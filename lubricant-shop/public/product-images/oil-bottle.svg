@@ -1,0 +1,11 @@
+<svg width="640" height="640" viewBox="0 0 640 640" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="640" height="640" fill="#f8fafc"/>
+  <path d="M264 96h112v72c0 18 8 35 22 47l28 24c30 26 47 63 47 102v160c0 44-36 80-80 80H247c-44 0-80-36-80-80V341c0-39 17-76 47-102l28-24c14-12 22-29 22-47V96Z" fill="#171717"/>
+  <path d="M280 64h80c18 0 32 14 32 32v28H248V96c0-18 14-32 32-32Z" fill="#2f3640"/>
+  <rect x="222" y="252" width="196" height="212" rx="20" fill="#1d4ed8"/>
+  <path d="M222 354c56-40 112-48 196-30v140H222V354Z" fill="#1e40af"/>
+  <text x="320" y="344" text-anchor="middle" font-family="Arial, sans-serif" font-size="58" font-weight="800" fill="white">OIL</text>
+  <text x="320" y="394" text-anchor="middle" font-family="Arial, sans-serif" font-size="34" font-weight="700" fill="white">MASTER</text>
+  <rect x="252" y="486" width="136" height="32" rx="4" fill="#dbeafe"/>
+  <text x="320" y="509" text-anchor="middle" font-family="Arial, sans-serif" font-size="20" font-weight="700" fill="#0f172a">1L</text>
+</svg>

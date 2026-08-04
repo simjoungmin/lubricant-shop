@@ -1,0 +1,24 @@
+# frontend
+lubricant-shop/node_modules/
+lubricant-shop/.next/
+lubricant-shop/out/
+lubricant-shop/.env*
+lubricant-shop/next-dev.log
+lubricant-shop/next-dev.err.log
+
+# backend
+lubricant-shop-back/build/
+lubricant-shop-back/.gradle/
+lubricant-shop-back/*.log
+lubricant-shop-back/*.err.log
+lubricant-shop-back/.env*
+
+# database/local
+MySQL/
+*.log
+
+# system/editor
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
