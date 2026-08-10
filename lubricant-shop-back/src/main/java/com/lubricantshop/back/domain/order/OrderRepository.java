@@ -8,5 +8,7 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
 
     List<Order> findAllByOrderByOrderedAtDesc();
 
+    List<Order> findByMember_MemberIdOrderByOrderedAtDesc(Long memberId);
+
     Optional<Order> findByOrderIdAndMember_MemberId(Long orderId, Long memberId);
 }

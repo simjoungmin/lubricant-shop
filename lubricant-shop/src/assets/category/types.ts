@@ -31,11 +31,20 @@ export type Category = {
 
 export type Product = {
   id: number;
-  categorySlug: CategorySlug;
+  categorySlug: string;
   subCategorySlug: string;
   name: string;
   spec: string;
   price: number;
+  originalPrice?: number;
+  brand?: string;
+  stock?: number;
+  description?: string;
+  viscosity?: string;
+  specification?: string;
+  volume?: string;
+  imageUrl?: string;
+  saleStatus?: "ON_SALE" | "SOLD_OUT" | "STOPPED" | "HIDDEN";
   pointRewardRatePercent?: number;
   badge: ProductBadge;
   color: string;

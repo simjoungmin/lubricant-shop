@@ -1,5 +1,5 @@
-import { products, searchProducts, sortProducts } from "@/assets/category/products";
 import AllProductGrid from "@/components/category/AllProductGrid";
+import { productApi } from "@/components/category/product.api";
 import { PageLayout } from "@/components/common/Layout";
 import CategoryContainer from "@/containers/CategoryContainer";
 
@@ -21,17 +21,17 @@ export default async function CategoryPage({ searchParams }: CategoryPageProps) 
     sort = "popular",
     viscosity = "",
   } = await searchParams;
-  const searchedProducts = searchProducts(products, {
-    keyword: q,
+  const displayProducts = await productApi.findProducts({
+    q,
     fuelType,
     viscosity,
     standard,
+    sort,
   });
-  const displayProducts = sortProducts(searchedProducts, sort);
 
   return (
     <PageLayout>
-      <CategoryContainer totalCount={searchedProducts.length} showAllProducts>
+      <CategoryContainer totalCount={displayProducts.length} showAllProducts>
         <AllProductGrid
           key={`${q}-${fuelType}-${viscosity}-${standard}-${sort}`}
           products={displayProducts}

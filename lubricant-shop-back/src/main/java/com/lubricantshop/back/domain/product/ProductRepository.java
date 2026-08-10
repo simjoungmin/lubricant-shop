@@ -8,4 +8,6 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
     boolean existsByProductName(String productName);
 
     List<Product> findByDeletedFalseOrderByProductIdAsc();
+
+    List<Product> findByDeletedFalseAndSaleStatusOrderByProductIdAsc(ProductStatus saleStatus);
 }

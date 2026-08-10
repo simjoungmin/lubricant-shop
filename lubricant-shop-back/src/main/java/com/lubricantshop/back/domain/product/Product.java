@@ -211,6 +211,10 @@ public class Product {
         return updatedAt;
     }
 
+    public Boolean isDeleted() {
+        return deleted;
+    }
+
     public BigDecimal getPointRewardRatePercent() {
         return pointRewardRatePercent == null ? BigDecimal.ZERO : pointRewardRatePercent;
     }
@@ -242,6 +246,79 @@ public class Product {
         this.saleStatus = saleStatus;
     }
 
+    public void updateAdminInfo(
+            String productName,
+            String category,
+            String brand,
+            BigDecimal price,
+            BigDecimal discountPrice,
+            Integer stock,
+            String productDescription,
+            String viscosity,
+            String specification,
+            String volume,
+            String imageUrl,
+            ProductStatus saleStatus,
+            BigDecimal pointRewardRatePercent,
+            Boolean mainProduct,
+            Boolean recommended
+    ) {
+        if (productName != null) {
+            this.productName = requireText(productName, "상품명을 입력해 주세요.");
+        }
+        if (category != null) {
+            this.category = requireText(category, "카테고리를 입력해 주세요.");
+        }
+        if (brand != null) {
+            this.brand = requireText(brand, "브랜드를 입력해 주세요.");
+        }
+        if (price != null) {
+            if (price.signum() < 0) {
+                throw new IllegalArgumentException("정상 판매가는 0보다 작을 수 없습니다.");
+            }
+            this.price = price;
+        }
+        if (discountPrice != null) {
+            if (discountPrice.signum() < 0) {
+                throw new IllegalArgumentException("할인 판매가는 0보다 작을 수 없습니다.");
+            }
+            this.discountPrice = discountPrice;
+        }
+        if (stock != null) {
+            changeStock(stock);
+        }
+        if (productDescription != null) {
+            this.productDescription = trimToNull(productDescription);
+        }
+        if (viscosity != null) {
+            this.viscosity = trimToNull(viscosity);
+        }
+        if (specification != null) {
+            this.specification = trimToNull(specification);
+        }
+        if (volume != null) {
+            this.volume = trimToNull(volume);
+        }
+        if (imageUrl != null) {
+            this.imageUrl = trimToNull(imageUrl);
+        }
+        if (saleStatus != null) {
+            changeSaleStatus(saleStatus);
+        }
+        if (pointRewardRatePercent != null) {
+            if (pointRewardRatePercent.signum() < 0) {
+                throw new IllegalArgumentException("적립률은 0보다 작을 수 없습니다.");
+            }
+            this.pointRewardRatePercent = pointRewardRatePercent;
+        }
+        if (mainProduct != null) {
+            this.mainProduct = mainProduct;
+        }
+        if (recommended != null) {
+            this.recommended = recommended;
+        }
+    }
+
     // 상품을 실제 삭제하지 않고 숨김 처리합니다.
     public void markDeleted() {
         deleted = true;
@@ -259,6 +336,22 @@ public class Product {
         }
 
         stock = getStock() - quantity;
+    }
+
+    private String requireText(String value, String message) {
+        if (value == null || value.isBlank()) {
+            throw new IllegalArgumentException(message);
+        }
+
+        return value.trim();
+    }
+
+    private String trimToNull(String value) {
+        if (value == null || value.isBlank()) {
+            return null;
+        }
+
+        return value.trim();
     }
 
     @PrePersist

@@ -22,13 +22,37 @@ public class ProductAdminService {
                 .toList();
     }
 
+    @Transactional(readOnly = true)
+    public AdminProductResponse findProduct(Long productId) {
+        Product product = productRepository.findById(productId)
+                .filter(foundProduct -> !Boolean.TRUE.equals(foundProduct.isDeleted()))
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 상품입니다."));
+
+        return AdminProductResponse.from(product);
+    }
+
     @Transactional
     public AdminProductResponse updateProduct(Long productId, AdminProductUpdateRequest request) {
         Product product = productRepository.findById(productId)
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 상품입니다."));
 
-        product.changeStock(request.stock());
-        product.changeSaleStatus(request.saleStatus());
+        product.updateAdminInfo(
+                request.productName(),
+                request.category(),
+                request.brand(),
+                request.price(),
+                request.discountPrice(),
+                request.stock(),
+                request.productDescription(),
+                request.viscosity(),
+                request.specification(),
+                request.volume(),
+                request.imageUrl(),
+                request.saleStatus(),
+                request.pointRewardRatePercent(),
+                request.mainProduct(),
+                request.recommended()
+        );
 
         return AdminProductResponse.from(product);
     }

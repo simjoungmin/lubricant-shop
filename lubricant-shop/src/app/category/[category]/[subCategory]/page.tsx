@@ -1,8 +1,5 @@
-import {
-  getDisplayProducts,
-  getProductsBySubCategory,
-} from "@/assets/category/products";
 import CategoryProductGrid from "@/components/category/CategoryProductGrid";
+import { productApi } from "@/components/category/product.api";
 
 type CategoryDetailPageProps = {
   params: Promise<{
@@ -32,13 +29,18 @@ export default async function CategoryDetailPage({
     pageSize = "20",
     viscosity = "",
   } = await searchParams;
-  const products = getProductsBySubCategory(category, subCategory);
-  const displayProducts = getDisplayProducts(products, sort, pageSize, {
-    keyword: q,
+  const products = await productApi.findProducts({
+    category,
+    subCategory,
+    q,
     fuelType,
     viscosity,
     standard,
+    sort,
   });
+  const parsedPageSize = Number(pageSize);
+  const visibleCount = Number.isFinite(parsedPageSize) ? parsedPageSize : 20;
+  const displayProducts = products.slice(0, visibleCount);
 
   return <CategoryProductGrid products={displayProducts} />;
 }

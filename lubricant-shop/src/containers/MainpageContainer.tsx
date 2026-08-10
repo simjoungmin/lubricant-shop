@@ -6,10 +6,17 @@ import HeroSection from "@/components/main/HeroSection";
 import OilGuideSection from "@/components/main/OilGuideSection";
 import ProductSection from "@/components/main/ProductSection";
 import ShortClipSection from "@/components/main/ShortClipSection";
+import { productApi } from "@/components/category/product.api";
 import React from "react";
 
 
-const MainpageContainer = () => {
+const MainpageContainer = async () => {
+  const products = await productApi.findProducts({ sort: "popular" });
+  const hotProducts = products.slice(0, 5);
+  const bestProducts = products.slice(5, 10).length > 0
+    ? products.slice(5, 10)
+    : products.slice(0, 5);
+
   return (
     <>
       <OilHeader />
@@ -18,8 +25,8 @@ const MainpageContainer = () => {
         <HeroSection />
         <CategorySection />
 
-        <ProductSection title="HOT 상품" badge="HOT" />
-        <ProductSection title="BEST 상품" badge="BEST" />
+        <ProductSection title="HOT 상품" badge="HOT" products={hotProducts} />
+        <ProductSection title="BEST 상품" badge="BEST" products={bestProducts} />
 
         <OilGuideSection />
         <ShortClipSection />

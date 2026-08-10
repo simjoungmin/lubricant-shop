@@ -27,6 +27,11 @@ const providerLabel = {
 
 const orderMenuItems: MyPageLinkItem[] = [
   {
+    title: "주문 내역",
+    description: "주문 번호, 결제 금액, 주문 상태를 확인합니다.",
+    href: "/my-page/orders",
+  },
+  {
     title: "내 문의 확인",
     description: "내가 남긴 문의와 관리자 답변을 확인합니다.",
     href: "/my-page/inquiries",
@@ -35,14 +40,9 @@ const orderMenuItems: MyPageLinkItem[] = [
 
 const pendingOrderMenuItems: MyPagePendingItem[] = [
   {
-    title: "주문 내역",
-    description: "결제한 주문과 주문 번호를 확인합니다.",
-    status: "준비 중",
-  },
-  {
     title: "배송 현황",
-    description: "상품 준비, 출고, 배송 완료 상태를 확인합니다.",
-    status: "준비 중",
+    description: "주문 상세에서 상품 준비, 배송 중, 배송 완료 상태를 확인합니다.",
+    status: "주문 상세에서 확인",
   },
 ];
 

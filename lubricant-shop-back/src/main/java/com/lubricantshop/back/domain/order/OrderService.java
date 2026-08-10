@@ -7,6 +7,9 @@ import com.lubricantshop.back.domain.order.dto.OrderCreateRequest;
 import com.lubricantshop.back.domain.order.dto.OrderCreateResponse;
 import com.lubricantshop.back.domain.order.dto.OrderItemRequest;
 import com.lubricantshop.back.domain.order.dto.OrderPaymentCompleteResponse;
+import com.lubricantshop.back.domain.order.dto.MyOrderDetailResponse;
+import com.lubricantshop.back.domain.order.dto.MyOrderItemResponse;
+import com.lubricantshop.back.domain.order.dto.MyOrderSummaryResponse;
 import com.lubricantshop.back.domain.product.Product;
 import com.lubricantshop.back.domain.product.ProductRepository;
 import com.lubricantshop.back.domain.product.ProductStatus;
@@ -112,6 +115,35 @@ public class OrderService {
         order.completePayment();
 
         return OrderPaymentCompleteResponse.from(order);
+    }
+
+    @Transactional(readOnly = true)
+    public List<MyOrderSummaryResponse> findMyOrders(Long memberId) {
+        findMember(memberId);
+
+        return orderRepository.findByMember_MemberIdOrderByOrderedAtDesc(memberId).stream()
+                .map(order -> MyOrderSummaryResponse.from(order, findOrderItems(order.getOrderId())))
+                .toList();
+    }
+
+    @Transactional(readOnly = true)
+    public MyOrderDetailResponse findMyOrder(Long memberId, Long orderId) {
+        findMember(memberId);
+        Order order = orderRepository.findByOrderIdAndMember_MemberId(orderId, memberId)
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 주문입니다."));
+
+        return MyOrderDetailResponse.from(order, findOrderItems(order.getOrderId()));
+    }
+
+    private Member findMember(Long memberId) {
+        return memberRepository.findById(memberId)
+                .orElseThrow(() -> new UnauthorizedException("로그인이 필요합니다."));
+    }
+
+    private List<MyOrderItemResponse> findOrderItems(Long orderId) {
+        return orderItemRepository.findByOrderOrderIdOrderByOrderItemIdAsc(orderId).stream()
+                .map(MyOrderItemResponse::from)
+                .toList();
     }
 
     private List<OrderLine> resolveOrderLines(List<OrderItemRequest> items) {

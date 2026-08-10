@@ -169,10 +169,16 @@ export function OrderCompleteSection({
             {isPaymentPending ? "처리 중..." : "테스트 결제 완료"}
           </button>
           <Link
-            href="/my-page"
+            href={`/my-page/orders/${createdOrder.orderId}`}
+            className="inline-flex h-12 items-center justify-center rounded-md border border-[#d6a84f]/70 px-5 text-sm font-black text-[#d6a84f] transition hover:bg-[#d6a84f] hover:text-black"
+          >
+            주문 상세 보기
+          </Link>
+          <Link
+            href="/my-page/orders"
             className="inline-flex h-12 items-center justify-center rounded-md border border-white/10 px-5 text-sm font-black text-white transition hover:border-[#d6a84f] hover:text-[#d6a84f]"
           >
-            마이페이지로 이동
+            주문 내역으로 이동
           </Link>
         </div>
       </div>

@@ -36,6 +36,46 @@ export type OrderPaymentCompleteResponse = {
   remainingPointBalance: number;
 };
 
+export type MyOrderItem = {
+  orderItemId: number;
+  productId: number;
+  productName: string;
+  quantity: number;
+  price: number;
+  totalPrice: number;
+  pointEarned: number;
+};
+
+export type MyOrderSummary = {
+  orderId: number;
+  orderNumber: string;
+  orderStatus: OrderStatus;
+  totalOrderAmount: number;
+  paymentAmount: number;
+  representativeProductName: string;
+  itemCount: number;
+  totalQuantity: number;
+  orderedAt: string;
+};
+
+export type MyOrderDetail = {
+  orderId: number;
+  orderNumber: string;
+  orderStatus: OrderStatus;
+  paymentMethod: PaymentMethod;
+  totalOrderAmount: number;
+  paymentAmount: number;
+  pointUsed: number;
+  pointEarned: number;
+  receiverName: string;
+  receiverPhone: string;
+  shippingAddress: string;
+  deliveryRequest: string | null;
+  orderedAt: string;
+  updatedAt: string;
+  items: MyOrderItem[];
+};
+
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL ?? "http://localhost:8080";
 
 const requestJson = async <ResponseBody>(path: string, init?: RequestInit) => {
@@ -67,4 +107,9 @@ export const orderApi = {
     requestJson<OrderPaymentCompleteResponse>(`/api/orders/${orderId}/test-payment-complete`, {
       method: "POST",
     }),
+
+  findMyOrders: () => requestJson<MyOrderSummary[]>("/api/orders/my"),
+
+  findMyOrder: (orderId: number) =>
+    requestJson<MyOrderDetail>(`/api/orders/my/${orderId}`),
 };

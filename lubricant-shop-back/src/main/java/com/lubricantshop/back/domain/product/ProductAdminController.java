@@ -26,6 +26,11 @@ public class ProductAdminController {
         return productAdminService.findProducts();
     }
 
+    @GetMapping("/{productId}")
+    public AdminProductResponse findProduct(@PathVariable Long productId) {
+        return productAdminService.findProduct(productId);
+    }
+
     @PatchMapping("/{productId}")
     public AdminProductResponse updateProduct(
             @PathVariable Long productId,

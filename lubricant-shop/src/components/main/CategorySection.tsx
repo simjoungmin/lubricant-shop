@@ -10,18 +10,8 @@ const categories = [
   { label: "케미컬", href: "/category/chemical/additive" },
 ];
 
-const services = [
-  { label: "정품 보장" },
-  { label: "빠른 배송" },
-  { label: "전문 상담", href: "/customer-center" },
-  { label: "안전 거래" },
-];
-
 const categoryCardClassName =
   "group block rounded-2xl border border-white/10 bg-[#201d17] p-6 text-left transition hover:border-[#d6a84f]/70 hover:bg-[#2b261d]";
-
-const serviceCardClassName =
-  "block rounded-2xl border border-white/10 bg-[#11100d] px-5 py-4";
 
 const CategorySection = () => {
   return (
@@ -63,30 +53,6 @@ const CategorySection = () => {
             );
           })}
         </div>
-
-        {/* <div className="mt-8 grid grid-cols-2 gap-4 md:grid-cols-4">
-          {services.map((service) => (
-            service.href ? (
-              <Link
-                key={service.label}
-                href={service.href}
-                className={`${serviceCardClassName} transition hover:border-[#d6a84f]/70`}
-              >
-                <p className="font-semibold text-[#d6a84f]">{service.label}</p>
-                <p className="mt-1 text-xs text-zinc-500">
-                  OIL MASTER 공식 서비스
-                </p>
-              </Link>
-            ) : (
-              <div key={service.label} className={serviceCardClassName}>
-                <p className="font-semibold text-[#d6a84f]">{service.label}</p>
-                <p className="mt-1 text-xs text-zinc-500">
-                  OIL MASTER 공식 서비스
-                </p>
-              </div>
-            )
-          ))}
-        </div> */}
       </div>
     </section>
   );

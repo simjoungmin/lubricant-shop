@@ -21,8 +21,27 @@ export type AdminProduct = {
   pointRewardRatePercent: number;
   mainProduct: boolean;
   recommended: boolean;
+  createdAt: string;
   updatedAt: string;
 };
+
+export type AdminProductUpdateInput = Partial<{
+  productName: string;
+  category: string;
+  brand: string;
+  price: number;
+  discountPrice: number | null;
+  stock: number;
+  productDescription: string;
+  viscosity: string;
+  specification: string;
+  volume: string;
+  imageUrl: string;
+  saleStatus: ProductStatus;
+  pointRewardRatePercent: number;
+  mainProduct: boolean;
+  recommended: boolean;
+}>;
 
 export type AdminOrderItem = {
   orderItemId: number;
@@ -77,7 +96,10 @@ const requestJson = async <ResponseBody>(path: string, init?: RequestInit) => {
 export const adminApi = {
   findProducts: () => requestJson<AdminProduct[]>("/api/admin/products"),
 
-  updateProduct: (productId: number, input: { stock: number; saleStatus: ProductStatus }) =>
+  findProduct: (productId: number) =>
+    requestJson<AdminProduct>(`/api/admin/products/${productId}`),
+
+  updateProduct: (productId: number, input: AdminProductUpdateInput) =>
     requestJson<AdminProduct>(`/api/admin/products/${productId}`, {
       method: "PATCH",
       body: JSON.stringify(input),

@@ -3,14 +3,14 @@ package com.lubricantshop.back.domain.product.dto;
 import com.lubricantshop.back.domain.product.Product;
 import com.lubricantshop.back.domain.product.ProductStatus;
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
 
-public record AdminProductResponse(
+public record ProductResponse(
         Long productId,
         String productName,
         String category,
         String brand,
         BigDecimal price,
+        BigDecimal originalPrice,
         BigDecimal discountPrice,
         Integer stock,
         String productDescription,
@@ -21,16 +21,15 @@ public record AdminProductResponse(
         ProductStatus saleStatus,
         BigDecimal pointRewardRatePercent,
         Boolean mainProduct,
-        Boolean recommended,
-        LocalDateTime createdAt,
-        LocalDateTime updatedAt
+        Boolean recommended
 ) {
-    public static AdminProductResponse from(Product product) {
-        return new AdminProductResponse(
+    public static ProductResponse from(Product product) {
+        return new ProductResponse(
                 product.getProductId(),
                 product.getProductName(),
                 product.getCategory(),
                 product.getBrand(),
+                product.getPrice(),
                 product.getOriginalPrice(),
                 product.getDiscountPrice(),
                 product.getStock(),
@@ -42,9 +41,7 @@ public record AdminProductResponse(
                 product.getSaleStatus(),
                 product.getPointRewardRatePercent(),
                 product.getMainProduct(),
-                product.getRecommended(),
-                product.getCreatedAt(),
-                product.getUpdatedAt()
+                product.getRecommended()
         );
     }
 }

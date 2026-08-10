@@ -1,5 +1,5 @@
-﻿import { getCategoryBySlug } from "@/assets/category/categories";
-import { getProductsBySubCategory } from "@/assets/category/products";
+import { getCategoryBySlug } from "@/assets/category/categories";
+import { productApi } from "@/components/category/product.api";
 import { PageLayout } from "@/components/common/Layout";
 import CategoryContainer from "@/containers/CategoryContainer";
 import { notFound, redirect } from "next/navigation";
@@ -32,7 +32,10 @@ const CategoryDetailLayout = async ({
     redirect(`/category/${category.slug}/${category.subCategories[0].slug}`);
   }
 
-  const products = getProductsBySubCategory(category.slug, subCategory.slug);
+  const products = await productApi.findProducts({
+    category: category.slug,
+    subCategory: subCategory.slug,
+  });
 
   return (
     <PageLayout>
