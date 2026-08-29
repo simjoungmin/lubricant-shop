@@ -8,6 +8,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.net.URI;
 import java.time.Duration;
 import java.util.UUID;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
@@ -27,10 +28,16 @@ public class KakaoAuthController {
 
     private final KakaoLoginService kakaoLoginService;
     private final JwtTokenProvider jwtTokenProvider;
+    private final boolean secureCookie;
 
-    public KakaoAuthController(KakaoLoginService kakaoLoginService, JwtTokenProvider jwtTokenProvider) {
+    public KakaoAuthController(
+            KakaoLoginService kakaoLoginService,
+            JwtTokenProvider jwtTokenProvider,
+            @Value("${app.cookie.secure:false}") boolean secureCookie
+    ) {
         this.kakaoLoginService = kakaoLoginService;
         this.jwtTokenProvider = jwtTokenProvider;
+        this.secureCookie = secureCookie;
     }
 
     @GetMapping("/login")
@@ -71,7 +78,7 @@ public class KakaoAuthController {
     private void addCookie(HttpServletResponse response, String name, String value, Duration maxAge) {
         ResponseCookie cookie = ResponseCookie.from(name, value)
                 .httpOnly(true)
-                .secure(false)
+                .secure(secureCookie)
                 .sameSite("Lax")
                 .path("/")
                 .maxAge(maxAge)

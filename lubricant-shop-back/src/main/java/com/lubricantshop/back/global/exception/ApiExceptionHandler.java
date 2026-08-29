@@ -33,6 +33,12 @@ public class ApiExceptionHandler {
                 .body(new ApiErrorResponse("UNAUTHORIZED", exception.getMessage()));
     }
 
+    @ExceptionHandler(ForbiddenException.class)
+    public ResponseEntity<ApiErrorResponse> handleForbidden(ForbiddenException exception) {
+        return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                .body(new ApiErrorResponse("FORBIDDEN", exception.getMessage()));
+    }
+
     @ExceptionHandler(IllegalArgumentException.class)
     public ResponseEntity<ApiErrorResponse> handleIllegalArgument(IllegalArgumentException exception) {
         return ResponseEntity.status(HttpStatus.CONFLICT)

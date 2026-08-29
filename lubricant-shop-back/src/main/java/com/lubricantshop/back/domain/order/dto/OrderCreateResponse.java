@@ -11,6 +11,7 @@ public record OrderCreateResponse(
         Integer pointUsed,
         Integer pointEarned,
         Integer remainingPointBalance,
-        String orderStatus
+        String orderStatus,
+        String paymentMethod
 ) {
 }

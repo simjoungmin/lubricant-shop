@@ -44,7 +44,7 @@ public class ProductService {
         Product product = productRepository.findById(productId)
                 .filter(foundProduct -> !Boolean.TRUE.equals(foundProduct.isDeleted()))
                 .filter(foundProduct -> foundProduct.getSaleStatus() == ProductStatus.ON_SALE)
-                .orElseThrow(() -> new IllegalArgumentException("판매중인 상품을 찾을 수 없습니다."));
+                .orElseThrow(() -> new IllegalArgumentException("판매 중인 상품을 찾을 수 없습니다."));
 
         return ProductResponse.from(product);
     }
@@ -63,28 +63,13 @@ public class ProductService {
         }
 
         String normalizedSubCategory = normalize(subCategory);
+        String productName = normalize(product.getProductName());
+        String specification = normalize(product.getSpecification());
+        String viscosity = normalize(product.getViscosity());
 
-        if (normalize(product.getViscosity()).equals(normalizedSubCategory)) {
-            return true;
-        }
-
-        if (normalize(product.getSpecification()).contains(normalizedSubCategory)) {
-            return true;
-        }
-
-        return switch (normalizedSubCategory) {
-            case "oilfilter" -> normalize(product.getProductName()).contains("오일필터");
-            case "airfilter" -> normalize(product.getProductName()).contains("에어필터");
-            case "cabinfilter" -> normalize(product.getProductName()).contains("캐빈필터");
-            case "fuelfilter" -> normalize(product.getProductName()).contains("연료필터");
-            case "additive" -> normalize(product.getProductName()).contains("첨가제")
-                    || normalize(product.getProductName()).contains("불스원샷");
-            case "coolant" -> normalize(product.getProductName()).contains("냉각수")
-                    || normalize(product.getProductName()).contains("쿨런트");
-            case "cleaner" -> normalize(product.getProductName()).contains("세정제");
-            case "coating" -> normalize(product.getProductName()).contains("코팅제");
-            default -> false;
-        };
+        return viscosity.equals(normalizedSubCategory)
+                || specification.contains(normalizedSubCategory)
+                || productName.contains(normalizedSubCategory);
     }
 
     private boolean isMatchedKeyword(Product product, String keyword) {
@@ -119,10 +104,10 @@ public class ProductService {
         ));
 
         return switch (normalizedFuelType) {
-            case "gasoline" -> searchableText.contains("가솔린") || searchableText.contains("gasoline");
-            case "diesel" -> searchableText.contains("디젤") || searchableText.contains("diesel");
-            case "hybrid" -> searchableText.contains("하이브리드") || searchableText.contains("hybrid");
-            case "europe" -> searchableText.contains("유럽") || searchableText.contains("acea");
+            case "gasoline" -> searchableText.contains("gasoline") || searchableText.contains("가솔린");
+            case "diesel" -> searchableText.contains("diesel") || searchableText.contains("디젤");
+            case "hybrid" -> searchableText.contains("hybrid") || searchableText.contains("하이브리드");
+            case "europe" -> searchableText.contains("acea") || searchableText.contains("유럽");
             default -> true;
         };
     }

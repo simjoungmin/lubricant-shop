@@ -15,6 +15,11 @@ export type SignupErrors = Partial<Record<keyof SignupFormState | "emailCheck" |
 
 export type EmailCheckState = "idle" | "checking" | "available" | "duplicated";
 
+export type SignupFormUpdateHandler = <Field extends keyof SignupFormState>(
+  field: Field,
+  value: SignupFormState[Field],
+) => void;
+
 export type SignupPayload = {
   email: string;
   password: string;

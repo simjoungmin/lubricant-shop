@@ -37,7 +37,7 @@ public class Order {
     @Column(name = "total_order_amount", nullable = false, precision = 12, scale = 0)
     private BigDecimal totalOrderAmount;
 
-    // 주문접수, 결제완료, 배송중 등 현재 주문 처리 상태입니다.
+    // 현재 주문 처리 상태입니다.
     @Enumerated(EnumType.STRING)
     @Column(name = "order_status", nullable = false, length = 30)
     private OrderStatus orderStatus = OrderStatus.ORDERED;
@@ -46,7 +46,7 @@ public class Order {
     @Column(name = "shipping_address", nullable = false, columnDefinition = "TEXT")
     private String shippingAddress;
 
-    // 카드, 무통장입금 등 결제 방식입니다.
+    // 카드, 무통장입금 등 고객이 선택한 결제 방식입니다.
     @Enumerated(EnumType.STRING)
     @Column(name = "payment_method", nullable = false, length = 30)
     private PaymentMethod paymentMethod;
@@ -59,7 +59,7 @@ public class Order {
     @Column(name = "point_used", nullable = false)
     private Integer pointUsed = 0;
 
-    // 이번 주문으로 적립된 포인트입니다.
+    // 이번 주문으로 적립 예정인 포인트입니다.
     @Column(name = "point_earned", nullable = false)
     private Integer pointEarned = 0;
 
@@ -67,19 +67,39 @@ public class Order {
     @Column(name = "ordered_at", nullable = false)
     private LocalDateTime orderedAt;
 
-    // 수령자 이름입니다.
+    // 수령인 이름입니다.
     @Column(name = "receiver_name", nullable = false, length = 80)
     private String receiverName;
 
-    // 수령자 연락처입니다.
+    // 수령인 연락처입니다.
     @Column(name = "receiver_phone", nullable = false, length = 30)
     private String receiverPhone;
 
-    // 배송 요청사항입니다.
+    // 고객이 남긴 배송 요청사항입니다.
     @Column(name = "delivery_request", length = 500)
     private String deliveryRequest;
 
-    // 주문 정보 또는 주문 상태가 마지막으로 바뀐 시각입니다.
+    // 배송을 담당하는 택배사 이름입니다.
+    @Column(name = "courier", length = 80)
+    private String courier;
+
+    // 송장번호는 앞자리 0, 하이픈, 문자 포함 가능성이 있어 문자열로 저장합니다.
+    @Column(name = "tracking_number", length = 100)
+    private String trackingNumber;
+
+    // 관리자가 배송 처리 시 남기는 내부 출고 메모입니다.
+    @Column(name = "shipment_memo", length = 500)
+    private String shipmentMemo;
+
+    // 배송중 상태로 변경된 시각입니다.
+    @Column(name = "shipped_at")
+    private LocalDateTime shippedAt;
+
+    // 배송완료 상태로 변경된 시각입니다.
+    @Column(name = "delivered_at")
+    private LocalDateTime deliveredAt;
+
+    // 주문 정보나 주문 상태가 마지막으로 변경된 시각입니다.
     @Column(name = "updated_at", nullable = false)
     private LocalDateTime updatedAt;
 
@@ -166,16 +186,71 @@ public class Order {
         return deliveryRequest;
     }
 
+    public String getCourier() {
+        return courier;
+    }
+
+    public String getTrackingNumber() {
+        return trackingNumber;
+    }
+
+    public String getShipmentMemo() {
+        return shipmentMemo;
+    }
+
+    public LocalDateTime getShippedAt() {
+        return shippedAt;
+    }
+
+    public LocalDateTime getDeliveredAt() {
+        return deliveredAt;
+    }
+
     public LocalDateTime getUpdatedAt() {
         return updatedAt;
     }
 
-    // 관리자 주문 처리 화면에서 주문 상태를 변경합니다.
-    public void changeStatus(OrderStatus orderStatus) {
-        this.orderStatus = orderStatus;
-        if (orderStatus == OrderStatus.CANCELED) {
+    public void updateShipment(String courier, String trackingNumber, String shipmentMemo) {
+        this.courier = trimToNull(courier);
+        this.trackingNumber = trimToNull(trackingNumber);
+        this.shipmentMemo = trimToNull(shipmentMemo);
+    }
+
+    // 관리자 주문 처리는 아래 흐름으로만 이동할 수 있습니다.
+    // ORDERED -> PAID -> PREPARING -> SHIPPING -> DELIVERED
+    // ORDERED -> CANCELED
+    public void changeStatus(OrderStatus nextStatus) {
+        if (orderStatus == nextStatus) {
+            return;
+        }
+
+        if (!canChangeStatus(orderStatus, nextStatus)) {
+            throw new IllegalStateException("변경할 수 없는 주문 상태입니다.");
+        }
+
+        if (nextStatus == OrderStatus.SHIPPING) {
+            requireShipmentInfo();
+            shippedAt = LocalDateTime.now();
+        }
+
+        if (nextStatus == OrderStatus.DELIVERED) {
+            deliveredAt = LocalDateTime.now();
+        }
+
+        orderStatus = nextStatus;
+        if (nextStatus == OrderStatus.CANCELED) {
             canceledAt = LocalDateTime.now();
         }
+    }
+
+    private boolean canChangeStatus(OrderStatus currentStatus, OrderStatus nextStatus) {
+        return switch (currentStatus) {
+            case ORDERED -> nextStatus == OrderStatus.PAID || nextStatus == OrderStatus.CANCELED;
+            case PAID -> nextStatus == OrderStatus.PREPARING;
+            case PREPARING -> nextStatus == OrderStatus.SHIPPING;
+            case SHIPPING -> nextStatus == OrderStatus.DELIVERED;
+            case DELIVERED, CANCELED -> false;
+        };
     }
 
     public void completePayment() {
@@ -188,6 +263,20 @@ public class Order {
         }
 
         orderStatus = OrderStatus.PAID;
+    }
+
+    private void requireShipmentInfo() {
+        if (courier == null || courier.isBlank() || trackingNumber == null || trackingNumber.isBlank()) {
+            throw new IllegalStateException("배송중 처리하려면 택배사와 송장번호가 필요합니다.");
+        }
+    }
+
+    private String trimToNull(String value) {
+        if (value == null || value.isBlank()) {
+            return null;
+        }
+
+        return value.trim();
     }
 
     @PrePersist

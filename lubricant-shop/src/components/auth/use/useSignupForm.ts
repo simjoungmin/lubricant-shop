@@ -81,7 +81,7 @@ export const useSignupForm = ({ onSignupSuccess }: UseSignupFormOptions = {}) =>
     setSignupErrors(nextErrors);
 
     if (Object.keys(nextErrors).length > 0) {
-      setSignupMessage("체크되지 않았거나 형식이 맞지 않는 항목을 확인해 주세요.");
+      setSignupMessage("체크하지 않았거나 형식이 맞지 않는 항목을 확인해 주세요.");
       return;
     }
 

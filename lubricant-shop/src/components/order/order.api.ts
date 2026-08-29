@@ -24,16 +24,7 @@ export type OrderCreateResponse = {
   pointEarned: number;
   remainingPointBalance: number;
   orderStatus: OrderStatus;
-};
-
-export type OrderPaymentCompleteResponse = {
-  orderId: number;
-  orderNumber: string;
-  orderStatus: OrderStatus;
-  paymentAmount: number;
-  pointUsed: number;
-  pointEarned: number;
-  remainingPointBalance: number;
+  paymentMethod: PaymentMethod;
 };
 
 export type MyOrderItem = {
@@ -71,6 +62,10 @@ export type MyOrderDetail = {
   receiverPhone: string;
   shippingAddress: string;
   deliveryRequest: string | null;
+  courier: string | null;
+  trackingNumber: string | null;
+  shippedAt: string | null;
+  deliveredAt: string | null;
   orderedAt: string;
   updatedAt: string;
   items: MyOrderItem[];
@@ -101,11 +96,6 @@ export const orderApi = {
     requestJson<OrderCreateResponse>("/api/orders", {
       method: "POST",
       body: JSON.stringify(input),
-    }),
-
-  completeTestPayment: (orderId: number) =>
-    requestJson<OrderPaymentCompleteResponse>(`/api/orders/${orderId}/test-payment-complete`, {
-      method: "POST",
     }),
 
   findMyOrders: () => requestJson<MyOrderSummary[]>("/api/orders/my"),

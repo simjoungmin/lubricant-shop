@@ -20,6 +20,10 @@ public record MyOrderDetailResponse(
         String receiverPhone,
         String shippingAddress,
         String deliveryRequest,
+        String courier,
+        String trackingNumber,
+        LocalDateTime shippedAt,
+        LocalDateTime deliveredAt,
         LocalDateTime orderedAt,
         LocalDateTime updatedAt,
         List<MyOrderItemResponse> items
@@ -38,6 +42,10 @@ public record MyOrderDetailResponse(
                 order.getReceiverPhone(),
                 order.getShippingAddress(),
                 order.getDeliveryRequest(),
+                order.getCourier(),
+                order.getTrackingNumber(),
+                order.getShippedAt(),
+                order.getDeliveredAt(),
                 order.getOrderedAt(),
                 order.getUpdatedAt(),
                 items

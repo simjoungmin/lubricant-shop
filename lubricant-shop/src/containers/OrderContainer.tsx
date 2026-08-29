@@ -16,7 +16,6 @@ import {
 import {
   orderApi,
   type OrderCreateResponse,
-  type OrderPaymentCompleteResponse,
 } from "@/components/order/order.api";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
@@ -33,7 +32,6 @@ export default function OrderContainer() {
   }));
   const [message, setMessage] = useState("");
   const [createdOrder, setCreatedOrder] = useState<OrderCreateResponse | null>(null);
-  const [completedPayment, setCompletedPayment] = useState<OrderPaymentCompleteResponse | null>(null);
 
   const pointBalance = user?.pointBalance ?? 0;
   const maxUsablePoint = Math.min(pointBalance, totalPrice);
@@ -55,23 +53,11 @@ export default function OrderContainer() {
     mutationFn: orderApi.createOrder,
     onSuccess: (order) => {
       setCreatedOrder(order);
-      setCompletedPayment(null);
-      setMessage("주문 데이터가 저장되었습니다. 테스트 결제를 진행해 주세요.");
+      setMessage("주문이 접수되었습니다. 입금 확인 후 결제 완료로 변경됩니다.");
       void queryClient.invalidateQueries({ queryKey: ["cart"] });
     },
     onError: (error) => {
       setMessage(error instanceof Error ? error.message : "주문 생성에 실패했습니다.");
-    },
-  });
-
-  const completePaymentMutation = useMutation({
-    mutationFn: orderApi.completeTestPayment,
-    onSuccess: (payment) => {
-      setCompletedPayment(payment);
-      setMessage("테스트 결제가 완료되었습니다. 주문 상태와 재고가 반영되었습니다.");
-    },
-    onError: (error) => {
-      setMessage(error instanceof Error ? error.message : "테스트 결제 완료 처리에 실패했습니다.");
     },
   });
 
@@ -115,14 +101,6 @@ export default function OrderContainer() {
     });
   };
 
-  const handleCompleteTestPayment = () => {
-    if (!createdOrder) {
-      return;
-    }
-
-    completePaymentMutation.mutate(createdOrder.orderId);
-  };
-
   const renderOrderContent = () => {
     if (!isReady || isLoading) {
       return <OrderLoadingSection />;
@@ -136,10 +114,7 @@ export default function OrderContainer() {
       return (
         <OrderCompleteSection
           createdOrder={createdOrder}
-          completedPayment={completedPayment}
           message={message}
-          isPaymentPending={completePaymentMutation.isPending}
-          onCompleteTestPayment={handleCompleteTestPayment}
         />
       );
     }

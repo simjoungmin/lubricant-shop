@@ -3,9 +3,9 @@ package com.lubricantshop.back.domain.cart;
 import com.lubricantshop.back.domain.cart.dto.CartAddRequest;
 import com.lubricantshop.back.domain.cart.dto.CartQuantityUpdateRequest;
 import com.lubricantshop.back.domain.cart.dto.CartResponse;
-import com.lubricantshop.back.global.security.JwtTokenProvider;
+import com.lubricantshop.back.global.security.AuthenticatedMember;
 import jakarta.validation.Valid;
-import org.springframework.web.bind.annotation.CookieValue;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -19,52 +19,48 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api/cart")
 public class CartController {
 
-    private static final String ACCESS_TOKEN_COOKIE_NAME = "access_token";
-
     private final CartService cartService;
-    private final JwtTokenProvider jwtTokenProvider;
 
-    public CartController(CartService cartService, JwtTokenProvider jwtTokenProvider) {
+    public CartController(CartService cartService) {
         this.cartService = cartService;
-        this.jwtTokenProvider = jwtTokenProvider;
     }
 
     @GetMapping
     public CartResponse findCart(
-            @CookieValue(name = ACCESS_TOKEN_COOKIE_NAME, required = false) String accessToken
+            @AuthenticationPrincipal AuthenticatedMember member
     ) {
-        return cartService.findCart(jwtTokenProvider.getMemberId(accessToken));
+        return cartService.findCart(member.memberId());
     }
 
     @PostMapping("/items")
     public CartResponse addCartItem(
-            @CookieValue(name = ACCESS_TOKEN_COOKIE_NAME, required = false) String accessToken,
+            @AuthenticationPrincipal AuthenticatedMember member,
             @Valid @RequestBody CartAddRequest request
     ) {
-        return cartService.addCartItem(jwtTokenProvider.getMemberId(accessToken), request);
+        return cartService.addCartItem(member.memberId(), request);
     }
 
     @PatchMapping("/items/{cartId}")
     public CartResponse updateQuantity(
-            @CookieValue(name = ACCESS_TOKEN_COOKIE_NAME, required = false) String accessToken,
+            @AuthenticationPrincipal AuthenticatedMember member,
             @PathVariable Long cartId,
             @Valid @RequestBody CartQuantityUpdateRequest request
     ) {
-        return cartService.updateQuantity(jwtTokenProvider.getMemberId(accessToken), cartId, request);
+        return cartService.updateQuantity(member.memberId(), cartId, request);
     }
 
     @DeleteMapping("/items/{cartId}")
     public CartResponse removeCartItem(
-            @CookieValue(name = ACCESS_TOKEN_COOKIE_NAME, required = false) String accessToken,
+            @AuthenticationPrincipal AuthenticatedMember member,
             @PathVariable Long cartId
     ) {
-        return cartService.removeCartItem(jwtTokenProvider.getMemberId(accessToken), cartId);
+        return cartService.removeCartItem(member.memberId(), cartId);
     }
 
     @DeleteMapping
     public CartResponse clearCart(
-            @CookieValue(name = ACCESS_TOKEN_COOKIE_NAME, required = false) String accessToken
+            @AuthenticationPrincipal AuthenticatedMember member
     ) {
-        return cartService.clearCart(jwtTokenProvider.getMemberId(accessToken));
+        return cartService.clearCart(member.memberId());
     }
 }

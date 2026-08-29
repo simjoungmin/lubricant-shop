@@ -70,9 +70,20 @@ export type AdminOrder = {
   receiverPhone: string;
   shippingAddress: string;
   deliveryRequest: string | null;
+  courier: string | null;
+  trackingNumber: string | null;
+  shipmentMemo: string | null;
+  shippedAt: string | null;
+  deliveredAt: string | null;
   orderedAt: string;
   updatedAt: string;
   items: AdminOrderItem[];
+};
+
+export type AdminOrderShipmentUpdateInput = {
+  courier: string;
+  trackingNumber: string;
+  shipmentMemo: string;
 };
 
 const requestJson = async <ResponseBody>(path: string, init?: RequestInit) => {
@@ -107,9 +118,27 @@ export const adminApi = {
 
   findOrders: () => requestJson<AdminOrder[]>("/api/admin/orders"),
 
-  updateOrderStatus: (orderId: number, orderStatus: OrderStatus) =>
+  findOrder: (orderId: number) =>
+    requestJson<AdminOrder>(`/api/admin/orders/${orderId}`),
+
+  updateOrderStatus: (
+    orderId: number,
+    orderStatus: OrderStatus,
+    shipment?: Partial<AdminOrderShipmentUpdateInput>,
+  ) =>
     requestJson<AdminOrder>(`/api/admin/orders/${orderId}/status`, {
       method: "PATCH",
-      body: JSON.stringify({ orderStatus }),
+      body: JSON.stringify({ orderStatus, ...shipment }),
+    }),
+
+  updateOrderShipment: (orderId: number, input: AdminOrderShipmentUpdateInput) =>
+    requestJson<AdminOrder>(`/api/admin/orders/${orderId}/shipment`, {
+      method: "PATCH",
+      body: JSON.stringify(input),
+    }),
+
+  completeOrderPayment: (orderId: number) =>
+    requestJson<AdminOrder>(`/api/admin/orders/${orderId}/payment-complete`, {
+      method: "POST",
     }),
 };

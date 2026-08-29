@@ -23,6 +23,11 @@ public record AdminOrderResponse(
         String receiverPhone,
         String shippingAddress,
         String deliveryRequest,
+        String courier,
+        String trackingNumber,
+        String shipmentMemo,
+        LocalDateTime shippedAt,
+        LocalDateTime deliveredAt,
         LocalDateTime orderedAt,
         LocalDateTime updatedAt,
         List<AdminOrderItemResponse> items
@@ -44,6 +49,11 @@ public record AdminOrderResponse(
                 order.getReceiverPhone(),
                 order.getShippingAddress(),
                 order.getDeliveryRequest(),
+                order.getCourier(),
+                order.getTrackingNumber(),
+                order.getShipmentMemo(),
+                order.getShippedAt(),
+                order.getDeliveredAt(),
                 order.getOrderedAt(),
                 order.getUpdatedAt(),
                 items
