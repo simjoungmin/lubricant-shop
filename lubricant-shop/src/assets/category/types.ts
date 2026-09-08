@@ -1,9 +1,9 @@
 export type CategorySlug =
   | "engine"
   | "mission"
-  | "brake"
-  | "filter"
   | "gear"
+  | "brake-power"
+  | "coolant"
   | "chemical";
 
 export type ProductBadge = "BEST" | "HOT";

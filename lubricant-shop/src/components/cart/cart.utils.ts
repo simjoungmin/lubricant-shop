@@ -6,6 +6,14 @@ export const formatPrice = (price: number) => {
   return `${price.toLocaleString("ko-KR")}원`;
 };
 
+export const getDiscountRate = (originalPrice?: number, salePrice?: number) => {
+  if (!originalPrice || !salePrice || originalPrice <= salePrice) {
+    return 0;
+  }
+
+  return Math.round(((originalPrice - salePrice) / originalPrice) * 100);
+};
+
 export const getCartItemTotalPrice = (price: number, quantity: number) => {
   return price * quantity;
 };
@@ -15,7 +23,7 @@ export const getProductRewardRate = (categorySlug: string) => {
     return 5;
   }
 
-  if (categorySlug === "mission" || categorySlug === "brake") {
+  if (categorySlug === "mission" || categorySlug === "brake-power") {
     return 3;
   }
 

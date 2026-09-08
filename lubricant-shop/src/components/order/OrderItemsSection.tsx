@@ -8,12 +8,15 @@ type OrderItemsSectionProps = {
 
 export function OrderItemsSection({ items }: OrderItemsSectionProps) {
   return (
-    <div className="rounded-lg border border-white/10 bg-[#171611] p-5">
-      <h2 className="text-lg font-black text-white">주문 상품</h2>
+    <div className="rounded-lg border border-[#dde2e8] bg-white p-5">
+      <h2 className="text-lg font-black text-[#071d3b]">주문 상품</h2>
       {items.length > 0 ? (
         <div className="mt-5 space-y-3">
           {items.map((item) => (
-            <div key={item.cartId} className="grid grid-cols-[64px_1fr] gap-4 rounded-md bg-black/20 p-3">
+            <div
+              key={item.cartId}
+              className="grid grid-cols-[64px_1fr] gap-4 rounded-md border border-[#edf0f3] bg-[#fbfcfd] p-3"
+            >
               <div className="relative h-16 overflow-hidden rounded-md bg-white">
                 <Image
                   src={item.product.imageUrl || "/product-images/oil-bottle.svg"}
@@ -24,11 +27,11 @@ export function OrderItemsSection({ items }: OrderItemsSectionProps) {
                 />
               </div>
               <div className="min-w-0">
-                <p className="truncate text-sm font-black text-white">{item.product.name}</p>
-                <p className="mt-1 text-xs text-zinc-500">
+                <p className="truncate text-sm font-black text-[#071d3b]">{item.product.name}</p>
+                <p className="mt-1 text-xs text-[#65717f]">
                   {item.quantity}개 · {formatPrice(item.product.price)}
                 </p>
-                <p className="mt-2 text-sm font-black text-[#d6a84f]">
+                <p className="mt-2 text-sm font-black text-[#ff4b1f]">
                   {formatPrice(item.totalPrice)}
                 </p>
               </div>
@@ -36,7 +39,7 @@ export function OrderItemsSection({ items }: OrderItemsSectionProps) {
           ))}
         </div>
       ) : (
-        <div className="mt-5 rounded-md border border-dashed border-white/10 px-4 py-10 text-center text-sm text-zinc-400">
+        <div className="mt-5 rounded-md border border-dashed border-[#cfd6de] px-4 py-10 text-center text-sm text-[#65717f]">
           주문할 상품이 없습니다.
         </div>
       )}

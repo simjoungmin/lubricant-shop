@@ -54,7 +54,11 @@ public class ProductService {
             return true;
         }
 
-        return normalize(product.getCategory()).equals(normalize(category));
+        String normalizedCategory = normalize(category);
+        String normalizedProductCategory = normalize(product.getCategory());
+
+        return normalizedProductCategory.equals(normalizedCategory)
+                || resolveCategoryAliases(normalizedCategory).contains(normalizedProductCategory);
     }
 
     private boolean isMatchedSubCategory(Product product, String subCategory) {
@@ -63,13 +67,53 @@ public class ProductService {
         }
 
         String normalizedSubCategory = normalize(subCategory);
+        String productSubCategory = normalize(product.getSubCategory());
         String productName = normalize(product.getProductName());
+        String brand = normalize(product.getBrand());
+        String productDescription = normalize(product.getProductDescription());
         String specification = normalize(product.getSpecification());
         String viscosity = normalize(product.getViscosity());
+        String searchableText = String.join(" ", productName, brand, productDescription, specification, viscosity);
 
-        return viscosity.equals(normalizedSubCategory)
+        return productSubCategory.equals(normalizedSubCategory)
+                || viscosity.equals(normalizedSubCategory)
                 || specification.contains(normalizedSubCategory)
-                || productName.contains(normalizedSubCategory);
+                || productName.contains(normalizedSubCategory)
+                || resolveSubCategoryKeywords(normalizedSubCategory).stream()
+                .map(this::normalize)
+                .anyMatch(searchableText::contains);
+    }
+
+    private List<String> resolveCategoryAliases(String category) {
+        return switch (category) {
+            case "brakepower" -> List.of("brake");
+            case "coolant" -> List.of("chemical");
+            default -> List.of();
+        };
+    }
+
+    private List<String> resolveSubCategoryKeywords(String subCategory) {
+        return switch (subCategory) {
+            case "brandengineoil" -> List.of("브랜드", "zic", "kixx", "mobil", "shell", "castrol");
+            case "viscosityengineoil" -> List.of("0w20", "0w30", "5w30", "5w40", "10w40", "15w40");
+            case "gasolinelpgengineoil" -> List.of("가솔린", "lpg");
+            case "passengerdieselinegineoil", "passengerdieselengineoil" -> List.of("승용", "디젤", "diesel");
+            case "racingbikeengineoil" -> List.of("레이싱", "바이크", "racing", "bike");
+            case "drum200lengineoil" -> List.of("200l", "200리터", "드럼", "자가하차");
+            case "dctdctf" -> List.of("dct", "dctf");
+            case "gearoil" -> List.of("기어오일", "gl5");
+            case "transfercase" -> List.of("트랜스퍼케이스", "transfercase");
+            case "brakefluid" -> List.of("브레이크액", "dot");
+            case "poweroil" -> List.of("파워오일");
+            case "orangepink" -> List.of("주황색", "분홍색");
+            case "enginesystem" -> List.of("엔진", "첨가제", "불스원샷");
+            case "airconradiator" -> List.of("에어컨", "라디에이터");
+            case "missionadditive" -> List.of("미션첨가제", "미션", "첨가제");
+            case "rustproofcleaner" -> List.of("방청유", "세정제");
+            case "washerfluid" -> List.of("워셔액");
+            case "hydraulicoil" -> List.of("유압유");
+            default -> List.of(subCategory);
+        };
     }
 
     private boolean isMatchedKeyword(Product product, String keyword) {
@@ -138,8 +182,7 @@ public class ProductService {
         }
 
         return Comparator
-                .comparing(Product::getMainProduct, Comparator.nullsLast(Comparator.reverseOrder()))
-                .thenComparing(Product::getRecommended, Comparator.nullsLast(Comparator.reverseOrder()))
+                .comparing(Product::getViewCount, Comparator.nullsLast(Comparator.reverseOrder()))
                 .thenComparing(Product::getProductId);
     }
 

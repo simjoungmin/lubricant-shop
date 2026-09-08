@@ -38,4 +38,4 @@ export const initialOrderFormState: OrderFormState = {
 };
 
 export const orderInputClassName =
-  "h-11 rounded-md border border-white/10 bg-[#11100d] px-3 text-sm font-bold text-white outline-none transition placeholder:text-zinc-600 focus:border-[#d6a84f]";
+  "h-11 rounded-md border border-[#dce2e8] bg-white px-3 text-sm font-bold text-[#071d3b] outline-none transition placeholder:text-[#a4adb8] focus:border-[#071d3b]";

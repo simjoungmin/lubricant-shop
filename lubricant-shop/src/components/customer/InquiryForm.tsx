@@ -10,6 +10,7 @@ import {
 } from "@/components/customer/inquiry-form.types";
 import { inquiryApi } from "@/components/customer/inquiry.api";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { type ChangeEvent, type FormEvent, useMemo, useState } from "react";
 
 type InquiryFormProps = {
@@ -26,6 +27,7 @@ export default function InquiryForm({
   selectedTopic,
 }: InquiryFormProps) {
   const { user, isReady } = useAuth();
+  const router = useRouter();
   const [values, setValues] = useState<InquiryFormValues>(initialInquiryFormValues);
   const [attachments, setAttachments] = useState<File[]>([]);
   const [errors, setErrors] = useState<InquiryFormErrors>({});
@@ -114,11 +116,11 @@ export default function InquiryForm({
         inquiryGroup: selectedGroup.label,
         inquiryTopic: selectedTopic.label,
         orderNumber: values.orderNumber.trim() || undefined,
-        vehicleInfo: values.vehicleInfo.trim() || undefined,
       });
 
       setValues({ ...initialInquiryFormValues });
       setAttachments([]);
+      router.push("/?notice=inquiry-created");
       setSubmitMessage("문의가 접수되었습니다. 관리자 문의 확인창에서 확인할 수 있습니다.");
     } catch (error) {
       setSubmitMessage(error instanceof Error ? error.message : "문의 접수에 실패했습니다.");
@@ -128,13 +130,13 @@ export default function InquiryForm({
   };
 
   return (
-    <section className="rounded-lg border border-white/10 bg-[#171611] p-6">
+    <section className="rounded-lg border border-[#dde2e8] bg-white p-6">
       <div className="mb-6">
-        <p className="text-sm font-black text-[#d6a84f]">문의 입력</p>
-        <h2 className="mt-2 text-2xl font-black text-white">
+        <p className="text-sm font-black text-[#ff4b1f]">문의 입력</p>
+        <h2 className="mt-2 text-2xl font-black text-[#071d3b]">
           {selectedCategory.label} / {selectedGroup.label} / {selectedTopic.label}
         </h2>
-        <p className="mt-3 text-sm leading-6 text-zinc-400">{selectedTopic.helper}</p>
+        <p className="mt-3 text-sm font-semibold leading-6 text-[#65717f]">{selectedTopic.helper}</p>
       </div>
 
       {isReady && !user ? <InquiryLoginNotice /> : null}
@@ -161,13 +163,13 @@ export default function InquiryForm({
 
 function InquiryLoginNotice() {
   return (
-    <div className="mb-6 rounded-md border border-[#d6a84f]/30 bg-[#d6a84f]/10 p-4">
-      <p className="text-sm font-bold text-zinc-200">
+    <div className="mb-6 rounded-md border border-[#ffd3c5] bg-[#fff3ef] p-4">
+      <p className="text-sm font-bold text-[#071d3b]">
         로그인 후 문의를 접수하면 회원 정보와 연결되어 저장됩니다.
       </p>
       <Link
         href="/login"
-        className="mt-3 inline-flex h-10 items-center justify-center rounded-md bg-[#d6a84f] px-4 text-sm font-black text-black transition hover:bg-[#efc769]"
+        className="mt-3 inline-flex h-10 items-center justify-center rounded-md bg-[#ff4b1f] px-4 text-sm font-black text-white transition hover:bg-[#e63e16]"
       >
         로그인하러 가기
       </Link>

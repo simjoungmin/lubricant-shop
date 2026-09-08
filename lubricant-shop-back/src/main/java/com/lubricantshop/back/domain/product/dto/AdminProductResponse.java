@@ -9,6 +9,7 @@ public record AdminProductResponse(
         Long productId,
         String productName,
         String category,
+        String subCategory,
         String brand,
         BigDecimal price,
         BigDecimal discountPrice,
@@ -20,8 +21,6 @@ public record AdminProductResponse(
         String imageUrl,
         ProductStatus saleStatus,
         BigDecimal pointRewardRatePercent,
-        Boolean mainProduct,
-        Boolean recommended,
         LocalDateTime createdAt,
         LocalDateTime updatedAt
 ) {
@@ -30,6 +29,7 @@ public record AdminProductResponse(
                 product.getProductId(),
                 product.getProductName(),
                 product.getCategory(),
+                product.getSubCategory(),
                 product.getBrand(),
                 product.getOriginalPrice(),
                 product.getDiscountPrice(),
@@ -41,8 +41,6 @@ public record AdminProductResponse(
                 product.getImageUrl(),
                 product.getSaleStatus(),
                 product.getPointRewardRatePercent(),
-                product.getMainProduct(),
-                product.getRecommended(),
                 product.getCreatedAt(),
                 product.getUpdatedAt()
         );

@@ -33,7 +33,7 @@ const ProductListControls = ({
   } = useProductListParams({ sortOptions, pageSizeOptions });
 
   return (
-    <div className="grid w-full gap-3 text-xs text-zinc-400 md:w-auto md:min-w-[640px]">
+    <div className="mb-6 grid w-full gap-3 text-xs md:w-auto md:min-w-[640px]">
       <ProductSearchForm
         currentFilters={currentFilters}
         onSubmit={updateSearchFilters}

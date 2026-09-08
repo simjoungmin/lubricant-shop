@@ -1,5 +1,5 @@
 export const inputClassName =
-  "h-12 rounded-md border border-white/10 bg-[#171611] px-4 text-sm text-white outline-none transition placeholder:text-zinc-500 focus:border-[#d6a84f] aria-[invalid=true]:border-red-400/70";
+  "h-12 rounded-md border border-[#dce2e8] bg-white px-4 text-sm text-[#071d3b] outline-none transition placeholder:text-[#a4adb8] focus:border-[#071d3b] aria-[invalid=true]:border-red-400/70";
 
 export const helperClassName = "text-xs font-bold";
 

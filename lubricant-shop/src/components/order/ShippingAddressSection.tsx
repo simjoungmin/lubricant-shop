@@ -14,8 +14,8 @@ export function ShippingAddressSection({
   onUpdateForm,
 }: ShippingAddressSectionProps) {
   return (
-    <div className="rounded-lg border border-white/10 bg-[#171611] p-5">
-      <h2 className="text-lg font-black text-white">배송지 입력</h2>
+    <div className="rounded-lg border border-[#dde2e8] bg-white p-5">
+      <h2 className="text-lg font-black text-[#071d3b]">배송지 입력</h2>
       <div className="mt-5 grid gap-4">
         <OrderInput
           label="수령인"
@@ -60,7 +60,7 @@ function OrderInput({
   inputMode?: "text" | "numeric" | "tel" | "decimal";
 }) {
   return (
-    <label className="grid gap-2 text-sm font-bold text-zinc-200">
+    <label className="grid gap-2 text-sm font-bold text-[#34465c]">
       {label}
       <input
         className={orderInputClassName}

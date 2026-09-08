@@ -30,10 +30,10 @@ export function InquiryContentFields({
         onChange={(value) => onChangeValue("title", value)}
       />
 
-      <label className="grid gap-2 text-sm font-bold text-zinc-200">
+      <label className="grid gap-2 text-sm font-bold text-[#34465c]">
         문의 내용
         <textarea
-          className="min-h-56 rounded-md border border-white/10 bg-[#11100d] px-4 py-4 text-sm leading-6 text-white outline-none transition placeholder:text-zinc-500 focus:border-[#d6a84f]"
+          className="min-h-56 rounded-md border border-[#dce2e8] bg-white px-4 py-4 text-sm font-semibold leading-6 text-[#071d3b] outline-none transition placeholder:text-[#a4adb8] focus:border-[#ff4b1f]"
           placeholder={`문의 내용을 자세히 적어주세요.\n\n선택한 문의: ${selectedTopic.label}\n필요 정보: ${selectedTopic.helper}`}
           value={values.content}
           onChange={(event) => onChangeValue("content", event.target.value)}

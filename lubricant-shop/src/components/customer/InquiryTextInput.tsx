@@ -7,6 +7,7 @@ type InquiryTextInputProps = {
   placeholder?: string;
   error?: string;
   type?: "text" | "email";
+  disabled?: boolean;
 };
 
 export function InquiryTextInput({
@@ -16,15 +17,17 @@ export function InquiryTextInput({
   placeholder,
   error,
   type = "text",
+  disabled = false,
 }: InquiryTextInputProps) {
   return (
-    <label className="grid gap-2 text-sm font-bold text-zinc-200">
+    <label className="grid gap-2 text-sm font-bold text-[#34465c]">
       {label}
       <input
         className={inquiryInputClassName}
         placeholder={placeholder}
         type={type}
         value={value}
+        disabled={disabled}
         onChange={(event) => onChange(event.target.value)}
         aria-invalid={Boolean(error)}
       />

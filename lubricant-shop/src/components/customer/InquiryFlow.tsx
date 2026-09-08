@@ -44,8 +44,8 @@ export default function InquiryFlow() {
           selectedTopic={selectedTopic}
         />
       ) : (
-        <div className="rounded-lg border border-dashed border-white/15 bg-[#171611] p-6 text-center">
-          <p className="text-sm font-bold text-zinc-400">
+        <div className="rounded-lg border border-dashed border-[#cfd6de] bg-white p-6 text-center">
+          <p className="text-sm font-bold text-[#65717f]">
             세 번째 문의 내용을 선택하면 입력칸이 아래에 표시됩니다.
           </p>
         </div>

@@ -11,6 +11,7 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+import org.springframework.security.config.Customizer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.SecurityFilterChain;
@@ -29,20 +30,23 @@ public class SecurityConfig {
     ) throws Exception {
         http
                 .csrf(AbstractHttpConfigurer::disable)
+                .cors(Customizer.withDefaults())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .exceptionHandling(exception -> exception
                         .authenticationEntryPoint(authenticationEntryPoint)
                         .accessDeniedHandler(accessDeniedHandler)
                 )
                 .authorizeHttpRequests(auth -> auth
+                        .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/products/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/display-sections/**").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/members/login").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/members/signup").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/members/email-exists").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/members/find-email").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/members/password/verification-code").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/members/password/reset").permitAll()
-                        .requestMatchers("/api/auth/kakao/**").permitAll()
+                        .requestMatchers("/api/auth/kakao/**", "/api/auth/naver/**").permitAll()
                         .requestMatchers("/api/admin/**", "/api/boards/admin/**").hasRole("ADMIN")
                         .requestMatchers("/api/cart/**", "/api/orders/**", "/api/boards/inquiries", "/api/boards/my/**").authenticated()
                         .anyRequest().authenticated()

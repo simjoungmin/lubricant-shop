@@ -8,6 +8,7 @@ export type AdminProduct = {
   productId: number;
   productName: string;
   category: string;
+  subCategory: string | null;
   brand: string;
   price: number;
   discountPrice: number | null;
@@ -19,8 +20,6 @@ export type AdminProduct = {
   imageUrl: string;
   saleStatus: ProductStatus;
   pointRewardRatePercent: number;
-  mainProduct: boolean;
-  recommended: boolean;
   createdAt: string;
   updatedAt: string;
 };
@@ -28,6 +27,7 @@ export type AdminProduct = {
 export type AdminProductUpdateInput = Partial<{
   productName: string;
   category: string;
+  subCategory: string;
   brand: string;
   price: number;
   discountPrice: number | null;
@@ -39,8 +39,6 @@ export type AdminProductUpdateInput = Partial<{
   imageUrl: string;
   saleStatus: ProductStatus;
   pointRewardRatePercent: number;
-  mainProduct: boolean;
-  recommended: boolean;
 }>;
 
 export type AdminOrderItem = {

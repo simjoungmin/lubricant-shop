@@ -5,9 +5,5 @@ type PageLayoutProps = {
 };
 
 export function PageLayout({ children }: PageLayoutProps) {
-  return (
-    <div className="min-h-screen bg-[#11100d] text-white">
-      {children}
-    </div>
-  );
+  return <div className="min-h-screen bg-[#f7f7f5] text-[#071d3b]">{children}</div>;
 }

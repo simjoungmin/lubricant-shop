@@ -1,48 +1,69 @@
-import Link from "next/link";
 import React from "react";
+
+const ratingOptions = ["5", "4", "3", "2", "1"];
 
 const OilGuideSection = () => {
   return (
-    <section className="bg-[#11100d] py-12">
-      <div className="mx-auto grid max-w-[1440px] grid-cols-1 gap-6 px-8 md:grid-cols-2">
-        <div className="rounded-3xl border border-white/10 bg-[linear-gradient(135deg,#282724,#15130f)] p-8">
-          <p className="text-sm font-bold text-[#d6a84f]">
-            내 차에 맞는 오일 찾기
-          </p>
-          <h2 className="mt-3 text-3xl font-bold">
-            차량 정보만 입력하면 <br />
-            적합한 오일을 추천해드려요
-          </h2>
-          <p className="mt-4 text-sm text-zinc-400">
-            차종, 연식, 엔진 타입에 맞는 엔진오일을 쉽게 확인하세요.
-          </p>
-          <Link
-            href="/category"
-            className="mt-8 inline-flex rounded-full bg-[#d6a84f] px-5 py-3 text-sm font-bold text-black"
-          >
-            오일 선택 가이드 →
-          </Link>
-        </div>
-
-        <div className="rounded-3xl border border-white/10 bg-[#1b1813] p-8">
-          <p className="text-sm font-bold text-[#d6a84f]">오일 선택 가이드</p>
-          <h2 className="mt-3 text-3xl font-bold">
-            점도, 규격, 브랜드까지 <br />
-            한 번에 비교하세요
-          </h2>
-
-          <div className="mt-8 grid grid-cols-2 gap-4">
-            {["가솔린", "디젤", "하이브리드", "수입차"].map((item) => (
-              <Link
-                key={item}
-                href="/category"
-                className="rounded-2xl border border-white/10 bg-black/20 p-4"
-              >
-                <p className="font-semibold">{item}</p>
-                <p className="mt-1 text-xs text-zinc-500">추천 오일 보기</p>
-              </Link>
-            ))}
+    <section className="bg-[#f7f7f5] py-8">
+      <div className="mx-auto max-w-[1240px] px-6 lg:px-8">
+        <div className="grid gap-8 border border-[#dde2e8] bg-white p-6 md:grid-cols-[0.9fr_1.4fr] md:p-8">
+          <div>
+            <p className="text-xs font-black uppercase text-[#ff4b1f]">Review</p>
+            <h2 className="mt-2 text-2xl font-black">상품 리뷰 남기기</h2>
+            <p className="mt-4 leading-7 text-[#65717f]">
+              사용한 오일의 체감, 배송 상태, 차량과의 궁합을 남겨주세요. 다른 고객이
+              내 차에 맞는 제품을 고르는 데 큰 도움이 됩니다.
+            </p>
           </div>
+
+          <form className="grid gap-4">
+            <div className="grid gap-4 md:grid-cols-2">
+              <label className="grid gap-2 text-sm font-black">
+                이름
+                <input
+                  type="text"
+                  placeholder="홍길동"
+                  className="h-12 rounded border border-[#dce2e8] px-4 text-sm font-semibold outline-none transition placeholder:text-[#a4adb8] focus:border-[#071d3b]"
+                />
+              </label>
+
+              <label className="grid gap-2 text-sm font-black">
+                평점
+                <select className="h-12 rounded border border-[#dce2e8] px-4 text-sm font-semibold outline-none transition focus:border-[#071d3b]">
+                  {ratingOptions.map((rating) => (
+                    <option key={rating} value={rating}>
+                      {rating}점
+                    </option>
+                  ))}
+                </select>
+              </label>
+            </div>
+
+            <label className="grid gap-2 text-sm font-black">
+              구매 상품
+              <input
+                type="text"
+                placeholder="예: 모빌1 FS 5W-30"
+                className="h-12 rounded border border-[#dce2e8] px-4 text-sm font-semibold outline-none transition placeholder:text-[#a4adb8] focus:border-[#071d3b]"
+              />
+            </label>
+
+            <label className="grid gap-2 text-sm font-black">
+              리뷰 내용
+              <textarea
+                rows={5}
+                placeholder="제품 사용 후기를 입력해 주세요."
+                className="resize-none rounded border border-[#dce2e8] px-4 py-3 text-sm font-semibold leading-6 outline-none transition placeholder:text-[#a4adb8] focus:border-[#071d3b]"
+              />
+            </label>
+
+            <button
+              type="submit"
+              className="h-12 rounded bg-[#071d3b] px-6 text-sm font-black text-white transition hover:bg-[#12345f] md:justify-self-end"
+            >
+              리뷰 등록
+            </button>
+          </form>
         </div>
       </div>
     </section>

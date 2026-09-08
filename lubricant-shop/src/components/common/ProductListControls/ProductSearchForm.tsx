@@ -14,10 +14,10 @@ type ProductSearchFormProps = {
 };
 
 const selectClassName =
-  "h-10 rounded-md border border-white/10 bg-[#171511] px-3 text-sm font-bold text-zinc-300 outline-none transition focus:border-[#d6a84f]";
+  "h-10 rounded-md border border-[#dce2e8] bg-white px-3 text-sm font-bold text-[#071d3b] outline-none transition focus:border-[#071d3b]";
 
 const searchInputClassName =
-  "h-10 min-w-0 rounded-md border border-white/10 bg-[#171511] px-3 text-sm font-bold text-white outline-none transition placeholder:text-zinc-600 focus:border-[#d6a84f]";
+  "h-10 min-w-0 rounded-md border border-[#dce2e8] bg-white px-3 text-sm font-bold text-[#071d3b] outline-none transition placeholder:text-[#a4adb8] focus:border-[#071d3b]";
 
 const ProductSearchForm = ({
   currentFilters,
@@ -52,7 +52,7 @@ const ProductSearchForm = ({
         />
         <button
           type="submit"
-          className="h-10 rounded-md bg-[#d6a84f] px-4 font-black text-black transition hover:bg-[#f0c76a]"
+          className="h-10 rounded-md bg-[#071d3b] px-4 font-black text-white transition hover:bg-[#12345f]"
         >
           검색
         </button>

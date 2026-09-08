@@ -1,10 +1,10 @@
 import type { SubCategory } from "../types";
 
 export const engineSubCategories: SubCategory[] = [
-  { slug: "5w-30", label: "5W-30" },
-  { slug: "5w-40", label: "5W-40" },
-  { slug: "0w-20", label: "0W-20" },
-  { slug: "0w-30", label: "0W-30" },
-  { slug: "10w-40", label: "10W-40" },
-  { slug: "15w-40", label: "15W-40" },
+  { slug: "brand-engine-oil", label: "브랜드별 엔진오일" },
+  { slug: "viscosity-engine-oil", label: "점도별 엔진오일" },
+  { slug: "gasoline-lpg-engine-oil", label: "가솔린 & LPG 엔진오일" },
+  { slug: "passenger-diesel-engine-oil", label: "승용 디젤 엔진오일" },
+  { slug: "racing-bike-engine-oil", label: "레이싱 및 바이크 전용" },
+  { slug: "drum-200l-engine-oil", label: "200L 드럼 엔진오일" },
 ];

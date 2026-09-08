@@ -8,10 +8,10 @@ type InquiryPrivacyFieldProps = {
 
 export function InquiryPrivacyField({ isChecked, error, onChange }: InquiryPrivacyFieldProps) {
   return (
-    <div className="rounded-md border border-white/10 bg-black/20 p-4">
-      <label className="flex items-start gap-3 text-sm leading-6 text-zinc-300">
+    <div className="rounded-md border border-[#dde2e8] bg-[#fbfcfd] p-4">
+      <label className="flex items-start gap-3 text-sm leading-6 text-[#34465c]">
         <input
-          className="mt-1 h-4 w-4 accent-[#d6a84f]"
+          className="mt-1 h-4 w-4 accent-[#ff4b1f]"
           type="checkbox"
           checked={isChecked}
           onChange={(event) => onChange(event.target.checked)}

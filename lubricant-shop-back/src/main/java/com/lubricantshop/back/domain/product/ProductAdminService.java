@@ -52,6 +52,7 @@ public class ProductAdminService {
         product.updateAdminInfo(
                 request.productName(),
                 request.category(),
+                request.subCategory(),
                 request.brand(),
                 request.price(),
                 request.discountPrice(),
@@ -62,9 +63,7 @@ public class ProductAdminService {
                 request.volume(),
                 request.imageUrl(),
                 request.saleStatus(),
-                request.pointRewardRatePercent(),
-                request.mainProduct(),
-                request.recommended()
+                request.pointRewardRatePercent()
         );
 
         return AdminProductResponse.from(product);

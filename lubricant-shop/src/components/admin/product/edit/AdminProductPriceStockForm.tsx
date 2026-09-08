@@ -44,25 +44,6 @@ export function AdminProductPriceStockForm({
           onChange={(value) => onChange("pointRewardRatePercent", value)}
         />
       </div>
-
-      <div className="flex flex-wrap gap-4 text-sm font-bold text-zinc-300">
-        <label className="flex items-center gap-2">
-          <input
-            type="checkbox"
-            checked={form.mainProduct}
-            onChange={(event) => onChange("mainProduct", event.target.checked)}
-          />
-          메인 상품
-        </label>
-        <label className="flex items-center gap-2">
-          <input
-            type="checkbox"
-            checked={form.recommended}
-            onChange={(event) => onChange("recommended", event.target.checked)}
-          />
-          추천 상품
-        </label>
-      </div>
     </section>
   );
 }

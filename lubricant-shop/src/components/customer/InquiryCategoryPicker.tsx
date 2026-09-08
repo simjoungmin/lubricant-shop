@@ -13,7 +13,8 @@ type InquiryCategoryPickerProps = {
   onSelectTopic: (topic: InquiryTopic) => void;
 };
 
-const columnClassName = "min-h-[360px] border-r border-white/10 p-5 last:border-r-0";
+const columnClassName =
+  "min-h-[360px] border-b border-[#e2e6eb] p-5 last:border-b-0 lg:border-b-0 lg:border-r lg:last:border-r-0";
 
 export default function InquiryCategoryPicker({
   categories,
@@ -25,17 +26,17 @@ export default function InquiryCategoryPicker({
   onSelectTopic,
 }: InquiryCategoryPickerProps) {
   return (
-    <section className="overflow-hidden rounded-lg border border-white/10 bg-[#171611]">
-      <div className="border-b border-white/10 px-5 py-4">
-        <p className="text-sm font-black text-[#d6a84f]">문의 분류 선택</p>
-        <p className="mt-2 text-sm text-zinc-400">
+    <section className="overflow-hidden rounded-lg border border-[#dde2e8] bg-white">
+      <div className="border-b border-[#e2e6eb] px-5 py-4">
+        <p className="text-sm font-black text-[#ff4b1f]">문의 분류 선택</p>
+        <p className="mt-2 text-sm font-semibold text-[#65717f]">
           문의 유형을 순서대로 선택하면 입력 양식이 열립니다.
         </p>
       </div>
 
       <div className="grid lg:grid-cols-[0.8fr_1fr_1.1fr]">
         <div className={columnClassName}>
-          <h2 className="mb-4 text-lg font-black text-white">1. 유형</h2>
+          <h2 className="mb-4 text-lg font-black text-[#071d3b]">1. 유형</h2>
           <div className="space-y-2">
             {categories.map((category) => (
               <button
@@ -43,13 +44,13 @@ export default function InquiryCategoryPicker({
                 type="button"
                 className={`w-full rounded-md border px-4 py-3 text-left transition ${
                   selectedCategory.id === category.id
-                    ? "border-[#d6a84f] bg-[#d6a84f]/10 text-white"
-                    : "border-white/10 text-zinc-300 hover:border-[#d6a84f]/60"
+                    ? "border-[#ff4b1f] bg-[#fff3ef] text-[#071d3b]"
+                    : "border-[#dce2e8] bg-white text-[#34465c] hover:border-[#ff8a65] hover:bg-[#fffaf7]"
                 }`}
                 onClick={() => onSelectCategory(category)}
               >
                 <span className="block text-sm font-black">{category.label}</span>
-                <span className="mt-1 block text-xs leading-5 text-zinc-500">
+                <span className="mt-1 block text-xs font-semibold leading-5 text-[#7a8490]">
                   {category.description}
                 </span>
               </button>
@@ -58,7 +59,7 @@ export default function InquiryCategoryPicker({
         </div>
 
         <div className={columnClassName}>
-          <h2 className="mb-4 text-lg font-black text-white">2. 세부 항목</h2>
+          <h2 className="mb-4 text-lg font-black text-[#071d3b]">2. 세부 항목</h2>
           <div className="space-y-2">
             {selectedCategory.groups.map((group) => (
               <button
@@ -66,8 +67,8 @@ export default function InquiryCategoryPicker({
                 type="button"
                 className={`w-full rounded-md border px-4 py-3 text-left text-sm font-bold transition ${
                   selectedGroup.id === group.id
-                    ? "border-[#d6a84f] bg-[#d6a84f]/10 text-white"
-                    : "border-white/10 text-zinc-300 hover:border-[#d6a84f]/60"
+                    ? "border-[#ff4b1f] bg-[#fff3ef] text-[#071d3b]"
+                    : "border-[#dce2e8] bg-white text-[#34465c] hover:border-[#ff8a65] hover:bg-[#fffaf7]"
                 }`}
                 onClick={() => onSelectGroup(group)}
               >
@@ -78,7 +79,7 @@ export default function InquiryCategoryPicker({
         </div>
 
         <div className="min-h-[360px] p-5">
-          <h2 className="mb-4 text-lg font-black text-white">3. 문의 내용</h2>
+          <h2 className="mb-4 text-lg font-black text-[#071d3b]">3. 문의 내용</h2>
           <div className="space-y-2">
             {selectedGroup.topics.map((topic) => (
               <button
@@ -86,13 +87,13 @@ export default function InquiryCategoryPicker({
                 type="button"
                 className={`w-full rounded-md border px-4 py-3 text-left transition ${
                   selectedTopic?.id === topic.id
-                    ? "border-[#d6a84f] bg-[#d6a84f]/10 text-white"
-                    : "border-white/10 text-zinc-300 hover:border-[#d6a84f]/60"
+                    ? "border-[#ff4b1f] bg-[#fff3ef] text-[#071d3b]"
+                    : "border-[#dce2e8] bg-white text-[#34465c] hover:border-[#ff8a65] hover:bg-[#fffaf7]"
                 }`}
                 onClick={() => onSelectTopic(topic)}
               >
                 <span className="block text-sm font-black">{topic.label}</span>
-                <span className="mt-1 block text-xs leading-5 text-zinc-500">
+                <span className="mt-1 block text-xs font-semibold leading-5 text-[#7a8490]">
                   {topic.helper}
                 </span>
               </button>

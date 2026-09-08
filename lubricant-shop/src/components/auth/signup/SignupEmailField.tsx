@@ -22,7 +22,7 @@ export function SignupEmailField({
   onCheckEmail,
 }: SignupEmailFieldProps) {
   return (
-    <label className="grid gap-2 text-sm font-bold text-zinc-200">
+    <label className="grid gap-2 text-sm font-bold text-[#34465c]">
       이메일
       <div className="grid gap-2 sm:grid-cols-[1fr_112px]">
         <input
@@ -35,7 +35,7 @@ export function SignupEmailField({
           onChange={(event) => onChangeField("email", event.target.value)}
         />
         <button
-          className="h-12 rounded-md border border-white/10 text-sm font-black text-white transition hover:border-[#d6a84f] hover:text-[#d6a84f] disabled:cursor-not-allowed disabled:opacity-60"
+          className="h-12 rounded-md border border-[#dce2e8] text-sm font-black text-[#071d3b] transition hover:border-[#ff4b1f] hover:text-[#ff4b1f] disabled:cursor-not-allowed disabled:opacity-60"
           disabled={emailCheckState === "checking"}
           type="button"
           onClick={onCheckEmail}
@@ -43,12 +43,12 @@ export function SignupEmailField({
           {emailCheckState === "checking" ? "확인 중" : "중복확인"}
         </button>
       </div>
-      {errors.email ? <span className={`${helperClassName} text-red-300`}>{errors.email}</span> : null}
+      {errors.email ? <span className={`${helperClassName} text-red-500`}>{errors.email}</span> : null}
       {errors.emailCheck ? (
-        <span className={`${helperClassName} text-red-300`}>{errors.emailCheck}</span>
+        <span className={`${helperClassName} text-red-500`}>{errors.emailCheck}</span>
       ) : null}
       {emailCheckState === "available" ? (
-        <span className={`${helperClassName} text-emerald-300`}>
+        <span className={`${helperClassName} text-emerald-600`}>
           사용할 수 있는 이메일입니다.
         </span>
       ) : null}

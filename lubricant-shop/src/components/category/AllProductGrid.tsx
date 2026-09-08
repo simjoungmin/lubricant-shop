@@ -9,10 +9,7 @@ type AllProductGridProps = {
   batchSize?: number;
 };
 
-const AllProductGrid = ({
-  products,
-  batchSize = 12,
-}: AllProductGridProps) => {
+const AllProductGrid = ({ products, batchSize = 12 }: AllProductGridProps) => {
   const [visibleCount, setVisibleCount] = useState(batchSize);
   const sentinelRef = useRef<HTMLDivElement | null>(null);
 
@@ -32,9 +29,7 @@ const AllProductGrid = ({
     const observer = new IntersectionObserver(
       ([entry]) => {
         if (entry.isIntersecting) {
-          setVisibleCount((count) =>
-            Math.min(count + batchSize, products.length),
-          );
+          setVisibleCount((count) => Math.min(count + batchSize, products.length));
         }
       },
       { rootMargin: "240px" },
@@ -49,7 +44,7 @@ const AllProductGrid = ({
 
   if (products.length === 0) {
     return (
-      <div className="rounded-lg border border-white/10 bg-[#1a1814] px-6 py-16 text-center text-sm text-zinc-400">
+      <div className="rounded-lg border border-[#dde2e8] bg-white px-6 py-16 text-center text-sm font-semibold text-[#65717f]">
         준비된 상품이 없습니다.
       </div>
     );
@@ -65,7 +60,7 @@ const AllProductGrid = ({
 
       <div
         ref={sentinelRef}
-        className="flex h-20 items-center justify-center text-xs text-zinc-500"
+        className="flex h-20 items-center justify-center text-xs font-semibold text-[#8a94a1]"
       >
         {hasMore ? "상품을 더 불러오는 중" : "모든 상품을 확인했습니다"}
       </div>

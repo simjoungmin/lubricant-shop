@@ -1,3 +1,4 @@
+import { categories } from "@/assets/category/categories";
 import type { ProductStatus } from "@/components/admin/admin.api";
 import {
   adminProductCategoryLabel,
@@ -24,6 +25,8 @@ export function AdminProductBasicForm({
   form,
   onChange,
 }: AdminProductBasicFormProps) {
+  const selectedCategory = categories.find((category) => category.slug === form.category);
+
   return (
     <section className="grid gap-5 rounded-lg border border-white/10 bg-[#171611] p-5">
       <div className="flex items-center justify-between gap-4">
@@ -49,12 +52,30 @@ export function AdminProductBasicForm({
           카테고리
           <select
             value={form.category}
-            onChange={(event) => onChange("category", event.target.value)}
+            onChange={(event) => {
+              onChange("category", event.target.value);
+              onChange("subCategory", "");
+            }}
             className={productEditInputClassName}
           >
             {Object.entries(adminProductCategoryLabel).map(([value, label]) => (
               <option key={value} value={value}>
                 {label}
+              </option>
+            ))}
+          </select>
+        </label>
+        <label className={productEditLabelClassName}>
+          하위 카테고리
+          <select
+            value={form.subCategory}
+            onChange={(event) => onChange("subCategory", event.target.value)}
+            className={productEditInputClassName}
+          >
+            <option value="">선택 안 함</option>
+            {selectedCategory?.subCategories.map((subCategory) => (
+              <option key={subCategory.slug} value={subCategory.slug}>
+                {subCategory.label}
               </option>
             ))}
           </select>

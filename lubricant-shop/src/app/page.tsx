@@ -1,10 +1,18 @@
 import { PageLayout } from "@/components/common/Layout";
 import MainpageContainer from "@/containers/MainpageContainer";
 
-export default function HomePage() {
+type HomePageProps = {
+  searchParams: Promise<{
+    notice?: string;
+  }>;
+};
+
+export default async function HomePage({ searchParams }: HomePageProps) {
+  const { notice } = await searchParams;
+
   return (
     <PageLayout>
-      <MainpageContainer />
+      <MainpageContainer shouldShowInquiryToast={notice === "inquiry-created"} />
     </PageLayout>
   );
 }

@@ -1,107 +1,163 @@
-﻿import { faqItems, supportCards } from "@/assets/customer-center";
+import { faqItems } from "@/assets/customer-center";
+import { inquiryCategories } from "@/assets/inquiry-categories";
 import OilFooter from "@/components/layout/OilFooter";
 import OilHeader from "@/components/layout/OilHeader";
 import Link from "next/link";
 import React from "react";
+
+const noticeItems = [
+  { title: "5월 고객센터 운영시간 변경 안내", date: "05.01" },
+  { title: "오일 상품 안전 포장 기준 안내", date: "04.30" },
+  { title: "포인트 정책 변경 안내", date: "04.25" },
+  { title: "정비소 납품 문의 접수 안내", date: "04.20" },
+];
+
+const contactItems = [
+  {
+    title: "전화 상담",
+    value: "1544-0000",
+    description: "평일 09:00 - 18:00",
+  },
+  {
+    title: "카카오톡 상담",
+    value: "오일마스터 검색",
+    description: "상담 가능 시간 내 순차 답변",
+  },
+  {
+    title: "이메일 문의",
+    value: "help@oilmaster.co.kr",
+    description: "24시간 접수 가능",
+  },
+];
 
 const CustomerCenterContainer = () => {
   return (
     <>
       <OilHeader />
 
-      <main>
-        <section className="border-b border-white/10 bg-[#0d0d0b]">
-          <div className="mx-auto grid min-h-[440px] max-w-[1440px] items-center gap-10 px-6 py-16 lg:grid-cols-[1fr_420px] lg:px-8">
+      <main className="bg-[#f7f7f5] text-[#071d3b]">
+        <section className="border-b border-[#e2e6eb] bg-white">
+          <div className="mx-auto max-w-[1240px] px-6 py-14 lg:px-8">
             <div>
-              <p className="text-sm font-black text-[#d6a84f]">CUSTOMER CENTER</p>
-              <h1 className="mt-4 max-w-3xl text-4xl font-black leading-tight text-white md:text-6xl">
-                배송부터 상품 선택까지, 필요한 답을 빠르게 찾으세요.
+              <p className="text-sm font-black uppercase text-[#ff4b1f]">Customer Center</p>
+              <h1 className="mt-4 text-4xl font-black leading-tight md:text-5xl">
+                궁금한 내용을 빠르게
+                <br />
+                확인하고 문의하세요.
               </h1>
-              <p className="mt-6 max-w-2xl text-base leading-8 text-zinc-400">
-                OIL MASTER 고객센터는 프리미엄 수입 오일, 고급 휘발유 관련 제품,
-                정비소 납품 문의까지 한 번에 안내합니다. 주문 전 확인부터 배송 후
-                처리까지 세부 기준을 정리했습니다.
+              <p className="mt-5 max-w-[560px] text-sm font-semibold leading-7 text-[#65717f]">
+                주문, 배송, 상품, 교환/반품까지 자주 필요한 안내를 한곳에 모았습니다.
               </p>
             </div>
-
-            <aside className="rounded-lg border border-white/10 bg-[#171611] p-6">
-              <p className="text-sm font-black text-[#d6a84f]">상담 운영</p>
-              <p className="mt-4 text-4xl font-black text-white">02-1234-5678</p>
-              <div className="mt-6 space-y-3 text-sm text-zinc-400">
-                <p>평일 09:00 - 18:00</p>
-                <p>점심 12:30 - 13:30</p>
-                <p>주말 및 공휴일 휴무</p>
-              </div>
-            </aside>
           </div>
         </section>
 
-        <section className="bg-[#11100d] py-14">
-          <div className="mx-auto max-w-[1440px] px-6 lg:px-8">
-            <div className="mb-8">
-              <p className="text-sm font-black text-[#d6a84f]">SUPPORT GUIDE</p>
-              <h2 className="mt-2 text-3xl font-black text-white">문의 유형별 안내</h2>
-            </div>
-
-            <div className="grid gap-4 md:grid-cols-2">
-              {supportCards.map((card) => (
-                <article
-                  key={card.title}
-                  className="rounded-lg border border-white/10 bg-[#171611] p-6"
-                >
-                  <h3 className="text-2xl font-black text-white">{card.title}</h3>
-                  <p className="mt-3 text-sm leading-6 text-zinc-400">{card.summary}</p>
-                  <ul className="mt-5 space-y-3">
-                    {card.details.map((detail) => (
-                      <li key={detail} className="flex gap-3 text-sm leading-6 text-zinc-300">
-                        <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-[#d6a84f]" />
-                        <span>{detail}</span>
-                      </li>
-                    ))}
-                  </ul>
-                </article>
-              ))}
-            </div>
-
-            <div className="mt-8 rounded-lg border border-[#d6a84f]/30 bg-[#d6a84f]/10 p-6 md:flex md:items-center md:justify-between md:gap-6">
-              <div>
-                <h3 className="text-2xl font-black text-white">더 자세한 상담이 필요하신가요?</h3>
-                <p className="mt-3 text-sm leading-6 text-zinc-300">
-                  문의 유형을 선택하고 필요한 정보를 남겨주시면 담당자가 순서대로 확인합니다.
-                </p>
-              </div>
+        <section className="mx-auto max-w-[1240px] px-6 py-10 lg:px-8">
+          <div className="grid gap-5 md:grid-cols-2">
+            <article className="border border-[#ffd3c5] bg-[#fff3ef] p-7">
+              <p className="text-sm font-black text-[#ff4b1f]">문의하기</p>
+              <h2 className="mt-3 text-2xl font-black">상담이 필요하신가요?</h2>
+              <p className="mt-3 text-sm leading-6 text-[#65717f]">
+                문의 유형을 선택하고 필요한 정보를 남겨주시면 담당자가 확인합니다.
+              </p>
               <Link
                 href="/customer-center/inquiry"
-                className="mt-5 inline-flex h-12 items-center justify-center rounded-md bg-[#d6a84f] px-6 text-sm font-black text-black transition hover:bg-[#efc769] md:mt-0"
+                className="mt-7 flex h-12 items-center justify-between bg-[#ff4b1f] px-5 text-sm font-black text-white transition hover:bg-[#e63e16]"
               >
-                문의하러 가기
+                1:1 문의하기
+                <span aria-hidden="true">→</span>
               </Link>
+            </article>
+
+            <article className="border border-[#dde2e8] bg-white p-7">
+              <p className="text-sm font-black text-[#ff4b1f]">배송 조회</p>
+              <h2 className="mt-3 text-2xl font-black text-[#071d3b]">주문하신 상품의 상태를 확인해 보세요.</h2>
+              <p className="mt-3 text-sm leading-6 text-[#65717f]">
+                로그인 후 마이페이지에서 주문 상태와 배송 정보를 확인할 수 있습니다.
+              </p>
+              <Link
+                href="/my-page/orders"
+                className="mt-7 flex h-12 items-center justify-between border border-[#cfd6de] bg-white px-5 text-sm font-black text-[#071d3b] transition hover:border-[#ff4b1f] hover:text-[#ff4b1f]"
+              >
+                배송 조회하기
+                <span aria-hidden="true">→</span>
+              </Link>
+            </article>
+          </div>
+        </section>
+
+        <section className="mx-auto max-w-[1240px] px-6 pb-10 lg:px-8">
+          <div className="mb-5">
+            <div>
+              <p className="text-sm font-black uppercase text-[#ff4b1f]">Inquiry Shortcut</p>
+              <h2 className="mt-2 text-2xl font-black">문의 유형 바로가기</h2>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-2 gap-3 md:grid-cols-5">
+            {inquiryCategories.map((category) => (
+              <Link
+                key={category.id}
+                href={`/customer-center/inquiry?category=${category.id}`}
+                className="group border border-[#dde2e8] bg-white p-5 transition hover:border-[#ff4b1f] hover:bg-[#fffaf7]"
+              >
+                <p className="text-base font-black group-hover:text-[#ff4b1f]">{category.label}</p>
+                <p className="mt-2 line-clamp-2 text-xs font-semibold leading-5 text-[#7a8490]">
+                  {category.description}
+                </p>
+              </Link>
+            ))}
+          </div>
+        </section>
+
+        <section className="mx-auto grid max-w-[1240px] gap-6 px-6 pb-12 md:grid-cols-2 lg:px-8">
+          <div className="border border-[#dde2e8] bg-white p-6">
+            <div className="mb-5 flex items-center justify-between">
+              <h2 className="text-xl font-black">공지사항</h2>
+              <Link href="/customer-center" className="text-xs font-bold text-[#7a8490]">
+                더보기
+              </Link>
+            </div>
+            <div className="divide-y divide-[#edf0f3]">
+              {noticeItems.map((notice) => (
+                <div key={notice.title} className="flex justify-between gap-4 py-3 text-sm">
+                  <p className="font-semibold text-[#34465c]">{notice.title}</p>
+                  <time className="shrink-0 text-xs font-bold text-[#7a8490]">{notice.date}</time>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <div className="border border-[#dde2e8] bg-white p-6">
+            <div className="mb-5 flex items-center justify-between">
+              <h2 className="text-xl font-black">자주 묻는 질문</h2>
+              <Link href="/customer-center" className="text-xs font-bold text-[#7a8490]">
+                더보기
+              </Link>
+            </div>
+            <div className="divide-y divide-[#edf0f3]">
+              {faqItems.map((faq) => (
+                <details key={faq.question} className="group py-3">
+                  <summary className="flex cursor-pointer list-none items-center justify-between gap-4 text-sm font-black text-[#34465c]">
+                    {faq.question}
+                    <span className="text-[#ff4b1f] group-open:rotate-180">⌄</span>
+                  </summary>
+                  <p className="mt-3 text-sm leading-6 text-[#65717f]">{faq.answer}</p>
+                </details>
+              ))}
             </div>
           </div>
         </section>
 
-        <section className="bg-[#11100d] py-14">
-          <div className="mx-auto grid max-w-[1440px] gap-10 px-6 lg:grid-cols-[360px_1fr] lg:px-8">
-            <div>
-              <p className="text-sm font-black text-[#d6a84f]">FAQ</p>
-              <h2 className="mt-2 text-3xl font-black text-white">자주 듣는 질문</h2>
-              <p className="mt-4 text-sm leading-6 text-zinc-400">
-                주문 전 자주 확인하는 내용을 모았습니다. 더 구체적인 상담이 필요하면
-                차량 정보와 주문 정보를 함께 남겨주세요.
-              </p>
-            </div>
-
-            <div className="space-y-3">
-              {faqItems.map((faq) => (
-                <article
-                  key={faq.question}
-                  className="rounded-lg border border-white/10 bg-[#171611] p-5"
-                >
-                  <h3 className="text-lg font-black text-white">{faq.question}</h3>
-                  <p className="mt-3 text-sm leading-6 text-zinc-400">{faq.answer}</p>
-                </article>
-              ))}
-            </div>
+        <section className="border-t border-[#e2e6eb] bg-white">
+          <div className="mx-auto grid max-w-[1240px] gap-6 px-6 py-10 md:grid-cols-3 lg:px-8">
+            {contactItems.map((item) => (
+              <article key={item.title} className="text-center">
+                <p className="text-sm font-black text-[#ff4b1f]">{item.title}</p>
+                <p className="mt-3 text-lg font-black">{item.value}</p>
+                <p className="mt-2 text-xs font-semibold text-[#7a8490]">{item.description}</p>
+              </article>
+            ))}
           </div>
         </section>
       </main>

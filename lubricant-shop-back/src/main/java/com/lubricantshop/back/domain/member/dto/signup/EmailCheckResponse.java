@@ -1,4 +1,4 @@
 package com.lubricantshop.back.domain.member.dto.signup;
 
-public record EmailCheckResponse(boolean exists) {
+public record EmailCheckResponse(boolean duplicated) {
 }

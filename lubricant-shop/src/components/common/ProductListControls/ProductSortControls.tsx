@@ -15,7 +15,7 @@ type ProductSortControlsProps = {
 };
 
 const selectClassName =
-  "h-10 rounded-md border border-white/10 bg-[#171511] px-3 text-sm font-bold text-zinc-300 outline-none transition focus:border-[#d6a84f]";
+  "h-10 rounded-md border border-[#dce2e8] bg-white px-3 text-sm font-bold text-[#071d3b] outline-none transition focus:border-[#071d3b]";
 
 const ProductSortControls = ({
   totalCount,
@@ -29,12 +29,12 @@ const ProductSortControls = ({
   onUpdateSearchParam,
 }: ProductSortControlsProps) => {
   return (
-    <div className="flex flex-wrap items-center justify-end gap-3">
-      <span>총 {totalCount}개 상품</span>
+    <div className="flex flex-wrap items-center justify-end gap-3 text-[#65717f]">
+      <span className="font-semibold">총 {totalCount}개 상품</span>
       {hasSearchFilter ? (
         <button
           type="button"
-          className="h-10 rounded-md border border-white/10 px-3 font-black text-zinc-300 transition hover:border-[#d6a84f] hover:text-[#d6a84f]"
+          className="h-10 rounded-md border border-[#dce2e8] bg-white px-3 font-black text-[#34465c] transition hover:border-[#ff8a65] hover:text-[#ff4b1f]"
           onClick={onClearSearch}
         >
           필터 초기화

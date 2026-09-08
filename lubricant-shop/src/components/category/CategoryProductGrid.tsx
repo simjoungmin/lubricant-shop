@@ -9,7 +9,7 @@ type CategoryProductGridProps = {
 const CategoryProductGrid = ({ products }: CategoryProductGridProps) => {
   if (products.length === 0) {
     return (
-      <div className="rounded-lg border border-white/10 bg-[#1a1814] px-6 py-16 text-center text-sm text-zinc-400">
+      <div className="rounded-lg border border-[#dde2e8] bg-white px-6 py-16 text-center text-sm font-semibold text-[#65717f]">
         준비된 상품이 없습니다.
       </div>
     );

@@ -20,10 +20,10 @@ const SubCategoryTabs = ({
           <Link
             key={subCategory.slug}
             href={`/category/${category.slug}/${subCategory.slug}`}
-            className={`rounded-md border px-4 py-2 text-sm transition ${
+            className={`rounded-md border px-4 py-2 text-sm font-black transition ${
               isActive
-                ? "border-[#d6a84f] bg-[#d6a84f] text-black"
-                : "border-white/10 bg-[#171511] text-zinc-300 hover:border-[#d6a84f]/70 hover:text-white"
+                ? "border-[#071d3b] bg-[#071d3b] text-white"
+                : "border-[#dce2e8] bg-white text-[#34465c] hover:border-[#ff8a65] hover:bg-[#fff3ef] hover:text-[#ff4b1f]"
             }`}
           >
             {subCategory.label}

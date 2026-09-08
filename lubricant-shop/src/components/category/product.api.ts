@@ -10,10 +10,11 @@ export type ProductQueryParams = {
   sort?: string;
 };
 
-type ServerProduct = {
+export type ServerProduct = {
   productId: number;
   productName: string;
   category: string;
+  subCategory: string | null;
   brand: string;
   price: number;
   originalPrice: number;
@@ -26,8 +27,6 @@ type ServerProduct = {
   imageUrl: string | null;
   saleStatus: "ON_SALE" | "SOLD_OUT" | "STOPPED" | "HIDDEN";
   pointRewardRatePercent: number;
-  mainProduct: boolean;
-  recommended: boolean;
 };
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL ?? "http://localhost:8080";
@@ -35,9 +34,9 @@ const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL ?? "http://localhost:8
 const categoryColors: Record<string, string> = {
   engine: "#b7bec7",
   mission: "#bf2331",
-  brake: "#286c98",
-  filter: "#d0a046",
   gear: "#a0a9b4",
+  "brake-power": "#286c98",
+  coolant: "#26709b",
   chemical: "#26709b",
 };
 
@@ -45,14 +44,6 @@ const appendParam = (params: URLSearchParams, key: string, value?: string) => {
   if (value?.trim()) {
     params.set(key, value.trim());
   }
-};
-
-const resolveBadge = (product: ServerProduct): ProductBadge => {
-  if (product.mainProduct) {
-    return "BEST";
-  }
-
-  return product.recommended ? "HOT" : "BEST";
 };
 
 const resolveSubCategorySlug = (product: ServerProduct) => {
@@ -67,23 +58,32 @@ const resolveSubCategorySlug = (product: ServerProduct) => {
 
   if (specification.includes("atf")) return "atf";
   if (specification.includes("cvt")) return "cvt";
-  if (specification.includes("dct")) return "dct";
-  if (specification.includes("dot4")) return "dot-4";
-  if (specification.includes("dot5.1")) return "dot-5-1";
-  if (specification.includes("gl-5")) return "75w-90";
-  if (productName.includes("오일필터")) return "oil-filter";
-  if (productName.includes("에어필터")) return "air-filter";
-  if (productName.includes("캐빈필터")) return "cabin-filter";
-  if (productName.includes("첨가제") || productName.includes("불스원샷")) return "additive";
-  if (productName.includes("냉각수") || productName.includes("쿨런트")) return "coolant";
+  if (specification.includes("dct") || specification.includes("dctf")) return "dct-dctf";
+  if (specification.includes("dot") || productName.includes("브레이크액")) return "brake-fluid";
+  if (productName.includes("파워오일")) return "power-oil";
+  if (specification.includes("gl-5") || productName.includes("기어오일")) return "gear-oil";
+  if (productName.includes("트랜스퍼케이스")) return "transfer-case";
+  if (productName.includes("할덱스")) return "haldex";
+  if (productName.includes("녹색")) return "green";
+  if (productName.includes("청색")) return "blue";
+  if (productName.includes("주황색") || productName.includes("분홍색")) return "orange-pink";
+  if (productName.includes("황색")) return "yellow";
+  if (productName.includes("적색")) return "red";
+  if (productName.includes("미션첨가제")) return "mission-additive";
+  if (productName.includes("방청유") || productName.includes("세정제")) return "rustproof-cleaner";
+  if (productName.includes("워셔액")) return "washer-fluid";
+  if (productName.includes("유압유")) return "hydraulic-oil";
+  if (productName.includes("그리스")) return "grease";
+  if (productName.includes("에어컨") || productName.includes("라디에이터")) return "aircon-radiator";
+  if (productName.includes("첨가제") || productName.includes("불스원샷")) return "engine-system";
 
   return product.category;
 };
 
-const toProduct = (product: ServerProduct): Product => ({
+export const toProduct = (product: ServerProduct, badge: ProductBadge = "BEST"): Product => ({
   id: product.productId,
   categorySlug: product.category,
-  subCategorySlug: resolveSubCategorySlug(product),
+  subCategorySlug: product.subCategory ?? resolveSubCategorySlug(product),
   name: product.productName,
   spec: [product.specification, product.volume].filter(Boolean).join(" / "),
   price: Number(product.price),
@@ -97,7 +97,7 @@ const toProduct = (product: ServerProduct): Product => ({
   imageUrl: product.imageUrl ?? "",
   saleStatus: product.saleStatus,
   pointRewardRatePercent: Number(product.pointRewardRatePercent),
-  badge: resolveBadge(product),
+  badge,
   color: categoryColors[product.category] ?? "#b7bec7",
 });
 
@@ -125,7 +125,7 @@ export const productApi = {
 
     const products = (await response.json()) as ServerProduct[];
 
-    return products.map(toProduct);
+    return products.map((product) => toProduct(product));
   },
 
   findProduct: async (productId: number) => {

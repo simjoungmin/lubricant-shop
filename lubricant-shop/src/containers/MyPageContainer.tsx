@@ -25,14 +25,14 @@ const MyPageContainer = () => {
     <>
       <OilHeader />
 
-      <main className="mx-auto min-h-[calc(100vh-64px)] w-full max-w-[960px] px-6 py-12 lg:px-8">
+      <main className="mx-auto min-h-[calc(100vh-72px)] w-full max-w-[960px] px-6 py-12 lg:px-8">
         <div className="mb-8">
-          <p className="mb-3 text-sm font-bold text-[#d6a84f]">MY PAGE</p>
-          <h1 className="text-3xl font-black text-white">내 정보</h1>
+          <p className="mb-3 text-sm font-black text-[#ff4b1f]">MY PAGE</p>
+          <h1 className="text-3xl font-black text-[#071d3b]">내 정보</h1>
         </div>
 
         {!isReady ? (
-          <section className="rounded-lg border border-white/10 bg-[#171611] px-6 py-16 text-center text-sm font-bold text-zinc-300">
+          <section className="rounded-lg border border-[#dde2e8] bg-white px-6 py-16 text-center text-sm font-bold text-[#65717f]">
             회원 정보를 불러오는 중입니다.
           </section>
         ) : user ? (
@@ -41,7 +41,7 @@ const MyPageContainer = () => {
 
             <div className="grid gap-6 lg:grid-cols-2">
               <MyPageMenuSection
-                title="주문·배송"
+                title="주문/배송"
                 linkItems={orderMenuItems}
                 pendingItems={pendingOrderMenuItems}
                 sideLink={{ href: "/cart", label: "장바구니" }}
@@ -50,13 +50,13 @@ const MyPageContainer = () => {
             </div>
           </section>
         ) : (
-          <section className="rounded-lg border border-white/10 bg-[#171611] p-6">
-            <p className="text-sm font-bold text-zinc-300">
+          <section className="rounded-lg border border-[#dde2e8] bg-white p-6">
+            <p className="text-sm font-bold text-[#65717f]">
               로그인하면 내 정보를 확인할 수 있습니다.
             </p>
             <Link
               href="/login"
-              className="mt-5 inline-flex h-11 items-center justify-center rounded-md bg-[#d6a84f] px-5 text-sm font-black text-black transition hover:bg-[#f0c76a]"
+              className="mt-5 inline-flex h-11 items-center justify-center rounded-md bg-[#071d3b] px-5 text-sm font-black text-white transition hover:bg-[#12345f]"
             >
               로그인하러 가기
             </Link>

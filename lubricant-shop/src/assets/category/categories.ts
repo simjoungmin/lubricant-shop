@@ -1,7 +1,7 @@
-import { brakeSubCategories } from "./sub-categories/brake";
+import { brakePowerSubCategories } from "./sub-categories/brake-power";
 import { chemicalSubCategories } from "./sub-categories/chemical";
+import { coolantSubCategories } from "./sub-categories/coolant";
 import { engineSubCategories } from "./sub-categories/engine";
-import { filterSubCategories } from "./sub-categories/filter";
 import { gearSubCategories } from "./sub-categories/gear";
 import { missionSubCategories } from "./sub-categories/mission";
 import type { Category, CategorySlug } from "./types";
@@ -15,32 +15,32 @@ export const categories: Category[] = [
   },
   {
     slug: "mission",
-    title: "미션오일",
-    description: "자동변속기와 수동변속기에 맞는 변속기 오일입니다.",
+    title: "자동 미션 오일",
+    description: "ATF, CVT, DCT 계열 자동변속기 오일입니다.",
     subCategories: missionSubCategories,
-  },
-  {
-    slug: "brake",
-    title: "브레이크액",
-    description: "안정적인 제동을 위한 규격별 브레이크액입니다.",
-    subCategories: brakeSubCategories,
-  },
-  {
-    slug: "filter",
-    title: "필터",
-    description: "엔진 성능과 실내 공기를 관리하는 필터입니다.",
-    subCategories: filterSubCategories,
   },
   {
     slug: "gear",
     title: "기어 오일",
-    description: "기어박스와 디퍼렌셜 보호를 위한 윤활유입니다.",
+    description: "기어박스, 트랜스퍼케이스, 할덱스 계통 보호를 위한 오일입니다.",
     subCategories: gearSubCategories,
   },
   {
+    slug: "brake-power",
+    title: "브레이크액·파워오일",
+    description: "제동 및 조향 계통 관리를 위한 브레이크액과 파워오일입니다.",
+    subCategories: brakePowerSubCategories,
+  },
+  {
+    slug: "coolant",
+    title: "부동액",
+    description: "색상과 규격에 맞춰 선택하는 냉각수 및 부동액입니다.",
+    subCategories: coolantSubCategories,
+  },
+  {
     slug: "chemical",
-    title: "케미컬",
-    description: "차량 관리와 컨디션 회복을 위한 케미컬 상품입니다.",
+    title: "케미컬·첨가제",
+    description: "엔진, 미션, 냉각, 세정 관리를 위한 케미컬 상품입니다.",
     subCategories: chemicalSubCategories,
   },
 ];

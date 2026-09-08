@@ -10,7 +10,7 @@ const CartToast = ({ notice }: CartToastProps) => {
   }
 
   return (
-    <div className="fixed right-5 top-[76px] z-[70] rounded-md border border-[#d6a84f]/40 bg-[#171511] px-4 py-3 text-sm font-semibold text-[#d6a84f] shadow-2xl">
+    <div className="fixed right-5 top-[84px] z-[70] rounded-md border border-[#ffd3c5] bg-white px-4 py-3 text-sm font-semibold text-[#ff4b1f] shadow-2xl">
       {notice}
     </div>
   );

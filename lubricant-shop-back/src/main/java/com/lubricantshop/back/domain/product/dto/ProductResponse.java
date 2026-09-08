@@ -8,6 +8,7 @@ public record ProductResponse(
         Long productId,
         String productName,
         String category,
+        String subCategory,
         String brand,
         BigDecimal price,
         BigDecimal originalPrice,
@@ -19,15 +20,14 @@ public record ProductResponse(
         String volume,
         String imageUrl,
         ProductStatus saleStatus,
-        BigDecimal pointRewardRatePercent,
-        Boolean mainProduct,
-        Boolean recommended
+        BigDecimal pointRewardRatePercent
 ) {
     public static ProductResponse from(Product product) {
         return new ProductResponse(
                 product.getProductId(),
                 product.getProductName(),
                 product.getCategory(),
+                product.getSubCategory(),
                 product.getBrand(),
                 product.getPrice(),
                 product.getOriginalPrice(),
@@ -39,9 +39,7 @@ public record ProductResponse(
                 product.getVolume(),
                 product.getImageUrl(),
                 product.getSaleStatus(),
-                product.getPointRewardRatePercent(),
-                product.getMainProduct(),
-                product.getRecommended()
+                product.getPointRewardRatePercent()
         );
     }
 }

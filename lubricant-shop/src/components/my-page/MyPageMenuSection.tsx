@@ -21,9 +21,9 @@ export function MyPageMenuSection({
   return (
     <section>
       <div className="mb-4 flex items-center justify-between gap-4">
-        <h2 className="text-xl font-black text-white">{title}</h2>
+        <h2 className="text-xl font-black text-[#071d3b]">{title}</h2>
         {sideLink ? (
-          <Link href={sideLink.href} className="text-sm font-bold text-zinc-400 hover:text-[#d6a84f]">
+          <Link href={sideLink.href} className="text-sm font-bold text-[#65717f] hover:text-[#ff4b1f]">
             {sideLink.label}
           </Link>
         ) : null}

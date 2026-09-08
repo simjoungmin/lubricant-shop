@@ -9,6 +9,7 @@ import java.math.BigDecimal;
 public record AdminProductUpdateRequest(
         @Size(max = 160) String productName,
         @Size(max = 80) String category,
+        @Size(max = 120) String subCategory,
         @Size(max = 80) String brand,
         @DecimalMin("0") BigDecimal price,
         @DecimalMin("0") BigDecimal discountPrice,
@@ -19,8 +20,6 @@ public record AdminProductUpdateRequest(
         @Size(max = 40) String volume,
         @Size(max = 500) String imageUrl,
         ProductStatus saleStatus,
-        @DecimalMin("0") BigDecimal pointRewardRatePercent,
-        Boolean mainProduct,
-        Boolean recommended
+        @DecimalMin("0") BigDecimal pointRewardRatePercent
 ) {
 }

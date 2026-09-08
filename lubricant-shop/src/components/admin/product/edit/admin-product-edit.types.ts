@@ -4,6 +4,7 @@ export type ProductEditForm = {
   productName: string;
   brand: string;
   category: string;
+  subCategory: string;
   productDescription: string;
   imageUrl: string;
   saleStatus: ProductStatus;
@@ -14,8 +15,6 @@ export type ProductEditForm = {
   discountPrice: string;
   stock: string;
   pointRewardRatePercent: string;
-  mainProduct: boolean;
-  recommended: boolean;
 };
 
 export type ProductEditFormChangeHandler = <Key extends keyof ProductEditForm>(

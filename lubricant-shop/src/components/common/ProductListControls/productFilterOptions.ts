@@ -19,7 +19,7 @@ export const fuelTypeOptions: ProductControlOption[] = [
   { label: "가솔린", value: "gasoline" },
   { label: "디젤", value: "diesel" },
   { label: "하이브리드", value: "hybrid" },
-  { label: "유럽차", value: "europe" },
+  { label: "수입차", value: "europe" },
 ];
 
 export const viscosityOptions: ProductControlOption[] = [

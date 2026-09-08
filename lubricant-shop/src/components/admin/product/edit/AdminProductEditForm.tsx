@@ -23,6 +23,7 @@ const toForm = (product: AdminProduct): ProductEditForm => ({
   productName: product.productName,
   brand: product.brand,
   category: product.category,
+  subCategory: product.subCategory ?? "",
   productDescription: product.productDescription ?? "",
   imageUrl: product.imageUrl ?? "",
   saleStatus: product.saleStatus,
@@ -33,8 +34,6 @@ const toForm = (product: AdminProduct): ProductEditForm => ({
   discountPrice: product.discountPrice === null ? "" : String(product.discountPrice),
   stock: String(product.stock),
   pointRewardRatePercent: String(product.pointRewardRatePercent),
-  mainProduct: product.mainProduct,
-  recommended: product.recommended,
 });
 
 const toNumber = (value: string) => Number(value.replace(/[^0-9.]/g, ""));
@@ -108,6 +107,7 @@ function buildProductUpdateInput(form: ProductEditForm): AdminProductUpdateInput
     productName: form.productName.trim(),
     brand: form.brand.trim(),
     category: form.category,
+    subCategory: form.subCategory,
     productDescription: form.productDescription.trim(),
     imageUrl: form.imageUrl.trim(),
     saleStatus: form.saleStatus,
@@ -117,8 +117,6 @@ function buildProductUpdateInput(form: ProductEditForm): AdminProductUpdateInput
     price: toNumber(form.price),
     stock: Math.max(0, Math.floor(toNumber(form.stock))),
     pointRewardRatePercent: toNumber(form.pointRewardRatePercent),
-    mainProduct: form.mainProduct,
-    recommended: form.recommended,
   };
 
   if (form.discountPrice.trim()) {

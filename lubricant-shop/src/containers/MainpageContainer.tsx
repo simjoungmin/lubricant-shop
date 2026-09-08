@@ -1,34 +1,41 @@
 ﻿import OilFooter from "@/components/layout/OilFooter";
 import OilHeader from "@/components/layout/OilHeader";
+import { ToastNotice } from "@/components/common/ToastNotice";
 import BrandSection from "@/components/main/BrandSection";
 import CategorySection from "@/components/main/CategorySection";
 import HeroSection from "@/components/main/HeroSection";
-import OilGuideSection from "@/components/main/OilGuideSection";
 import ProductSection from "@/components/main/ProductSection";
+import ServiceBannerSection from "@/components/main/ServiceBannerSection";
 import ShortClipSection from "@/components/main/ShortClipSection";
-import { productApi } from "@/components/category/product.api";
+import { displayApi } from "@/components/main/display.api";
 import React from "react";
 
+type MainpageContainerProps = {
+  shouldShowInquiryToast?: boolean;
+};
 
-const MainpageContainer = async () => {
-  const products = await productApi.findProducts({ sort: "popular" });
-  const hotProducts = products.slice(0, 5);
-  const bestProducts = products.slice(5, 10).length > 0
-    ? products.slice(5, 10)
-    : products.slice(0, 5);
+const MainpageContainer = async ({ shouldShowInquiryToast = false }: MainpageContainerProps) => {
+  const displaySections = await displayApi.findSections();
 
   return (
     <>
       <OilHeader />
+      {shouldShowInquiryToast ? <ToastNotice message="문의가 접수되었습니다" /> : null}
 
-      <main>
+      <main className="bg-[#f7f7f5]">
         <HeroSection />
         <CategorySection />
 
-        <ProductSection title="HOT 상품" badge="HOT" products={hotProducts} />
-        <ProductSection title="BEST 상품" badge="BEST" products={bestProducts} />
+        {displaySections.map((section) => (
+          <ProductSection
+            key={section.sectionId}
+            title={section.sectionName}
+            badge={section.sectionCode}
+            products={section.products}
+          />
+        ))}
+        <ServiceBannerSection />
 
-        <OilGuideSection />
         <ShortClipSection />
         <BrandSection />
       </main>

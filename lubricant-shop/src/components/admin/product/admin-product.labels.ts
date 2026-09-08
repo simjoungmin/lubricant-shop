@@ -9,11 +9,11 @@ export const adminProductStatusLabel: Record<ProductStatus, string> = {
 
 export const adminProductCategoryLabel: Record<string, string> = {
   engine: "엔진오일",
-  mission: "미션오일",
-  brake: "브레이크액",
-  filter: "필터",
+  mission: "자동 미션 오일",
   gear: "기어 오일",
-  chemical: "케미컬",
+  "brake-power": "브레이크액·파워오일",
+  coolant: "부동액",
+  chemical: "케미컬·첨가제",
 };
 
 export const adminProductStatusOptions = Object.keys(adminProductStatusLabel) as ProductStatus[];

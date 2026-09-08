@@ -24,33 +24,35 @@ export default function CartPageContainer() {
   return (
     <>
       <OilHeader />
-      <main className="mx-auto min-h-[calc(100vh-64px)] w-full max-w-[1180px] px-6 py-10 lg:px-8">
+      <main className="mx-auto min-h-[calc(100vh-72px)] w-full max-w-[1180px] px-6 py-10 lg:px-8">
         <div className="mb-8 flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
           <div>
-            <p className="text-sm font-black text-[#d6a84f]">CART</p>
-            <h1 className="mt-3 text-3xl font-black text-white">장바구니</h1>
-            <p className="mt-3 text-sm text-zinc-400">
+            <p className="text-sm font-black text-[#ff4b1f]">CART</p>
+            <h1 className="mt-3 text-3xl font-black text-[#071d3b]">장바구니</h1>
+            <p className="mt-3 text-sm leading-6 text-[#65717f]">
               주문할 상품과 수량을 확인한 뒤 주문서로 이동하세요.
             </p>
           </div>
           <Link
             href="/category"
-            className="inline-flex h-11 items-center justify-center rounded-md border border-white/10 px-5 text-sm font-black text-white transition hover:border-[#d6a84f] hover:text-[#d6a84f]"
+            className="inline-flex h-11 items-center justify-center rounded-md border border-[#aab3bf] bg-white px-5 text-sm font-black text-[#071d3b] transition hover:border-[#ff4b1f] hover:text-[#ff4b1f]"
           >
             쇼핑 계속하기
           </Link>
         </div>
 
         {!isReady || isLoading ? (
-          <section className="rounded-lg border border-white/10 bg-[#171611] px-6 py-16 text-center text-sm font-bold text-zinc-300">
+          <section className="rounded-lg border border-[#dde2e8] bg-white px-6 py-16 text-center text-sm font-bold text-[#65717f]">
             장바구니를 불러오는 중입니다.
           </section>
         ) : !user ? (
-          <section className="rounded-lg border border-white/10 bg-[#171611] p-6">
-            <p className="text-sm font-bold text-zinc-300">로그인 후 장바구니를 이용할 수 있습니다.</p>
+          <section className="rounded-lg border border-[#dde2e8] bg-white p-6">
+            <p className="text-sm font-bold text-[#65717f]">
+              로그인 후 장바구니를 이용할 수 있습니다.
+            </p>
             <Link
               href="/login?redirect=%2Fcart"
-              className="mt-5 inline-flex h-11 items-center justify-center rounded-md bg-[#d6a84f] px-5 text-sm font-black text-black transition hover:bg-[#f0c76a]"
+              className="mt-5 inline-flex h-11 items-center justify-center rounded-md bg-[#071d3b] px-5 text-sm font-black text-white transition hover:bg-[#12345f]"
             >
               로그인하러 가기
             </Link>
@@ -69,27 +71,33 @@ export default function CartPageContainer() {
                   />
                 ))
               ) : (
-                <div className="rounded-lg border border-white/10 bg-[#171611] px-6 py-16 text-center">
-                  <p className="text-lg font-black text-white">장바구니가 비어 있습니다.</p>
-                  <p className="mt-2 text-sm text-zinc-400">필요한 상품을 담고 다시 확인해 주세요.</p>
+                <div className="rounded-lg border border-[#dde2e8] bg-white px-6 py-16 text-center">
+                  <p className="text-lg font-black text-[#071d3b]">
+                    장바구니가 비어 있습니다.
+                  </p>
+                  <p className="mt-2 text-sm text-[#65717f]">
+                    필요한 상품을 담고 다시 확인해 주세요.
+                  </p>
                 </div>
               )}
             </section>
 
-            <aside className="h-fit rounded-lg border border-white/10 bg-[#171611] p-5">
-              <h2 className="text-lg font-black text-white">주문 요약</h2>
+            <aside className="h-fit rounded-lg border border-[#dde2e8] bg-white p-5">
+              <h2 className="text-lg font-black text-[#071d3b]">주문 요약</h2>
               <div className="mt-5 space-y-3 text-sm">
-                <div className="flex justify-between text-zinc-400">
+                <div className="flex justify-between text-[#65717f]">
                   <span>상품 수량</span>
-                  <strong className="text-white">{totalQuantity}개</strong>
+                  <strong className="text-[#071d3b]">{totalQuantity}개</strong>
                 </div>
-                <div className="flex justify-between text-zinc-400">
+                <div className="flex justify-between text-[#65717f]">
                   <span>상품 합계</span>
-                  <strong className="text-white">{formatPrice(totalPrice)}</strong>
+                  <strong className="text-[#071d3b]">{formatPrice(totalPrice)}</strong>
                 </div>
-                <div className="flex justify-between text-zinc-400">
+                <div className="flex justify-between text-[#65717f]">
                   <span>예상 적립</span>
-                  <strong className="text-[#d6a84f]">{expectedRewardPoint.toLocaleString("ko-KR")} P</strong>
+                  <strong className="text-[#ff4b1f]">
+                    {expectedRewardPoint.toLocaleString("ko-KR")} P
+                  </strong>
                 </div>
               </div>
 
@@ -99,8 +107,8 @@ export default function CartPageContainer() {
                   aria-disabled={items.length === 0}
                   className={`flex h-12 items-center justify-center rounded-md text-sm font-black transition ${
                     items.length === 0
-                      ? "pointer-events-none bg-zinc-700 text-zinc-400"
-                      : "bg-[#d6a84f] text-black hover:bg-[#f0c76a]"
+                      ? "pointer-events-none bg-[#d8dde3] text-[#8a94a1]"
+                      : "bg-[#ff4b1f] text-white hover:bg-[#e63e16]"
                   }`}
                 >
                   주문서 작성
@@ -108,7 +116,7 @@ export default function CartPageContainer() {
                 <button
                   type="button"
                   disabled={items.length === 0}
-                  className="h-11 rounded-md border border-white/10 text-sm font-black text-zinc-300 transition hover:border-red-400 hover:text-red-300 disabled:cursor-not-allowed disabled:text-zinc-600"
+                  className="h-11 rounded-md border border-[#dce2e8] text-sm font-black text-[#65717f] transition hover:border-red-300 hover:bg-red-50 hover:text-red-500 disabled:cursor-not-allowed disabled:text-[#b9c1ca]"
                   onClick={clearCart}
                 >
                   장바구니 비우기
