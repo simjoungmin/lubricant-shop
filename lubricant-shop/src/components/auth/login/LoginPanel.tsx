@@ -8,10 +8,9 @@ import { inputClassName, socialButtonClassName } from "../styles/authForm.styles
 
 type LoginPanelProps = {
   signupMessage: string;
-  onSignupClick: () => void;
 };
 
-const LoginPanel = ({ signupMessage, onSignupClick }: LoginPanelProps) => {
+const LoginPanel = ({ signupMessage }: LoginPanelProps) => {
   const router = useRouter();
   const [loginMessage, setLoginMessage] = useState("");
   const { form, error, isSubmitting, updateField, submitLogin, submitSocialLogin } = useLogin({
@@ -39,21 +38,21 @@ const LoginPanel = ({ signupMessage, onSignupClick }: LoginPanelProps) => {
       <div className="mb-7">
         <h2 className="text-2xl font-black text-[#071d3b]">로그인</h2>
         <p className="mt-2 text-sm text-[#65717f]">
-          이메일 계정 또는 소셜 계정으로 시작해 주세요.
+          아이디 또는 소셜 계정으로 시작해 주세요.
         </p>
       </div>
 
       <form className="space-y-4" onSubmit={handleSubmit}>
         <label className="grid gap-2 text-sm font-bold text-[#34465c]">
-          이메일
+          아이디
           <input
             className={inputClassName}
-            inputMode="email"
-            name="email"
-            placeholder="oilmaster@example.com"
-            type="email"
-            value={form.email}
-            onChange={(event) => updateField("email", event.target.value)}
+            inputMode="text"
+            name="loginId"
+            placeholder="아이디 입력"
+            type="text"
+            value={form.loginId}
+            onChange={(event) => updateField("loginId", event.target.value)}
           />
         </label>
 
@@ -72,12 +71,12 @@ const LoginPanel = ({ signupMessage, onSignupClick }: LoginPanelProps) => {
         <div className="flex flex-wrap items-center justify-between gap-3 text-sm text-[#65717f]">
           <label className="flex items-center gap-2">
             <input
-              checked={form.rememberEmail}
+              checked={form.rememberLoginId}
               className="h-4 w-4 accent-[#ff4b1f]"
               type="checkbox"
-              onChange={(event) => updateField("rememberEmail", event.target.checked)}
+              onChange={(event) => updateField("rememberLoginId", event.target.checked)}
             />
-            이메일 기억하기
+            아이디 기억하기
           </label>
           <Link href="/find-email" className="font-bold text-[#ff4b1f] hover:text-[#071d3b]">
             아이디 찾기
@@ -129,13 +128,12 @@ const LoginPanel = ({ signupMessage, onSignupClick }: LoginPanelProps) => {
 
       <p className="mt-6 text-center text-sm text-[#65717f]">
         아직 회원이 아니신가요?{" "}
-        <button
+        <Link
+          href="/signup"
           className="font-bold text-[#ff4b1f] hover:text-[#071d3b]"
-          type="button"
-          onClick={onSignupClick}
         >
           회원가입
-        </button>
+        </Link>
       </p>
     </>
   );

@@ -15,7 +15,14 @@ export const validateSignupForm = (
   }
 
   if (emailCheckState !== "available") {
-    nextErrors.emailCheck = "이메일 중복 확인을 완료해 주세요.";
+    nextErrors.emailCheck =
+      emailCheckState === "duplicated"
+        ? "이미 사용 중인 이메일입니다."
+        : "이메일 중복 확인을 완료해 주세요.";
+  }
+
+  if (!/^[a-z0-9]{4,16}$/.test(signupForm.loginId.trim())) {
+    nextErrors.loginId = "아이디는 영문소문자/숫자 4~16자로 입력해 주세요.";
   }
 
   if (!passwordPattern.test(signupForm.password)) {
@@ -30,6 +37,10 @@ export const validateSignupForm = (
 
   if (!signupForm.name.trim()) {
     nextErrors.name = "이름을 입력해 주세요.";
+  }
+
+  if (!signupForm.address.trim()) {
+    nextErrors.address = "주소를 입력해 주세요.";
   }
 
   if (!signupForm.phone.trim()) {

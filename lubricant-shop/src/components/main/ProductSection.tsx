@@ -35,7 +35,7 @@ const ProductSection = ({ title, badge, products }: ProductSectionProps) => {
   };
 
   return (
-    <section className="bg-[#f7f7f5] py-8">
+    <section className="bg-white py-8">
       <div className="mx-auto max-w-[1240px] px-6 lg:px-8">
         <div className="mb-5 flex items-center justify-between gap-3">
           <h2 className="text-2xl font-black">{title}</h2>

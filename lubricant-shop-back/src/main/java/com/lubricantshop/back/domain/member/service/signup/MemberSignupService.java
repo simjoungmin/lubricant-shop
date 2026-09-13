@@ -27,17 +27,23 @@ public class MemberSignupService {
     @Transactional
     public MemberSignupResponse signup(MemberSignupRequest request) {
         String email = request.email().trim().toLowerCase();
+        String loginId = request.loginId().trim().toLowerCase();
 
         if (memberRepository.existsByEmailIgnoreCase(email)) {
             throw new IllegalArgumentException("이미 사용 중인 이메일입니다.");
         }
 
+        if (memberRepository.existsByLoginIdIgnoreCase(loginId)) {
+            throw new IllegalArgumentException("이미 사용 중인 아이디입니다.");
+        }
+
         Member member = new Member(
                 email,
+                loginId,
                 passwordEncoder.encode(request.password()),
                 request.name().trim(),
                 normalizePhone(request.phone()),
-                "",
+                request.address() == null ? "" : request.address().trim(),
                 request.termsAgreed(),
                 request.privacyAgreed(),
                 request.marketingAgreed(),
@@ -48,6 +54,7 @@ public class MemberSignupService {
         return new MemberSignupResponse(
                 savedMember.getMemberId(),
                 savedMember.getEmail(),
+                savedMember.getLoginId(),
                 savedMember.getMemberName(),
                 savedMember.getProvider(),
                 savedMember.getRole(),

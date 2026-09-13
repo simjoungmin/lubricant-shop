@@ -1,16 +1,19 @@
 import Link from "next/link";
 
-const tabs = [
-  { label: "주문 내역", value: "4건", href: "/my-page/orders", isActive: true },
-  { label: "취소/반품 내역", value: "준비 중", href: "/my-page/orders" },
-  { label: "찜한 상품", value: "준비 중", href: "/my-page" },
-  { label: "쿠폰함", value: "준비 중", href: "/my-page" },
-  { label: "회원정보 수정", value: "준비 중", href: "/my-page" },
-];
+type MyOrdersTabsProps = {
+  orderCount: number;
+};
 
-export function MyOrdersTabs() {
+export function MyOrdersTabs({ orderCount }: MyOrdersTabsProps) {
+  const tabs = [
+    { label: "주문 내역", value: `${orderCount.toLocaleString("ko-KR")}건`, href: "/my-page/orders", isActive: true },
+    { label: "취소/반품 내역", value: "준비 중", href: "/my-page/orders" },
+    { label: "찜한 상품", value: "준비 중", href: "/my-page" },
+    { label: "쿠폰함", value: "준비 중", href: "/my-page" },
+  ];
+
   return (
-    <nav className="grid overflow-hidden rounded-lg border border-[#dde2e8] bg-white md:grid-cols-5">
+    <nav className="grid overflow-hidden rounded-lg border border-[#dde2e8] bg-white md:grid-cols-4">
       {tabs.map((tab) => (
         <Link
           key={tab.label}

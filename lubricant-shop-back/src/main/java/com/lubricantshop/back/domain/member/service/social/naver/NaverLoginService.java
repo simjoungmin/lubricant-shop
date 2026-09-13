@@ -1,12 +1,15 @@
 package com.lubricantshop.back.domain.member.service.social.naver;
 
+import com.lubricantshop.back.domain.cart.CartRepository;
 import com.lubricantshop.back.domain.member.SocialProvider;
 import com.lubricantshop.back.domain.member.dto.auth.MemberLoginResponse;
 import com.lubricantshop.back.domain.member.dto.social.NaverMemberProfile;
 import com.lubricantshop.back.domain.member.entity.Member;
 import com.lubricantshop.back.domain.member.repository.MemberRepository;
+import com.lubricantshop.back.global.exception.UnauthorizedException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
+import java.time.LocalDateTime;
 import java.util.Optional;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -20,17 +23,20 @@ public class NaverLoginService {
     private final NaverOAuthProperties properties;
     private final NaverOAuthClient naverOAuthClient;
     private final MemberRepository memberRepository;
+    private final CartRepository cartRepository;
     private final PasswordEncoder passwordEncoder;
 
     public NaverLoginService(
             NaverOAuthProperties properties,
             NaverOAuthClient naverOAuthClient,
             MemberRepository memberRepository,
+            CartRepository cartRepository,
             PasswordEncoder passwordEncoder
     ) {
         this.properties = properties;
         this.naverOAuthClient = naverOAuthClient;
         this.memberRepository = memberRepository;
+        this.cartRepository = cartRepository;
         this.passwordEncoder = passwordEncoder;
     }
 
@@ -50,14 +56,18 @@ public class NaverLoginService {
         Member member = memberRepository.findByProviderAndProviderId(SocialProvider.NAVER, profile.providerId())
                 .or(() -> findByEmail(profile.email()))
                 .orElseGet(() -> createNaverMember(profile));
+        restoreOrRejectWithdrawnMember(member);
 
         return new MemberLoginResponse(
                 member.getMemberId(),
                 member.getEmail(),
+                member.getLoginId(),
                 member.getMemberName(),
                 member.getProvider(),
                 member.getRole(),
-                member.getPointBalance()
+                member.getPointBalance(),
+                member.getPhoneNumber(),
+                member.getAddress()
         );
     }
 
@@ -71,6 +81,20 @@ public class NaverLoginService {
         }
 
         return memberRepository.findByEmailIgnoreCase(email.trim().toLowerCase());
+    }
+
+    private void restoreOrRejectWithdrawnMember(Member member) {
+        LocalDateTime now = LocalDateTime.now();
+
+        if (member.isWithdrawalExpired(now)) {
+            cartRepository.deleteByMember_MemberId(member.getMemberId());
+            member.finalizeWithdrawal(now);
+            throw new UnauthorizedException("탈퇴 처리 완료된 계정입니다.");
+        }
+
+        if (member.canRestoreWithdrawal(now)) {
+            member.restoreWithdrawal();
+        }
     }
 
     private Member createNaverMember(NaverMemberProfile profile) {

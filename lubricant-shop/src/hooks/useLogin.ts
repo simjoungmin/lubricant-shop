@@ -4,9 +4,9 @@ import { useAuth, type AuthProviderName, type AuthUser } from "@/components/auth
 import { useState } from "react";
 
 type LoginFormState = {
-  email: string;
+  loginId: string;
   password: string;
-  rememberEmail: boolean;
+  rememberLoginId: boolean;
 };
 
 type SocialProvider = Exclude<AuthProviderName, "email">;
@@ -17,28 +17,30 @@ type UseLoginOptions = {
 };
 
 const initialFormState: LoginFormState = {
-  email: "",
+  loginId: "",
   password: "",
-  rememberEmail: true,
+  rememberLoginId: true,
 };
 
-const REMEMBERED_EMAIL_STORAGE_KEY = "oil-master:remembered-email";
+const REMEMBERED_LOGIN_ID_STORAGE_KEY = "oil-master:remembered-login-id";
 
 const getInitialFormState = (): LoginFormState => {
   if (typeof window === "undefined") {
     return initialFormState;
   }
 
-  const rememberedEmail = window.localStorage.getItem(REMEMBERED_EMAIL_STORAGE_KEY);
+  const rememberedLoginId =
+    window.localStorage.getItem(REMEMBERED_LOGIN_ID_STORAGE_KEY) ??
+    window.localStorage.getItem("oil-master:remembered-email");
 
-  if (!rememberedEmail) {
+  if (!rememberedLoginId) {
     return initialFormState;
   }
 
   return {
     ...initialFormState,
-    email: rememberedEmail,
-    rememberEmail: true,
+    loginId: rememberedLoginId,
+    rememberLoginId: true,
   };
 };
 
@@ -61,12 +63,13 @@ export function useLogin(options: UseLoginOptions = {}) {
     setIsSubmitting(true);
 
     try {
-      const user = await login({ email: form.email.trim(), password: form.password });
+      const loginId = form.loginId.trim().toLowerCase();
+      const user = await login({ loginId, password: form.password });
 
-      if (form.rememberEmail) {
-        window.localStorage.setItem(REMEMBERED_EMAIL_STORAGE_KEY, form.email.trim());
+      if (form.rememberLoginId) {
+        window.localStorage.setItem(REMEMBERED_LOGIN_ID_STORAGE_KEY, loginId);
       } else {
-        window.localStorage.removeItem(REMEMBERED_EMAIL_STORAGE_KEY);
+        window.localStorage.removeItem(REMEMBERED_LOGIN_ID_STORAGE_KEY);
       }
 
       options.onLoginSuccess?.(user);

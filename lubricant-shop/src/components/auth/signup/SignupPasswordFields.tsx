@@ -1,4 +1,8 @@
-import type { SignupErrors, SignupFormState, SignupFormUpdateHandler } from "./signup.types";
+import type {
+  SignupErrors,
+  SignupFormState,
+  SignupFormUpdateHandler,
+} from "./signup.types";
 import { SignupTextField } from "./SignupTextField";
 
 type SignupPasswordFieldsProps = {
@@ -13,7 +17,7 @@ export function SignupPasswordFields({
   onChangeField,
 }: SignupPasswordFieldsProps) {
   return (
-    <div className="grid gap-4 md:grid-cols-2">
+    <div className="grid gap-4 sm:grid-cols-2 sm:gap-5">
       <SignupTextField
         label="비밀번호"
         placeholder="Aa! 포함 8자 이상"
@@ -22,6 +26,7 @@ export function SignupPasswordFields({
         error={errors.password}
         onChange={(value) => onChangeField("password", value)}
       />
+
       <SignupTextField
         label="비밀번호 확인"
         placeholder="비밀번호 재입력"

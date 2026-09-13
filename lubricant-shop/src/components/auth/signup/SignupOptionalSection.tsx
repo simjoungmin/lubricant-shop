@@ -8,13 +8,13 @@ type SignupOptionalSectionProps = {
 
 export function SignupOptionalSection({ form, onChangeField }: SignupOptionalSectionProps) {
   return (
-    <div className="rounded-md border border-white/10 bg-black/20 p-4">
-      <p className="mb-3 text-sm font-black text-white">선택 항목</p>
-      <div className="grid gap-3 text-sm text-zinc-300">
+    <div className="rounded-md border border-[#dce2e8] bg-[#f8fafc] p-4">
+      <p className="mb-3 text-sm font-black text-[#071d3b]">선택 항목</p>
+      <div className="grid gap-3 text-sm text-[#34465c]">
         <label className="flex items-start gap-3">
           <input
             checked={form.vehicleEnabled}
-            className="mt-1 h-4 w-4 accent-[#d6a84f]"
+            className="mt-1 h-4 w-4 accent-[#ff4b1f]"
             type="checkbox"
             onChange={(event) => onChangeField("vehicleEnabled", event.target.checked)}
           />
@@ -32,7 +32,7 @@ export function SignupOptionalSection({ form, onChangeField }: SignupOptionalSec
         <label className="flex items-start gap-3">
           <input
             checked={form.marketingAgreed}
-            className="mt-1 h-4 w-4 accent-[#d6a84f]"
+            className="mt-1 h-4 w-4 accent-[#ff4b1f]"
             type="checkbox"
             onChange={(event) => onChangeField("marketingAgreed", event.target.checked)}
           />

@@ -3,6 +3,7 @@ import type { Product, ProductBadge } from "@/assets/category/types";
 export type ProductQueryParams = {
   category?: string;
   subCategory?: string;
+  brand?: string;
   q?: string;
   fuelType?: string;
   viscosity?: string;
@@ -107,6 +108,7 @@ export const productApi = {
 
     appendParam(params, "category", query.category);
     appendParam(params, "subCategory", query.subCategory);
+    appendParam(params, "brand", query.brand);
     appendParam(params, "q", query.q);
     appendParam(params, "fuelType", query.fuelType);
     appendParam(params, "viscosity", query.viscosity);
@@ -126,6 +128,29 @@ export const productApi = {
     const products = (await response.json()) as ServerProduct[];
 
     return products.map((product) => toProduct(product));
+  },
+
+  findBrands: async (query: Omit<ProductQueryParams, "brand" | "sort"> = {}) => {
+    const params = new URLSearchParams();
+
+    appendParam(params, "category", query.category);
+    appendParam(params, "subCategory", query.subCategory);
+    appendParam(params, "q", query.q);
+    appendParam(params, "fuelType", query.fuelType);
+    appendParam(params, "viscosity", query.viscosity);
+    appendParam(params, "standard", query.standard);
+
+    const queryString = params.toString();
+    const response = await fetch(
+      `${API_BASE_URL}/api/products/brands${queryString ? `?${queryString}` : ""}`,
+      { cache: "no-store" },
+    );
+
+    if (!response.ok) {
+      throw new Error("브랜드 목록을 불러오지 못했습니다.");
+    }
+
+    return (await response.json()) as string[];
   },
 
   findProduct: async (productId: number) => {

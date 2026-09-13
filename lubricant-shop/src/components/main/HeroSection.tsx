@@ -1,79 +1,156 @@
-import Link from "next/link";
-import React from "react";
+"use client";
 
-const partnerBrands = ["Mobil", "Shell", "Castrol", "ZIC", "Kixx", "Total"];
+import Image from "next/image";
+import { useCallback, useEffect, useRef, useState } from "react";
+
+const banners = [
+  {
+    id: 1,
+    src: "/main-banner/oil-specialist.png",
+    alt: "오일마스터 엔진오일 전문 배너",
+  },
+  {
+    id: 2,
+    src: "/main-banner/opening-sale.png",
+    alt: "오픈 기념 전 품목 20% 할인 배너",
+  },
+  {
+    id: 3,
+    src: "/main-banner/kia-collaboration.png",
+    alt: "기아 자동차 컬래버레이션 배너",
+  },
+];
+
+const AUTO_PLAY_DELAY = 5000;
 
 const HeroSection = () => {
+  const sliderRef = useRef<HTMLDivElement>(null);
+
+  const [activeIndex, setActiveIndex] = useState(0);
+  const [isPaused, setIsPaused] = useState(false);
+
+  const moveToBanner = useCallback((index: number) => {
+    const slider = sliderRef.current;
+
+    if (!slider) {
+      return;
+    }
+
+    slider.scrollTo({
+      left: slider.clientWidth * index,
+      behavior: "smooth",
+    });
+
+    setActiveIndex(index);
+  }, []);
+
+  const moveToPrevious = () => {
+    const previousIndex =
+      activeIndex === 0 ? banners.length - 1 : activeIndex - 1;
+
+    moveToBanner(previousIndex);
+  };
+
+  const moveToNext = useCallback(() => {
+    const nextIndex =
+      activeIndex === banners.length - 1 ? 0 : activeIndex + 1;
+
+    moveToBanner(nextIndex);
+  }, [activeIndex, moveToBanner]);
+
+  const handleScroll = () => {
+    const slider = sliderRef.current;
+
+    if (!slider || slider.clientWidth === 0) {
+      return;
+    }
+
+    const nextIndex = Math.round(slider.scrollLeft / slider.clientWidth);
+
+    setActiveIndex(Math.min(nextIndex, banners.length - 1));
+  };
+
+  useEffect(() => {
+    if (isPaused) {
+      return;
+    }
+
+    const timer = window.setInterval(moveToNext, AUTO_PLAY_DELAY);
+
+    return () => {
+      window.clearInterval(timer);
+    };
+  }, [isPaused, moveToNext]);
+
   return (
-    <section className="relative overflow-hidden border-b border-[#e7eaee] bg-[linear-gradient(90deg,#ffffff_0%,#fbfaf8_52%,#f0efec_100%)]">
-      <div className="absolute inset-y-0 right-0 hidden w-[42%] bg-[radial-gradient(circle_at_80%_58%,rgba(7,29,59,0.16),transparent_35%)] lg:block" />
-
-      <div className="mx-auto grid min-h-[488px] max-w-[1440px] grid-cols-1 items-center gap-10 px-6 py-12 md:grid-cols-[1fr_0.95fr] lg:px-8">
-        <div className="relative z-10">
-          <p className="mb-5 text-xs font-black uppercase text-[#ff4b1f]">
-            Engine Oil Specialist
-          </p>
-
-          <h1 className="mb-7 text-4xl font-black leading-tight text-[#071d3b] md:text-6xl">
-            차에 맞는 오일을,
-            <br />
-            복잡하지 않게.
-          </h1>
-
-          <p className="mb-8 max-w-[520px] text-base leading-8 text-[#596675]">
-            오일마스터는 100% 정품 엔진오일만 취급합니다.
-            <br />
-            전문가가 직접 검수한 믿을 수 있는 제품을 만나보세요.
-          </p>
-
-          <div className="flex flex-wrap gap-4">
-            <Link
-              href="/category"
-              className="inline-flex min-w-36 items-center justify-center rounded bg-[#ff4b1f] px-7 py-3 text-sm font-black text-white shadow-[0_10px_22px_rgba(255,75,31,0.24)] transition hover:bg-[#e63e16]"
-            >
-              내 차 오일 찾기
-            </Link>
-            <Link
-              href="/category"
-              className="inline-flex min-w-40 items-center justify-center rounded border border-[#aab3bf] bg-white px-7 py-3 text-sm font-black text-[#071d3b] transition hover:border-[#071d3b]"
-            >
-              전체 상품 보기
-            </Link>
+    <section
+      className="relative w-full overflow-hidden bg-[#f4f4f4]"
+      aria-label="메인 프로모션 배너"
+      onMouseEnter={() => setIsPaused(true)}
+      onMouseLeave={() => setIsPaused(false)}
+      onFocus={() => setIsPaused(true)}
+      onBlur={() => setIsPaused(false)}
+    >
+      <div
+        ref={sliderRef}
+        onScroll={handleScroll}
+        className="flex w-full snap-x snap-mandatory overflow-x-auto scroll-smooth [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+      >
+        {banners.map((banner, index) => (
+          <div
+            key={banner.id}
+            className="relative aspect-[16/7] min-w-full shrink-0 snap-center sm:aspect-[16/6] lg:aspect-[16/5]"
+          >
+            <Image
+              src={banner.src}
+              alt={banner.alt}
+              fill
+              priority={index === 0}
+              sizes="100vw"
+              className="select-none object-cover"
+              draggable={false}
+            />
           </div>
+        ))}
+      </div>
 
-          <div className="mt-9 flex flex-wrap items-center gap-5 text-[11px] font-black text-[#071d3b]/80">
-            <span className="font-medium text-[#87909c]">공식 공급 브랜드</span>
-            {partnerBrands.map((brand) => (
-              <span key={brand}>{brand}</span>
-            ))}
-          </div>
-        </div>
+      <button
+        type="button"
+        onClick={moveToPrevious}
+        aria-label="이전 배너 보기"
+        className="absolute left-3 top-1/2 hidden h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full bg-black/35 text-2xl text-white backdrop-blur-sm transition hover:bg-black/60 sm:flex lg:left-7"
+      >
+        <span aria-hidden="true">‹</span>
+      </button>
 
-        <div className="relative hidden min-h-[390px] items-end justify-center md:flex">
-          <div className="absolute right-6 top-10 flex h-28 w-28 items-center justify-center rounded-full border border-[#f1b77f] bg-white/70 text-center text-[#ff6a21]">
-            <div>
-              <p className="text-[10px] font-black uppercase">Premium</p>
-              <p className="text-2xl font-black">5W-30</p>
-              <p className="text-[10px] font-bold">100% 정품</p>
-            </div>
-          </div>
+      <button
+        type="button"
+        onClick={moveToNext}
+        aria-label="다음 배너 보기"
+        className="absolute right-3 top-1/2 hidden h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full bg-black/35 text-2xl text-white backdrop-blur-sm transition hover:bg-black/60 sm:flex lg:right-7"
+      >
+        <span aria-hidden="true">›</span>
+      </button>
 
-          <div className="relative h-[360px] w-[260px] rounded-[36px] bg-[#111820] p-8 shadow-[0_28px_50px_rgba(7,29,59,0.28)]">
-            <div className="absolute -right-20 bottom-0 h-44 w-44 rounded-full border-[18px] border-[#d7dce1]" />
-            <div className="absolute -right-8 top-7 h-40 w-16 rounded-[32px] border-[18px] border-[#111820]" />
-            <div className="mx-auto h-10 w-24 rounded-t-2xl bg-[#111820] shadow-inner" />
-            <div className="mt-9 rounded-xl bg-white p-4 text-center shadow-inner">
-              <p className="text-2xl font-black text-[#1470c8]">Mobil</p>
-              <p className="mx-auto mt-2 flex h-20 w-16 items-center justify-center bg-[#0b0b0d] text-6xl font-black text-white">
-                1
-              </p>
-              <p className="mt-3 rounded bg-[#51402f] py-2 text-xs font-bold text-white">
-                5W-30
-              </p>
-            </div>
-            <p className="absolute bottom-6 right-7 text-xl font-black text-white">4L</p>
-          </div>
-        </div>
+      <div className="absolute bottom-4 left-1/2 flex -translate-x-1/2 items-center gap-2 rounded-full bg-black/30 px-3 py-2 backdrop-blur-sm">
+        {banners.map((banner, index) => (
+          <button
+            key={banner.id}
+            type="button"
+            onClick={() => moveToBanner(index)}
+            aria-label={`${index + 1}번째 배너 보기`}
+            aria-current={activeIndex === index}
+            className={`h-2 rounded-full transition-all duration-300 ${
+              activeIndex === index
+                ? "w-7 bg-white"
+                : "w-2 bg-white/55 hover:bg-white/80"
+            }`}
+          />
+        ))}
+      </div>
+
+      <div className="absolute bottom-4 right-4 rounded-full bg-black/45 px-3 py-1.5 text-xs font-semibold text-white backdrop-blur-sm lg:right-8">
+        {activeIndex + 1} / {banners.length}
       </div>
     </section>
   );

@@ -9,3 +9,8 @@ export type MyPagePendingItem = {
   description: string;
   status: string;
 };
+
+export type MyPageInfoItem = {
+  title: string;
+  description: string;
+};

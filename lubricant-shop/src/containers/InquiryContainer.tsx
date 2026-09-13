@@ -1,5 +1,4 @@
 import InquiryFlow from "@/components/customer/InquiryFlow";
-import OilFooter from "@/components/layout/OilFooter";
 import OilHeader from "@/components/layout/OilHeader";
 import Link from "next/link";
 import React from "react";
@@ -34,7 +33,6 @@ export default function InquiryContainer() {
         </section>
       </main>
 
-      <OilFooter />
     </>
   );
 }

@@ -1,5 +1,5 @@
 import { getApiErrorMessage } from "../auth/auth.errors";
-import type { SignupPayload } from "./signup.types";
+import type { SignupFormState, SignupPayload } from "./signup.types";
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL ?? "http://localhost:8080";
 
@@ -28,3 +28,19 @@ export const signupApi = {
     }
   },
 };
+
+export const toSignupPayload = (signupForm: SignupFormState): SignupPayload => ({
+  email: signupForm.email.trim().toLowerCase(),
+  loginId: signupForm.loginId.trim().toLowerCase(),
+  password: signupForm.password,
+  name: signupForm.name.trim(),
+  address: [signupForm.postalCode, signupForm.address, signupForm.detailAddress]
+    .map((value) => value.trim())
+    .filter(Boolean)
+    .join(" "),
+  phone: signupForm.phone.trim(),
+  termsAgreed: signupForm.termsAgreed,
+  privacyAgreed: signupForm.privacyAgreed,
+  marketingAgreed: signupForm.marketingAgreed,
+  vehicleInfo: signupForm.vehicleEnabled ? signupForm.vehicleInfo.trim() : "",
+});

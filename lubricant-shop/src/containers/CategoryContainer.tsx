@@ -2,7 +2,6 @@ import { categories } from "@/assets/category/categories";
 import type { Category, SubCategory } from "@/assets/category/types";
 import CategorySidebar from "@/components/category/CategorySidebar";
 import ProductListControls from "@/components/common/ProductListControls/ProductListControls";
-import OilFooter from "@/components/layout/OilFooter";
 import OilHeader from "@/components/layout/OilHeader";
 import React from "react";
 
@@ -84,7 +83,6 @@ const CategoryContainer = ({
           </div>
         </section>
       </main>
-      <OilFooter />
     </>
   );
 };

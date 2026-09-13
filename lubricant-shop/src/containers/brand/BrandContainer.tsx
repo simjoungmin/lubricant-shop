@@ -1,4 +1,3 @@
-import OilFooter from "@/components/layout/OilFooter";
 import OilHeader from "@/components/layout/OilHeader";
 import React from "react";
 
@@ -159,7 +158,6 @@ const BrandContainer = () => {
         </section>
       </main>
 
-      <OilFooter />
     </>
   );
 };

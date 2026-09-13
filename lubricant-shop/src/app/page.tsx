@@ -12,7 +12,7 @@ export default async function HomePage({ searchParams }: HomePageProps) {
 
   return (
     <PageLayout>
-      <MainpageContainer shouldShowInquiryToast={notice === "inquiry-created"} />
+      <MainpageContainer />
     </PageLayout>
   );
 }

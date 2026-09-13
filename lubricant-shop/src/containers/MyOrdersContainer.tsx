@@ -2,6 +2,7 @@
 
 import { useAuth } from "@/components/auth/auth/AuthContext";
 import OilHeader from "@/components/layout/OilHeader";
+import { MyPageLayout } from "@/components/my-page/MyPageLayout";
 import { MyOrdersFilterBar } from "@/components/my-orders/MyOrdersFilterBar";
 import { MyOrdersGuide } from "@/components/my-orders/MyOrdersGuide";
 import { MyOrdersPageHeader } from "@/components/my-orders/MyOrdersPageHeader";
@@ -34,29 +35,27 @@ export default function MyOrdersContainer() {
     <>
       <OilHeader />
 
-      <main className="min-h-[calc(100vh-64px)] bg-[#f7f7f5] text-[#071d3b]">
-        <div className="mx-auto grid w-full max-w-[1280px] gap-8 px-6 py-12 lg:px-8">
-          {user ? (
-            <>
-              <MyOrdersPageHeader user={user} orders={orders} />
-              <MyOrdersTabs orderCount={orders.length} />
-            </>
-          ) : null}
+      <MyPageLayout activeMenu="orders" contentClassName="grid gap-8">
+        {user ? (
+          <>
+            <MyOrdersPageHeader user={user} orders={orders} />
+            <MyOrdersTabs orderCount={orders.length} />
+          </>
+        ) : null}
 
-          {guardMessage ? (
-            <MyOrdersStateSection message={guardMessage} shouldShowLoginLink={isReady && !user} />
-          ) : null}
+        {guardMessage ? (
+          <MyOrdersStateSection message={guardMessage} shouldShowLoginLink={isReady && !user} />
+        ) : null}
 
-          {recentOrder ? (
-            <>
-              <MyOrdersFilterBar />
-              <RecentOrderCard order={recentOrder} />
-              <PreviousOrdersTable orders={previousOrders} />
-              <MyOrdersGuide />
-            </>
-          ) : null}
-        </div>
-      </main>
+        {recentOrder ? (
+          <>
+            <MyOrdersFilterBar />
+            <RecentOrderCard order={recentOrder} />
+            <PreviousOrdersTable orders={previousOrders} />
+            <MyOrdersGuide />
+          </>
+        ) : null}
+      </MyPageLayout>
     </>
   );
 }

@@ -6,6 +6,7 @@ import com.lubricantshop.back.domain.member.SocialProvider;
 public record MemberSignupResponse(
         Long memberId,
         String email,
+        String loginId,
         String name,
         SocialProvider provider,
         MemberRole role,

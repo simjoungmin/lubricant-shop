@@ -1,4 +1,5 @@
 import { formatPrice } from "@/components/cart/cart.utils";
+import { orderStatusLabel } from "@/components/my-order/my-order.labels";
 import { BankTransferGuide } from "@/components/order/BankTransferGuide";
 import type { OrderCreateResponse } from "@/components/order/order.api";
 import Link from "next/link";
@@ -21,7 +22,7 @@ export function OrderCompleteSection({
         <p className="text-sm font-black text-[#ff4b1f]">주문 저장 완료</p>
         <h2 className="mt-3 text-2xl font-black text-[#071d3b]">{createdOrder.orderNumber}</h2>
         <div className="mt-6 grid gap-3 text-sm">
-          <SummaryRow label="주문 상태" value={createdOrder.orderStatus} />
+          <SummaryRow label="주문 상태" value={orderStatusLabel[createdOrder.orderStatus]} />
           <SummaryRow label="상품 합계" value={formatPrice(createdOrder.totalOrderAmount)} />
           <SummaryRow label="사용 포인트" value={`${createdOrder.pointUsed.toLocaleString("ko-KR")} P`} />
           <div className="flex justify-between border-t border-[#e2e6eb] pt-3 text-[#34465c]">

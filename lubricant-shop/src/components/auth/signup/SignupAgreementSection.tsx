@@ -13,13 +13,13 @@ export function SignupAgreementSection({
   onChangeField,
 }: SignupAgreementSectionProps) {
   return (
-    <div className="rounded-md border border-white/10 bg-black/20 p-4">
-      <p className="mb-3 text-sm font-black text-white">필수 동의</p>
-      <div className="grid gap-3 text-sm text-zinc-300">
+    <div className="rounded-md border border-[#dce2e8] bg-[#f8fafc] p-4">
+      <p className="mb-3 text-sm font-black text-[#071d3b]">필수 동의</p>
+      <div className="grid gap-3 text-sm leading-6 text-[#34465c]">
         <label className="flex items-start gap-3">
           <input
             checked={form.termsAgreed}
-            className="mt-1 h-4 w-4 accent-[#d6a84f]"
+            className="mt-1 h-4 w-4 accent-[#ff4b1f]"
             type="checkbox"
             onChange={(event) => onChangeField("termsAgreed", event.target.checked)}
           />
@@ -31,7 +31,7 @@ export function SignupAgreementSection({
         <label className="flex items-start gap-3">
           <input
             checked={form.privacyAgreed}
-            className="mt-1 h-4 w-4 accent-[#d6a84f]"
+            className="mt-1 h-4 w-4 accent-[#ff4b1f]"
             type="checkbox"
             onChange={(event) => onChangeField("privacyAgreed", event.target.checked)}
           />

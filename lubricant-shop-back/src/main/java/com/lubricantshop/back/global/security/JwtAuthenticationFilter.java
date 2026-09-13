@@ -56,6 +56,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             Long memberId = jwtTokenProvider.getMemberId(accessToken);
             Member member = memberRepository.findById(memberId)
                     .orElseThrow(() -> new UnauthorizedException("로그인이 필요합니다."));
+            if (member.isWithdrawn()) {
+                throw new UnauthorizedException("로그인이 필요합니다.");
+            }
             AuthenticatedMember principal = new AuthenticatedMember(member.getMemberId(), member.getRole());
             UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
                     principal,

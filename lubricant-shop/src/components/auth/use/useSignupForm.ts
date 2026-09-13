@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import { signupApi } from "../signup/signup.api";
+import { signupApi, toSignupPayload } from "../signup/signup.api";
 import { emailPattern, initialSignupForm } from "../signup/signup.constants";
 import type { EmailCheckState, SignupErrors, SignupFormState } from "../signup/signup.types";
 import { validateSignupForm } from "../signup/signup.validation";
@@ -77,7 +77,29 @@ export const useSignupForm = ({ onSignupSuccess }: UseSignupFormOptions = {}) =>
   const handleSignupSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
-    const nextErrors = validateSignupForm(signupForm, emailCheckState);
+    const email = signupForm.email.trim().toLowerCase();
+    let nextEmailCheckState = emailCheckState;
+
+    if (emailPattern.test(email) && emailCheckState !== "available") {
+      setEmailCheckState("checking");
+
+      try {
+        const data = await signupApi.checkEmail(email);
+        nextEmailCheckState = data.duplicated ? "duplicated" : "available";
+        setEmailCheckState(nextEmailCheckState);
+      } catch (nextError) {
+        setEmailCheckState("idle");
+        setSignupErrors((current) => ({
+          ...current,
+          emailCheck:
+            nextError instanceof Error ? nextError.message : "이메일 중복 확인에 실패했습니다.",
+        }));
+        setSignupMessage("체크하지 않았거나 형식이 맞지 않는 항목을 확인해 주세요.");
+        return;
+      }
+    }
+
+    const nextErrors = validateSignupForm(signupForm, nextEmailCheckState);
     setSignupErrors(nextErrors);
 
     if (Object.keys(nextErrors).length > 0) {
@@ -89,16 +111,7 @@ export const useSignupForm = ({ onSignupSuccess }: UseSignupFormOptions = {}) =>
     setSignupMessage("");
 
     try {
-      await signupApi.signup({
-        email: signupForm.email.trim().toLowerCase(),
-        password: signupForm.password,
-        name: signupForm.name.trim(),
-        phone: signupForm.phone.trim(),
-        termsAgreed: signupForm.termsAgreed,
-        privacyAgreed: signupForm.privacyAgreed,
-        marketingAgreed: signupForm.marketingAgreed,
-        vehicleInfo: signupForm.vehicleEnabled ? signupForm.vehicleInfo.trim() : "",
-      });
+      await signupApi.signup(toSignupPayload(signupForm));
 
       setSignupForm(initialSignupForm);
       setEmailCheckState("idle");

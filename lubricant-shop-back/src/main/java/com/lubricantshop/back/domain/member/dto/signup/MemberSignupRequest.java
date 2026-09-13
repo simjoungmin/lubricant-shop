@@ -11,6 +11,10 @@ public record MemberSignupRequest(
         @Email(message = "올바른 이메일 형식으로 입력해 주세요.")
         String email,
 
+        @NotBlank(message = "아이디를 입력해 주세요.")
+        @Pattern(regexp = "^[a-z0-9]{4,16}$", message = "아이디는 영문소문자/숫자 4~16자로 입력해 주세요.")
+        String loginId,
+
         @NotBlank(message = "비밀번호를 입력해 주세요.")
         @Pattern(
                 regexp = "^(?=.*[a-z])(?=.*[A-Z])(?=.*[^A-Za-z0-9]).{8,}$",
@@ -21,6 +25,9 @@ public record MemberSignupRequest(
         @NotBlank(message = "이름을 입력해 주세요.")
         @Size(max = 80, message = "이름은 80자 이하로 입력해 주세요.")
         String name,
+
+        @Size(max = 500, message = "주소는 500자 이하로 입력해 주세요.")
+        String address,
 
         @NotBlank(message = "휴대폰 번호를 입력해 주세요.")
         @Pattern(regexp = "^01[016789]-?\\d{3,4}-?\\d{4}$", message = "휴대폰 번호 형식을 확인해 주세요.")

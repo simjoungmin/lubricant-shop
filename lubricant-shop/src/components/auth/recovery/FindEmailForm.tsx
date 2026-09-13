@@ -7,19 +7,19 @@ import { recoveryApi } from "./recovery.api";
 
 const FindEmailForm = () => {
   const [phone, setPhone] = useState("");
-  const [email, setEmail] = useState("");
+  const [loginId, setLoginId] = useState("");
   const [message, setMessage] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    setEmail("");
+    setLoginId("");
     setMessage("");
     setIsSubmitting(true);
 
     try {
       const data = await recoveryApi.findEmail(phone.trim());
-      setEmail(data.email);
+      setLoginId(data.loginId);
     } catch (nextError) {
       setMessage(nextError instanceof Error ? nextError.message : "아이디 찾기에 실패했습니다.");
     } finally {
@@ -32,7 +32,7 @@ const FindEmailForm = () => {
       <div className="rounded-lg border border-white/10 bg-[#11100d] p-6 shadow-2xl shadow-black/30">
         <p className="mb-3 text-sm font-bold text-[#d6a84f]">FIND ACCOUNT</p>
         <h1 className="text-2xl font-black text-white">아이디 찾기</h1>
-        <p className="mt-2 text-sm text-zinc-400">가입한 휴대폰 번호로 이메일 아이디를 찾습니다.</p>
+        <p className="mt-2 text-sm text-zinc-400">가입한 휴대폰 번호로 아이디를 찾습니다.</p>
 
         <form className="mt-7 space-y-4" onSubmit={handleSubmit}>
           <label className="grid gap-2 text-sm font-bold text-zinc-200">
@@ -47,9 +47,9 @@ const FindEmailForm = () => {
             />
           </label>
 
-          {email ? (
+          {loginId ? (
             <p className="rounded-md border border-emerald-400/30 bg-emerald-500/10 px-3 py-2 text-sm font-bold text-emerald-200">
-              가입된 이메일: {email}
+              가입된 아이디: {loginId}
             </p>
           ) : null}
           {message ? (

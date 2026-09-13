@@ -20,7 +20,7 @@ export type PasswordVerificationMethod = "EMAIL" | "PHONE";
 
 export const recoveryApi = {
   findEmail: (phone: string) =>
-    postJson<{ email: string }>("/api/members/find-email", {
+    postJson<{ loginId: string }>("/api/members/find-email", {
       phone,
     }),
 

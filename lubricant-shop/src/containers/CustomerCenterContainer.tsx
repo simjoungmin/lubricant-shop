@@ -1,6 +1,6 @@
 import { faqItems } from "@/assets/customer-center";
 import { inquiryCategories } from "@/assets/inquiry-categories";
-import OilFooter from "@/components/layout/OilFooter";
+import { DeliveryLookupLink } from "@/components/customer/DeliveryLookupLink";
 import OilHeader from "@/components/layout/OilHeader";
 import Link from "next/link";
 import React from "react";
@@ -75,13 +75,7 @@ const CustomerCenterContainer = () => {
               <p className="mt-3 text-sm leading-6 text-[#65717f]">
                 로그인 후 마이페이지에서 주문 상태와 배송 정보를 확인할 수 있습니다.
               </p>
-              <Link
-                href="/my-page/orders"
-                className="mt-7 flex h-12 items-center justify-between border border-[#cfd6de] bg-white px-5 text-sm font-black text-[#071d3b] transition hover:border-[#ff4b1f] hover:text-[#ff4b1f]"
-              >
-                배송 조회하기
-                <span aria-hidden="true">→</span>
-              </Link>
+              <DeliveryLookupLink />
             </article>
           </div>
         </section>
@@ -162,7 +156,6 @@ const CustomerCenterContainer = () => {
         </section>
       </main>
 
-      <OilFooter />
     </>
   );
 };

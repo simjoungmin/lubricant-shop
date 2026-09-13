@@ -4,7 +4,7 @@ import OilHeader from "@/components/layout/OilHeader";
 
 export default function LoginPage() {
   return (
-    <PageLayout>
+    <PageLayout shouldShowFooter={false}>
       <OilHeader />
       <LoginForm />
     </PageLayout>

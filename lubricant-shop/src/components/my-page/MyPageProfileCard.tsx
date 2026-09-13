@@ -1,5 +1,4 @@
 import type { AuthUser } from "@/components/auth/auth/auth.types";
-import Link from "next/link";
 import { providerLabel } from "./my-page.constants";
 
 type MyPageProfileCardProps = {
@@ -8,44 +7,43 @@ type MyPageProfileCardProps = {
 };
 
 export function MyPageProfileCard({ user, onLogout }: MyPageProfileCardProps) {
+  const initial = user.name.trim().slice(0, 1).toUpperCase() || "U";
+
   return (
-    <div className="rounded-lg border border-[#dde2e8] bg-white p-6">
-      <div className="flex flex-col gap-6 md:flex-row md:items-start md:justify-between">
-        <div>
-          <p className="text-sm font-bold text-[#65717f]">환영합니다</p>
-          <h2 className="mt-2 text-2xl font-black text-[#071d3b]">{user.name}</h2>
-          <p className="mt-2 text-sm font-bold text-[#65717f]">{user.email}</p>
-        </div>
-
-        <div className="grid gap-3 text-sm sm:grid-cols-2 md:min-w-[360px]">
-          <div className="rounded-md border border-[#dde2e8] bg-[#fbfcfd] p-4">
-            <p className="font-bold text-[#65717f]">로그인 방식</p>
-            <p className="mt-2 font-black text-[#071d3b]">{providerLabel[user.provider]}</p>
+    <section className="border-b border-[#dce2e8] pb-8">
+      <div className="grid gap-6 md:grid-cols-[1fr_180px] md:items-center">
+        <div className="grid gap-5 md:grid-cols-[84px_1fr_1fr_1fr] md:items-center">
+          <div className="flex h-20 w-20 items-center justify-center rounded-full bg-[#eef2f8] text-3xl font-black text-[#071d3b]">
+            {initial}
           </div>
-          <div className="rounded-md border border-[#dde2e8] bg-[#fbfcfd] p-4">
-            <p className="font-bold text-[#65717f]">보유 포인트</p>
-            <p className="mt-2 font-black text-[#ff4b1f]">
-              {user.pointBalance.toLocaleString("ko-KR")} P
+
+          <div className="min-w-0">
+            <h2 className="truncate text-xl font-black text-[#071d3b]">{user.name}</h2>
+            <p className="mt-1 text-sm font-bold text-[#65717f]">일반 회원</p>
+          </div>
+
+          <div className="min-w-0 border-[#dce2e8] md:border-l md:pl-8">
+            <p className="truncate text-base font-black text-[#071d3b]">{user.email}</p>
+            <p className="mt-1 text-sm font-bold text-[#65717f]">{providerLabel[user.provider]}</p>
+          </div>
+
+          <div className="border-[#dce2e8] md:border-l md:pl-8">
+            <p className="inline-flex items-center gap-2 text-base font-black text-[#071d3b]">
+              <span className="h-2.5 w-2.5 rounded-full bg-[#26b262]" />
+              정상 이용 중
             </p>
+            <p className="mt-1 text-sm font-bold text-[#65717f]">계정 상태</p>
           </div>
         </div>
-      </div>
 
-      <div className="mt-6 flex flex-wrap gap-3">
-        <Link
-          href="/"
-          className="flex h-11 items-center justify-center rounded-md border border-[#aab3bf] bg-white px-5 text-sm font-black text-[#071d3b] transition hover:border-[#ff4b1f] hover:text-[#ff4b1f]"
-        >
-          쇼핑 계속하기
-        </Link>
         <button
           type="button"
-          className="h-11 rounded-md bg-[#071d3b] px-5 text-sm font-black text-white transition hover:bg-[#12345f]"
+          className="h-11 rounded-md border border-[#aab3bf] bg-white px-5 text-sm font-black text-[#071d3b] transition hover:border-[#071d3b]"
           onClick={onLogout}
         >
           로그아웃
         </button>
       </div>
-    </div>
+    </section>
   );
 }

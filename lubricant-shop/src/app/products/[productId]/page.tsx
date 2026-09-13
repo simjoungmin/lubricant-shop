@@ -2,7 +2,6 @@ import { formatPrice, getDiscountRate } from "@/components/cart/cart.utils";
 import Button from "@/components/common/Button";
 import { PageLayout } from "@/components/common/Layout";
 import { productApi } from "@/components/category/product.api";
-import OilFooter from "@/components/layout/OilFooter";
 import OilHeader from "@/components/layout/OilHeader";
 import Image from "next/image";
 import Link from "next/link";
@@ -135,7 +134,6 @@ const ProductDetailPage = async ({ params }: ProductDetailPageProps) => {
           </div>
         </section>
       </main>
-      <OilFooter />
     </PageLayout>
   );
 };

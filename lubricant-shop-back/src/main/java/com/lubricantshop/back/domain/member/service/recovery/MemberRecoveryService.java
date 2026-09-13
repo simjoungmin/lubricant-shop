@@ -33,7 +33,7 @@ public class MemberRecoveryService {
         Member member = memberRepository.findByPhoneNumber(normalizePhone(phone))
                 .orElseThrow(() -> new IllegalArgumentException("입력한 휴대폰 번호로 가입된 계정이 없습니다."));
 
-        return new FindEmailResponse(member.getEmail());
+        return new FindEmailResponse(member.getLoginId());
     }
 
     @Transactional(readOnly = true)

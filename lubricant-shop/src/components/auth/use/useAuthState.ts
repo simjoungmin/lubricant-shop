@@ -52,6 +52,20 @@ export const useAuthState = (): AuthContextValue => {
         authApi.startSocialLogin(provider);
         return new Promise<AuthUser>(() => undefined);
       },
+      updateName: async (input) => {
+        const member = await authApi.updateName(input);
+        const nextUser = toAuthUser(member);
+        setUser(nextUser);
+
+        return nextUser;
+      },
+      updatePassword: async (input) => {
+        await authApi.updatePassword(input);
+      },
+      withdraw: async () => {
+        await authApi.withdraw();
+        setUser(null);
+      },
       logout: async () => {
         await authApi.logout();
         setUser(null);

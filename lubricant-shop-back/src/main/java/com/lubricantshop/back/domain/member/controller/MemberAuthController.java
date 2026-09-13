@@ -2,6 +2,9 @@ package com.lubricantshop.back.domain.member.controller;
 
 import com.lubricantshop.back.domain.member.dto.auth.MemberLoginRequest;
 import com.lubricantshop.back.domain.member.dto.auth.MemberLoginResponse;
+import com.lubricantshop.back.domain.member.dto.auth.MemberNameUpdateRequest;
+import com.lubricantshop.back.domain.member.dto.auth.MemberPasswordUpdateRequest;
+import com.lubricantshop.back.domain.member.dto.common.SimpleMessageResponse;
 import com.lubricantshop.back.domain.member.service.auth.MemberAuthService;
 import com.lubricantshop.back.global.security.AuthenticatedMember;
 import com.lubricantshop.back.global.security.JwtTokenProvider;
@@ -12,7 +15,9 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseCookie;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -54,6 +59,37 @@ public class MemberAuthController {
             @AuthenticationPrincipal AuthenticatedMember member
     ) {
         return memberAuthService.findLoggedInMember(member.memberId());
+    }
+
+    @PatchMapping("/me/name")
+    public MemberLoginResponse updateName(
+            @AuthenticationPrincipal AuthenticatedMember member,
+            @Valid @RequestBody MemberNameUpdateRequest request
+    ) {
+        return memberAuthService.updateName(member.memberId(), request);
+    }
+
+    @PatchMapping("/me/password")
+    public SimpleMessageResponse updatePassword(
+            @AuthenticationPrincipal AuthenticatedMember member,
+            @Valid @RequestBody MemberPasswordUpdateRequest request
+    ) {
+        memberAuthService.updatePassword(member.memberId(), request);
+        return new SimpleMessageResponse("비밀번호가 변경되었습니다.");
+    }
+
+    @DeleteMapping("/me")
+    public SimpleMessageResponse withdraw(
+            @AuthenticationPrincipal AuthenticatedMember member,
+            HttpServletResponse response
+    ) {
+        withdrawMember(member, response);
+        return new SimpleMessageResponse("회원탈퇴 신청이 완료되었습니다.");
+    }
+
+    private void withdrawMember(AuthenticatedMember member, HttpServletResponse response) {
+        memberAuthService.withdraw(member.memberId());
+        addAccessTokenCookie(response, "", Duration.ZERO);
     }
 
     @PostMapping("/logout")

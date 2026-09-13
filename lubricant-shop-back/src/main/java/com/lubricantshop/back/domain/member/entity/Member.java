@@ -25,9 +25,13 @@ public class Member {
     @Column(name = "member_id")
     private Long memberId;
 
-    // 로그인 ID로 사용하는 이메일입니다.
+    // 회원 연락과 계정 복구에 사용하는 이메일입니다.
     @Column(name = "email", nullable = false, unique = true, length = 160)
     private String email;
+
+    // 로그인에 사용하는 아이디입니다.
+    @Column(name = "login_id", nullable = false, unique = true, length = 120)
+    private String loginId;
 
     // 암호화되어 저장되는 비밀번호입니다.
     @Column(name = "password", nullable = false, length = 255)
@@ -87,6 +91,10 @@ public class Member {
     @Column(name = "withdrawn_at")
     private LocalDateTime withdrawnAt;
 
+    // 탈퇴 유예기간이 지나 개인정보가 최종 정리된 시각입니다.
+    @Column(name = "withdrawal_finalized_at")
+    private LocalDateTime withdrawalFinalizedAt;
+
     // 탈퇴 여부입니다. 실제 삭제 대신 계정 비활성화에 사용합니다.
     @Column(name = "is_withdrawn", nullable = false)
     private Boolean withdrawn = false;
@@ -100,6 +108,7 @@ public class Member {
 
     public Member(
             String email,
+            String loginId,
             String password,
             String memberName,
             String phoneNumber,
@@ -110,6 +119,7 @@ public class Member {
             String vehicleInfo
     ) {
         this.email = email;
+        this.loginId = loginId;
         this.password = password;
         this.memberName = memberName;
         this.phoneNumber = phoneNumber;
@@ -130,6 +140,7 @@ public class Member {
     ) {
         Member member = new Member(
                 email,
+                createSocialLoginId(provider, providerId),
                 password,
                 memberName,
                 "",
@@ -144,12 +155,21 @@ public class Member {
         return member;
     }
 
+    private static String createSocialLoginId(SocialProvider provider, String providerId) {
+        String normalizedProviderId = providerId.replaceAll("[^A-Za-z0-9]", "").toLowerCase();
+        return provider.name().toLowerCase() + "_" + normalizedProviderId;
+    }
+
     public Long getMemberId() {
         return memberId;
     }
 
     public String getEmail() {
         return email;
+    }
+
+    public String getLoginId() {
+        return loginId;
     }
 
     public String getPassword() {
@@ -174,6 +194,26 @@ public class Member {
 
     public String getProviderId() {
         return providerId;
+    }
+
+    public String getAddress() {
+        return address;
+    }
+
+    public boolean isWithdrawn() {
+        return Boolean.TRUE.equals(withdrawn);
+    }
+
+    public boolean isWithdrawalPending() {
+        return isWithdrawn() && withdrawalFinalizedAt == null;
+    }
+
+    public boolean canRestoreWithdrawal(LocalDateTime now) {
+        return isWithdrawalPending() && withdrawnAt != null && now.isBefore(withdrawnAt.plusDays(7));
+    }
+
+    public boolean isWithdrawalExpired(LocalDateTime now) {
+        return isWithdrawalPending() && (withdrawnAt == null || !now.isBefore(withdrawnAt.plusDays(7)));
     }
 
     public Integer getPointBalance() {
@@ -233,6 +273,50 @@ public class Member {
         this.password = password;
     }
 
+    public void changeName(String memberName) {
+        this.memberName = memberName;
+    }
+
+    public void requestWithdrawal(LocalDateTime now) {
+        if (Boolean.TRUE.equals(withdrawn)) {
+            return;
+        }
+
+        withdrawn = true;
+        withdrawnAt = now;
+        withdrawalFinalizedAt = null;
+    }
+
+    public void restoreWithdrawal() {
+        if (!isWithdrawalPending()) {
+            return;
+        }
+
+        withdrawn = false;
+        withdrawnAt = null;
+    }
+
+    public void finalizeWithdrawal(LocalDateTime now) {
+        if (withdrawalFinalizedAt != null) {
+            return;
+        }
+
+        withdrawn = true;
+        withdrawalFinalizedAt = now;
+        email = "withdrawn-" + memberId + "@oil-master.local";
+        loginId = "withdrawn_" + memberId;
+        password = "{noop}withdrawn";
+        memberName = "탈퇴 회원";
+        phoneNumber = "";
+        providerId = null;
+        address = "";
+        termsAgreed = false;
+        privacyAgreed = false;
+        marketingAgreed = false;
+        vehicleInfo = "";
+        pointBalance = 0;
+    }
+
     @PrePersist
     void prePersist() {
         LocalDateTime now = LocalDateTime.now();
@@ -240,6 +324,9 @@ public class Member {
         updatedAt = now;
         if (pointBalance == null) {
             pointBalance = 0;
+        }
+        if (withdrawn == null) {
+            withdrawn = false;
         }
     }
 

@@ -20,6 +20,7 @@ public class ProductService {
     public List<ProductResponse> findProducts(
             String category,
             String subCategory,
+            String brand,
             String keyword,
             String fuelType,
             String viscosity,
@@ -30,12 +31,38 @@ public class ProductService {
                 .stream()
                 .filter(product -> isMatchedCategory(product, category))
                 .filter(product -> isMatchedSubCategory(product, subCategory))
+                .filter(product -> isMatchedBrand(product, brand))
                 .filter(product -> isMatchedKeyword(product, keyword))
                 .filter(product -> isMatchedFuelType(product, fuelType))
                 .filter(product -> isMatchedViscosity(product, viscosity))
                 .filter(product -> isMatchedStandard(product, standard))
                 .sorted(resolveSort(sort))
                 .map(ProductResponse::from)
+                .toList();
+    }
+
+    @Transactional(readOnly = true)
+    public List<String> findBrands(
+            String category,
+            String subCategory,
+            String keyword,
+            String fuelType,
+            String viscosity,
+            String standard
+    ) {
+        return productRepository.findByDeletedFalseAndSaleStatusOrderByProductIdAsc(ProductStatus.ON_SALE)
+                .stream()
+                .filter(product -> isMatchedCategory(product, category))
+                .filter(product -> isMatchedSubCategory(product, subCategory))
+                .filter(product -> isMatchedKeyword(product, keyword))
+                .filter(product -> isMatchedFuelType(product, fuelType))
+                .filter(product -> isMatchedViscosity(product, viscosity))
+                .filter(product -> isMatchedStandard(product, standard))
+                .map(Product::getBrand)
+                .filter(brand -> !isBlank(brand))
+                .map(String::trim)
+                .distinct()
+                .sorted((firstBrand, secondBrand) -> firstBrand.compareToIgnoreCase(secondBrand))
                 .toList();
     }
 
@@ -74,6 +101,10 @@ public class ProductService {
         String specification = normalize(product.getSpecification());
         String viscosity = normalize(product.getViscosity());
         String searchableText = String.join(" ", productName, brand, productDescription, specification, viscosity);
+
+        if ("brandengineoil".equals(normalizedSubCategory)) {
+            return !isBlank(product.getBrand());
+        }
 
         return productSubCategory.equals(normalizedSubCategory)
                 || viscosity.equals(normalizedSubCategory)
@@ -114,6 +145,14 @@ public class ProductService {
             case "hydraulicoil" -> List.of("유압유");
             default -> List.of(subCategory);
         };
+    }
+
+    private boolean isMatchedBrand(Product product, String brand) {
+        if (isBlank(brand)) {
+            return true;
+        }
+
+        return normalize(product.getBrand()).equals(normalize(brand));
     }
 
     private boolean isMatchedKeyword(Product product, String keyword) {

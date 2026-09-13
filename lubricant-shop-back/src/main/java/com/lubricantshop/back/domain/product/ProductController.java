@@ -22,13 +22,26 @@ public class ProductController {
     public List<ProductResponse> findProducts(
             @RequestParam(required = false) String category,
             @RequestParam(required = false) String subCategory,
+            @RequestParam(required = false) String brand,
             @RequestParam(required = false, name = "q") String keyword,
             @RequestParam(required = false) String fuelType,
             @RequestParam(required = false) String viscosity,
             @RequestParam(required = false) String standard,
             @RequestParam(required = false, defaultValue = "popular") String sort
     ) {
-        return productService.findProducts(category, subCategory, keyword, fuelType, viscosity, standard, sort);
+        return productService.findProducts(category, subCategory, brand, keyword, fuelType, viscosity, standard, sort);
+    }
+
+    @GetMapping("/brands")
+    public List<String> findBrands(
+            @RequestParam(required = false) String category,
+            @RequestParam(required = false) String subCategory,
+            @RequestParam(required = false, name = "q") String keyword,
+            @RequestParam(required = false) String fuelType,
+            @RequestParam(required = false) String viscosity,
+            @RequestParam(required = false) String standard
+    ) {
+        return productService.findBrands(category, subCategory, keyword, fuelType, viscosity, standard);
     }
 
     @GetMapping("/{productId}")

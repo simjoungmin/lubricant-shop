@@ -1,16 +1,29 @@
-import type { SignupFormState } from "./signup.types";
+import type { SignupFormState, SignupSavedFieldState, SignupUiOnlyFieldState } from "./signup.types";
 
-export const initialSignupForm: SignupFormState = {
+export const initialSignupSavedFields: SignupSavedFieldState = {
   email: "",
+  loginId: "",
   password: "",
-  passwordConfirm: "",
   name: "",
+  postalCode: "",
+  address: "",
+  detailAddress: "",
   phone: "",
   termsAgreed: false,
   privacyAgreed: false,
-  vehicleEnabled: false,
   vehicleInfo: "",
   marketingAgreed: false,
+};
+
+export const initialSignupUiOnlyFields: SignupUiOnlyFieldState = {
+  passwordConfirm: "",
+  privacyDelegationAgreed: false,
+  vehicleEnabled: false,
+};
+
+export const initialSignupForm: SignupFormState = {
+  ...initialSignupSavedFields,
+  ...initialSignupUiOnlyFields,
 };
 
 export const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
