@@ -4,13 +4,14 @@ import type {
   AdminOrderShipmentUpdateInput,
   OrderStatus,
 } from "@/components/admin/admin.api";
+import { AdminGuardMessage } from "@/components/admin/AdminGuardMessage";
 import {
   adminOrderStatusLabel,
   getAdminOrderStatusClassName,
 } from "@/components/admin/order/admin-order.labels";
 import { AdminOrderDetailView } from "@/components/admin/order/AdminOrderDetailView";
-import { useAuth } from "@/components/auth/auth/AuthContext";
 import OilHeader from "@/components/layout/OilHeader";
+import { useAdminAccess } from "@/hooks/useAdminAccess";
 import {
   useAdminOrder,
   useCompleteAdminOrderPayment,
@@ -27,8 +28,7 @@ type AdminOrderDetailContainerProps = {
 export default function AdminOrderDetailContainer({
   orderId,
 }: AdminOrderDetailContainerProps) {
-  const { user, isReady } = useAuth();
-  const isAdmin = user?.role === "ADMIN";
+  const { isReady, isAdmin, showLoginLink } = useAdminAccess();
   const orderQuery = useAdminOrder(orderId, isReady && isAdmin);
   const updateOrderStatusMutation = useUpdateAdminOrderStatus();
   const updateOrderShipmentMutation = useUpdateAdminOrderShipment();
@@ -140,19 +140,7 @@ export default function AdminOrderDetailContainer({
           ) : null}
         </div>
 
-        {guardMessage ? (
-          <section className="mb-5 rounded-lg border border-white/10 bg-[#171611] p-5">
-            <p className="text-sm font-bold text-zinc-300">{guardMessage}</p>
-            {isReady && !isAdmin ? (
-              <Link
-                href="/login"
-                className="mt-5 inline-flex h-11 items-center justify-center rounded-md bg-[#d6a84f] px-5 text-sm font-black text-black transition hover:bg-[#f0c76a]"
-              >
-                로그인하러 가기
-              </Link>
-            ) : null}
-          </section>
-        ) : null}
+        <AdminGuardMessage message={guardMessage} showLoginLink={showLoginLink} className="mb-5" />
 
         {order ? (
           <AdminOrderDetailView

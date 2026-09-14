@@ -9,6 +9,8 @@ import com.lubricantshop.back.domain.member.repository.MemberRepository;
 import com.lubricantshop.back.domain.product.Product;
 import com.lubricantshop.back.domain.product.ProductRepository;
 import com.lubricantshop.back.domain.product.ProductStatus;
+import com.lubricantshop.back.global.exception.ConflictException;
+import com.lubricantshop.back.global.exception.ResourceNotFoundException;
 import com.lubricantshop.back.global.exception.UnauthorizedException;
 import java.util.List;
 import org.springframework.stereotype.Service;
@@ -63,7 +65,7 @@ public class CartService {
     @Transactional
     public CartResponse updateQuantity(Long memberId, Long cartId, CartQuantityUpdateRequest request) {
         Cart cart = cartRepository.findById(cartId)
-                .orElseThrow(() -> new IllegalArgumentException("장바구니 상품을 찾을 수 없습니다."));
+                .orElseThrow(() -> new ResourceNotFoundException("장바구니 상품을 찾을 수 없습니다."));
 
         if (!cartBelongsToMember(cart, memberId)) {
             throw new UnauthorizedException("장바구니를 수정할 권한이 없습니다.");
@@ -94,24 +96,24 @@ public class CartService {
 
     private Product findAvailableProduct(Long productId) {
         Product product = productRepository.findById(productId)
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 상품입니다."));
+                .orElseThrow(() -> new ResourceNotFoundException("존재하지 않는 상품입니다."));
         validateAvailableProduct(product);
         return product;
     }
 
     private void validateAvailableProduct(Product product) {
         if (product.getSaleStatus() != ProductStatus.ON_SALE) {
-            throw new IllegalStateException("현재 구매할 수 없는 상품입니다.");
+            throw new ConflictException("현재 구매할 수 없는 상품입니다.");
         }
 
         if (product.getStock() <= 0) {
-            throw new IllegalStateException("품절된 상품입니다.");
+            throw new ConflictException("품절된 상품입니다.");
         }
     }
 
     private void validateQuantityWithinStock(Product product, int quantity) {
         if (quantity > product.getStock()) {
-            throw new IllegalStateException("장바구니 수량이 현재 재고보다 많습니다.");
+            throw new ConflictException("장바구니 수량이 현재 재고보다 많습니다.");
         }
     }
 

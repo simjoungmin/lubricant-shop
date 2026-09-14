@@ -8,6 +8,7 @@ import com.lubricantshop.back.domain.order.dto.MyOrderItemResponse;
 import com.lubricantshop.back.domain.order.dto.MyOrderSummaryResponse;
 import com.lubricantshop.back.domain.order.dto.OrderCreateRequest;
 import com.lubricantshop.back.domain.order.dto.OrderCreateResponse;
+import com.lubricantshop.back.global.exception.ResourceNotFoundException;
 import com.lubricantshop.back.global.exception.UnauthorizedException;
 import java.math.BigDecimal;
 import java.util.List;
@@ -99,7 +100,7 @@ public class OrderService {
     public MyOrderDetailResponse findMyOrder(Long memberId, Long orderId) {
         findMember(memberId);
         Order order = orderRepository.findByOrderIdAndMember_MemberId(orderId, memberId)
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 주문입니다."));
+                .orElseThrow(() -> new ResourceNotFoundException("존재하지 않는 주문입니다."));
 
         return MyOrderDetailResponse.from(order, findOrderItems(order.getOrderId()));
     }

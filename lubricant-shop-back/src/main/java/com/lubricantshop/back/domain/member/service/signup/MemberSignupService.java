@@ -4,6 +4,7 @@ import com.lubricantshop.back.domain.member.dto.signup.MemberSignupRequest;
 import com.lubricantshop.back.domain.member.dto.signup.MemberSignupResponse;
 import com.lubricantshop.back.domain.member.entity.Member;
 import com.lubricantshop.back.domain.member.repository.MemberRepository;
+import com.lubricantshop.back.global.exception.ConflictException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -30,11 +31,11 @@ public class MemberSignupService {
         String loginId = request.loginId().trim().toLowerCase();
 
         if (memberRepository.existsByEmailIgnoreCase(email)) {
-            throw new IllegalArgumentException("이미 사용 중인 이메일입니다.");
+            throw new ConflictException("이미 사용 중인 이메일입니다.");
         }
 
         if (memberRepository.existsByLoginIdIgnoreCase(loginId)) {
-            throw new IllegalArgumentException("이미 사용 중인 아이디입니다.");
+            throw new ConflictException("이미 사용 중인 아이디입니다.");
         }
 
         Member member = new Member(

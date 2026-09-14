@@ -1,7 +1,8 @@
 ﻿"use client";
 
-import { useAuth } from "@/components/auth/auth/AuthContext";
+import { AdminGuardMessage } from "@/components/admin/AdminGuardMessage";
 import OilHeader from "@/components/layout/OilHeader";
+import { useAdminAccess } from "@/hooks/useAdminAccess";
 import Link from "next/link";
 
 const adminLinks = [
@@ -23,8 +24,12 @@ const adminLinks = [
 ];
 
 export default function AdminHomeContainer() {
-  const { user, isReady } = useAuth();
-  const isAdmin = user?.role === "ADMIN";
+  const { isReady, isAdmin, showLoginLink } = useAdminAccess();
+  const guardMessage = !isReady
+    ? "관리자 정보를 확인하는 중입니다."
+    : !isAdmin
+      ? "관리자 계정으로 로그인하면 운영 메뉴를 사용할 수 있습니다."
+      : "";
 
   return (
     <>
@@ -37,19 +42,7 @@ export default function AdminHomeContainer() {
         </p>
 
         {!isReady || !isAdmin ? (
-          <section className="mt-8 rounded-lg border border-white/10 bg-[#171611] p-6">
-            <p className="text-sm font-bold text-zinc-300">
-              {isReady ? "관리자 계정으로 로그인하면 운영 메뉴를 사용할 수 있습니다." : "관리자 정보를 확인하는 중입니다."}
-            </p>
-            {isReady ? (
-              <Link
-                href="/login"
-                className="mt-5 inline-flex h-11 items-center justify-center rounded-md bg-[#d6a84f] px-5 text-sm font-black text-black transition hover:bg-[#f0c76a]"
-              >
-                로그인하러 가기
-              </Link>
-            ) : null}
-          </section>
+          <AdminGuardMessage message={guardMessage} showLoginLink={showLoginLink} className="mt-8" />
         ) : (
           <section className="mt-8 grid gap-4 md:grid-cols-3">
             {adminLinks.map((item) => (

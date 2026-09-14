@@ -1,9 +1,9 @@
 package com.lubricantshop.back.domain.board.service;
 
 import com.lubricantshop.back.domain.board.Board;
-import com.lubricantshop.back.domain.member.MemberRole;
 import com.lubricantshop.back.domain.member.entity.Member;
 import com.lubricantshop.back.domain.member.repository.MemberRepository;
+import com.lubricantshop.back.domain.member.service.AdminAuthorizationService;
 import com.lubricantshop.back.global.exception.ForbiddenException;
 import com.lubricantshop.back.global.exception.UnauthorizedException;
 import org.springframework.stereotype.Component;
@@ -11,10 +11,17 @@ import org.springframework.stereotype.Component;
 @Component
 public class BoardInquiryAuthorization {
 
-    private final MemberRepository memberRepository;
+    private static final String ADMIN_INQUIRIES_FORBIDDEN_MESSAGE = "관리자만 문의를 확인할 수 있습니다.";
 
-    public BoardInquiryAuthorization(MemberRepository memberRepository) {
+    private final MemberRepository memberRepository;
+    private final AdminAuthorizationService adminAuthorizationService;
+
+    public BoardInquiryAuthorization(
+            MemberRepository memberRepository,
+            AdminAuthorizationService adminAuthorizationService
+    ) {
         this.memberRepository = memberRepository;
+        this.adminAuthorizationService = adminAuthorizationService;
     }
 
     public Member findMember(Long memberId) {
@@ -23,12 +30,7 @@ public class BoardInquiryAuthorization {
     }
 
     public Member requireAdmin(Long memberId) {
-        Member admin = findMember(memberId);
-        if (admin.getRole() != MemberRole.ADMIN) {
-            throw new ForbiddenException("관리자만 문의를 확인할 수 있습니다.");
-        }
-
-        return admin;
+        return adminAuthorizationService.requireAdmin(memberId, ADMIN_INQUIRIES_FORBIDDEN_MESSAGE);
     }
 
     public void requireOwner(Long writerId, Board board) {

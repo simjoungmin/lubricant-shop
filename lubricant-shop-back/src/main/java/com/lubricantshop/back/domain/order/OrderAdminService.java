@@ -1,16 +1,15 @@
 package com.lubricantshop.back.domain.order;
 
-import com.lubricantshop.back.domain.member.MemberRole;
 import com.lubricantshop.back.domain.member.entity.Member;
-import com.lubricantshop.back.domain.member.repository.MemberRepository;
+import com.lubricantshop.back.domain.member.service.AdminAuthorizationService;
 import com.lubricantshop.back.domain.order.dto.AdminOrderItemResponse;
 import com.lubricantshop.back.domain.order.dto.AdminOrderResponse;
 import com.lubricantshop.back.domain.order.dto.AdminOrderShipmentUpdateRequest;
 import com.lubricantshop.back.domain.order.dto.AdminOrderStatusUpdateRequest;
 import com.lubricantshop.back.domain.product.Product;
 import com.lubricantshop.back.domain.product.ProductStatus;
-import com.lubricantshop.back.global.exception.ForbiddenException;
-import com.lubricantshop.back.global.exception.UnauthorizedException;
+import com.lubricantshop.back.global.exception.ConflictException;
+import com.lubricantshop.back.global.exception.ResourceNotFoundException;
 import java.util.List;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,18 +17,20 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class OrderAdminService {
 
+    private static final String ADMIN_ORDERS_FORBIDDEN_MESSAGE = "관리자만 주문을 관리할 수 있습니다.";
+
     private final OrderRepository orderRepository;
     private final OrderItemRepository orderItemRepository;
-    private final MemberRepository memberRepository;
+    private final AdminAuthorizationService adminAuthorizationService;
 
     public OrderAdminService(
             OrderRepository orderRepository,
             OrderItemRepository orderItemRepository,
-            MemberRepository memberRepository
+            AdminAuthorizationService adminAuthorizationService
     ) {
         this.orderRepository = orderRepository;
         this.orderItemRepository = orderItemRepository;
-        this.memberRepository = memberRepository;
+        this.adminAuthorizationService = adminAuthorizationService;
     }
 
     @Transactional(readOnly = true)
@@ -87,7 +88,7 @@ public class OrderAdminService {
 
     private AdminOrderResponse completePayment(Long orderId) {
         Order order = orderRepository.findByOrderIdForUpdate(orderId)
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 주문입니다."));
+                .orElseThrow(() -> new ResourceNotFoundException("존재하지 않는 주문입니다."));
 
         return completePayment(order);
     }
@@ -98,14 +99,14 @@ public class OrderAdminService {
         }
 
         if (order.getOrderStatus() != OrderStatus.ORDERED) {
-            throw new IllegalStateException("주문 접수 상태에서만 결제 완료 처리할 수 있습니다.");
+            throw new ConflictException("주문 접수 상태에서만 결제 완료 처리할 수 있습니다.");
         }
 
         List<OrderItem> orderItems = orderItemRepository.findByOrderOrderIdOrderByOrderItemIdAsc(order.getOrderId());
 
         for (OrderItem orderItem : orderItems) {
             Product product = orderItem.getProduct();
-            validatePurchasableProduct(product);
+            validatePurchasableProduct(product, orderItem.getQuantity());
             product.decreaseStock(orderItem.getQuantity());
         }
 
@@ -120,23 +121,20 @@ public class OrderAdminService {
 
     private Order findOrder(Long orderId) {
         return orderRepository.findById(orderId)
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 주문입니다."));
+                .orElseThrow(() -> new ResourceNotFoundException("존재하지 않는 주문입니다."));
     }
 
     private Member requireAdmin(Long memberId) {
-        Member admin = memberRepository.findById(memberId)
-                .orElseThrow(() -> new UnauthorizedException("로그인이 필요합니다."));
-
-        if (admin.getRole() != MemberRole.ADMIN) {
-            throw new ForbiddenException("관리자만 주문을 관리할 수 있습니다.");
-        }
-
-        return admin;
+        return adminAuthorizationService.requireAdmin(memberId, ADMIN_ORDERS_FORBIDDEN_MESSAGE);
     }
 
-    private void validatePurchasableProduct(Product product) {
+    private void validatePurchasableProduct(Product product, int quantity) {
         if (product.getSaleStatus() != ProductStatus.ON_SALE) {
-            throw new IllegalStateException("현재 구매할 수 없는 상품이 포함되어 있습니다.");
+            throw new ConflictException("현재 구매할 수 없는 상품이 포함되어 있습니다.");
+        }
+
+        if (product.getStock() < quantity) {
+            throw new ConflictException("상품 재고가 부족합니다.");
         }
     }
 

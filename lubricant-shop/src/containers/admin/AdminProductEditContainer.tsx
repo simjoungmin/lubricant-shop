@@ -1,8 +1,9 @@
 "use client";
 
 import { AdminProductEditForm } from "@/components/admin/product/edit/AdminProductEditForm";
-import { useAuth } from "@/components/auth/auth/AuthContext";
+import { AdminGuardMessage } from "@/components/admin/AdminGuardMessage";
 import OilHeader from "@/components/layout/OilHeader";
+import { useAdminAccess } from "@/hooks/useAdminAccess";
 import { useAdminProduct } from "@/hooks/useAdminProducts";
 import Link from "next/link";
 
@@ -13,8 +14,7 @@ type AdminProductEditContainerProps = {
 export default function AdminProductEditContainer({
   productId,
 }: AdminProductEditContainerProps) {
-  const { user, isReady } = useAuth();
-  const isAdmin = user?.role === "ADMIN";
+  const { isReady, isAdmin, showLoginLink } = useAdminAccess();
   const productQuery = useAdminProduct(productId, isReady && isAdmin);
 
   const guardMessage = !isReady
@@ -44,11 +44,7 @@ export default function AdminProductEditContainer({
           </div>
         </div>
 
-        {guardMessage ? (
-          <section className="rounded-lg border border-white/10 bg-[#171611] p-5">
-            <p className="text-sm font-bold text-zinc-300">{guardMessage}</p>
-          </section>
-        ) : null}
+        <AdminGuardMessage message={guardMessage} showLoginLink={showLoginLink} />
 
         {productQuery.data ? (
           <AdminProductEditForm key={productId} product={productQuery.data} />

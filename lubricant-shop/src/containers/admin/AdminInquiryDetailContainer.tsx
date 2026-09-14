@@ -1,7 +1,8 @@
 ﻿"use client";
 
-import { useAuth } from "@/components/auth/auth/AuthContext";
+import { AdminGuardMessage } from "@/components/admin/AdminGuardMessage";
 import OilHeader from "@/components/layout/OilHeader";
+import { useAdminAccess } from "@/hooks/useAdminAccess";
 import { useAdminInquiryDetail, useCreateInquiryAnswer } from "@/hooks/useInquiries";
 import Link from "next/link";
 import { useParams } from "next/navigation";
@@ -17,10 +18,9 @@ const formatDateTime = (value: string) =>
 export default function AdminInquiryDetailContainer() {
   const params = useParams<{ boardId: string }>();
   const boardId = Number(params.boardId);
-  const { user, isReady } = useAuth();
+  const { isReady, isAdmin, showLoginLink } = useAdminAccess();
   const [answer, setAnswer] = useState("");
   const [message, setMessage] = useState("");
-  const isAdmin = user?.role === "ADMIN";
   const detailQuery = useAdminInquiryDetail(boardId, isReady && isAdmin);
   const createAnswerMutation = useCreateInquiryAnswer(boardId);
   const detail = detailQuery.data ?? null;
@@ -68,9 +68,7 @@ export default function AdminInquiryDetailContainer() {
         </div>
 
         {guardMessage && !detail ? (
-          <section className="rounded-lg border border-white/10 bg-[#171611] p-6">
-            <p className="text-sm font-bold text-zinc-300">{guardMessage}</p>
-          </section>
+          <AdminGuardMessage message={guardMessage} showLoginLink={showLoginLink} />
         ) : null}
 
         {detail ? (

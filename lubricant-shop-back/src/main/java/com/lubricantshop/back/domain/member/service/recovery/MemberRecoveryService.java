@@ -7,6 +7,8 @@ import com.lubricantshop.back.domain.member.dto.recovery.PasswordVerificationRes
 import com.lubricantshop.back.domain.member.entity.Member;
 import com.lubricantshop.back.domain.member.repository.MemberRepository;
 import com.lubricantshop.back.domain.member.service.verification.PasswordVerificationService;
+import com.lubricantshop.back.global.exception.BadRequestException;
+import com.lubricantshop.back.global.exception.ResourceNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -31,7 +33,7 @@ public class MemberRecoveryService {
     @Transactional(readOnly = true)
     public FindEmailResponse findEmailByPhone(String phone) {
         Member member = memberRepository.findByPhoneNumber(normalizePhone(phone))
-                .orElseThrow(() -> new IllegalArgumentException("입력한 휴대폰 번호로 가입된 계정이 없습니다."));
+                .orElseThrow(() -> new ResourceNotFoundException("입력한 휴대폰 번호로 가입된 계정이 없습니다."));
 
         return new FindEmailResponse(member.getLoginId());
     }
@@ -42,7 +44,7 @@ public class MemberRecoveryService {
             PasswordVerificationMethod method
     ) {
         Member member = memberRepository.findByEmailIgnoreCase(email.trim().toLowerCase())
-                .orElseThrow(() -> new IllegalArgumentException("입력한 이메일로 가입된 계정이 없습니다."));
+                .orElseThrow(() -> new ResourceNotFoundException("입력한 이메일로 가입된 계정이 없습니다."));
 
         String receiver = method == PasswordVerificationMethod.EMAIL ? member.getEmail() : member.getPhoneNumber();
         String code = passwordVerificationService.createCode(member.getEmail(), method, receiver);
@@ -57,18 +59,18 @@ public class MemberRecoveryService {
     public void resetPassword(PasswordResetRequest request) {
         String email = request.email().trim().toLowerCase();
         Member member = memberRepository.findByEmailIgnoreCase(email)
-                .orElseThrow(() -> new IllegalArgumentException("입력한 이메일로 가입된 계정이 없습니다."));
+                .orElseThrow(() -> new ResourceNotFoundException("입력한 이메일로 가입된 계정이 없습니다."));
 
         if (!request.newPassword().equals(request.newPasswordConfirm())) {
-            throw new IllegalArgumentException("새 비밀번호가 일치하지 않습니다.");
+            throw new BadRequestException("새 비밀번호가 일치하지 않습니다.");
         }
 
         if (passwordEncoder.matches(request.newPassword(), member.getPassword())) {
-            throw new IllegalArgumentException("기존 비밀번호와 동일한 비밀번호로 변경할 수 없습니다.");
+            throw new BadRequestException("기존 비밀번호와 동일한 비밀번호로 변경할 수 없습니다.");
         }
 
         if (!passwordVerificationService.verifyAndConsume(email, request.code().trim())) {
-            throw new IllegalArgumentException("인증번호가 올바르지 않거나 만료되었습니다.");
+            throw new BadRequestException("인증번호가 올바르지 않거나 만료되었습니다.");
         }
 
         member.changePassword(passwordEncoder.encode(request.newPassword()));

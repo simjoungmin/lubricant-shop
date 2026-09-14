@@ -1,12 +1,9 @@
 package com.lubricantshop.back.domain.product;
 
-import com.lubricantshop.back.domain.member.MemberRole;
-import com.lubricantshop.back.domain.member.entity.Member;
-import com.lubricantshop.back.domain.member.repository.MemberRepository;
+import com.lubricantshop.back.domain.member.service.AdminAuthorizationService;
 import com.lubricantshop.back.domain.product.dto.AdminProductResponse;
 import com.lubricantshop.back.domain.product.dto.AdminProductUpdateRequest;
-import com.lubricantshop.back.global.exception.ForbiddenException;
-import com.lubricantshop.back.global.exception.UnauthorizedException;
+import com.lubricantshop.back.global.exception.ResourceNotFoundException;
 import java.util.List;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -14,17 +11,22 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class ProductAdminService {
 
-    private final ProductRepository productRepository;
-    private final MemberRepository memberRepository;
+    private static final String ADMIN_PRODUCTS_FORBIDDEN_MESSAGE = "관리자만 상품을 관리할 수 있습니다.";
 
-    public ProductAdminService(ProductRepository productRepository, MemberRepository memberRepository) {
+    private final ProductRepository productRepository;
+    private final AdminAuthorizationService adminAuthorizationService;
+
+    public ProductAdminService(
+            ProductRepository productRepository,
+            AdminAuthorizationService adminAuthorizationService
+    ) {
         this.productRepository = productRepository;
-        this.memberRepository = memberRepository;
+        this.adminAuthorizationService = adminAuthorizationService;
     }
 
     @Transactional(readOnly = true)
     public List<AdminProductResponse> findProducts(Long adminId) {
-        requireAdmin(adminId);
+        adminAuthorizationService.requireAdmin(adminId, ADMIN_PRODUCTS_FORBIDDEN_MESSAGE);
 
         return productRepository.findByDeletedFalseOrderByProductIdAsc().stream()
                 .map(AdminProductResponse::from)
@@ -33,21 +35,21 @@ public class ProductAdminService {
 
     @Transactional(readOnly = true)
     public AdminProductResponse findProduct(Long adminId, Long productId) {
-        requireAdmin(adminId);
+        adminAuthorizationService.requireAdmin(adminId, ADMIN_PRODUCTS_FORBIDDEN_MESSAGE);
 
         Product product = productRepository.findById(productId)
                 .filter(foundProduct -> !Boolean.TRUE.equals(foundProduct.isDeleted()))
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 상품입니다."));
+                .orElseThrow(() -> new ResourceNotFoundException("존재하지 않는 상품입니다."));
 
         return AdminProductResponse.from(product);
     }
 
     @Transactional
     public AdminProductResponse updateProduct(Long adminId, Long productId, AdminProductUpdateRequest request) {
-        requireAdmin(adminId);
+        adminAuthorizationService.requireAdmin(adminId, ADMIN_PRODUCTS_FORBIDDEN_MESSAGE);
 
         Product product = productRepository.findById(productId)
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 상품입니다."));
+                .orElseThrow(() -> new ResourceNotFoundException("존재하지 않는 상품입니다."));
 
         product.updateAdminInfo(
                 request.productName(),
@@ -67,14 +69,5 @@ public class ProductAdminService {
         );
 
         return AdminProductResponse.from(product);
-    }
-
-    private void requireAdmin(Long memberId) {
-        Member member = memberRepository.findById(memberId)
-                .orElseThrow(() -> new UnauthorizedException("로그인이 필요합니다."));
-
-        if (member.getRole() != MemberRole.ADMIN) {
-            throw new ForbiddenException("관리자만 상품을 관리할 수 있습니다.");
-        }
     }
 }

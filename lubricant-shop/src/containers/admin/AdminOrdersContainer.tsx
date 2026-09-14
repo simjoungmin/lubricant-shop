@@ -1,10 +1,11 @@
 "use client";
 
 import type { AdminOrder, OrderStatus } from "@/components/admin/admin.api";
+import { AdminGuardMessage } from "@/components/admin/AdminGuardMessage";
 import { AdminOrdersList } from "@/components/admin/order/AdminOrdersList";
 import { AdminOrderSummaryCards } from "@/components/admin/order/AdminOrderSummaryCards";
-import { useAuth } from "@/components/auth/auth/AuthContext";
 import OilHeader from "@/components/layout/OilHeader";
+import { useAdminAccess } from "@/hooks/useAdminAccess";
 import {
   useAdminOrders,
   useCompleteAdminOrderPayment,
@@ -16,8 +17,7 @@ import { useMemo, useState } from "react";
 const emptyOrders: AdminOrder[] = [];
 
 export default function AdminOrdersContainer() {
-  const { user, isReady } = useAuth();
-  const isAdmin = user?.role === "ADMIN";
+  const { isReady, isAdmin, showLoginLink } = useAdminAccess();
   const [drafts, setDrafts] = useState<Record<number, OrderStatus>>({});
   const [message, setMessage] = useState("");
   const ordersQuery = useAdminOrders(isReady && isAdmin);
@@ -98,9 +98,7 @@ export default function AdminOrdersContainer() {
           />
         ) : null}
 
-        {guardMessage ? (
-          <AdminOrdersGuardMessage message={guardMessage} showLoginLink={isReady && !isAdmin} />
-        ) : null}
+        <AdminGuardMessage message={guardMessage} showLoginLink={showLoginLink} className="mb-5" />
 
         {isReady && isAdmin ? (
           <AdminOrdersList
@@ -143,27 +141,5 @@ function AdminOrdersHeader() {
         재고 관리로 이동
       </Link>
     </div>
-  );
-}
-
-function AdminOrdersGuardMessage({
-  message,
-  showLoginLink,
-}: {
-  message: string;
-  showLoginLink: boolean;
-}) {
-  return (
-    <section className="mb-5 rounded-lg border border-white/10 bg-[#171611] p-5">
-      <p className="text-sm font-bold text-zinc-300">{message}</p>
-      {showLoginLink ? (
-        <Link
-          href="/login"
-          className="mt-5 inline-flex h-11 items-center justify-center rounded-md bg-[#d6a84f] px-5 text-sm font-black text-black transition hover:bg-[#f0c76a]"
-        >
-          로그인하러 가기
-        </Link>
-      ) : null}
-    </section>
   );
 }

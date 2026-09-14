@@ -4,6 +4,8 @@ import com.lubricantshop.back.domain.order.dto.OrderItemRequest;
 import com.lubricantshop.back.domain.product.Product;
 import com.lubricantshop.back.domain.product.ProductRepository;
 import com.lubricantshop.back.domain.product.ProductStatus;
+import com.lubricantshop.back.global.exception.ConflictException;
+import com.lubricantshop.back.global.exception.ResourceNotFoundException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
@@ -23,12 +25,12 @@ public class OrderLineResolver {
 
         for (OrderItemRequest item : items) {
             Product product = productRepository.findById(item.productId())
-                    .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 상품입니다. productId=" + item.productId()));
+                    .orElseThrow(() -> new ResourceNotFoundException("존재하지 않는 상품입니다. productId=" + item.productId()));
             int quantity = item.quantity();
             validatePurchasableProduct(product);
 
             if (product.getStock() < quantity) {
-                throw new IllegalStateException("상품 재고가 부족합니다.");
+                throw new ConflictException("상품 재고가 부족합니다.");
             }
 
             BigDecimal totalPrice = product.getPrice().multiply(BigDecimal.valueOf(quantity));
@@ -40,7 +42,7 @@ public class OrderLineResolver {
 
     private void validatePurchasableProduct(Product product) {
         if (product.getSaleStatus() != ProductStatus.ON_SALE) {
-            throw new IllegalStateException("현재 구매할 수 없는 상품입니다.");
+            throw new ConflictException("현재 구매할 수 없는 상품입니다.");
         }
     }
 }

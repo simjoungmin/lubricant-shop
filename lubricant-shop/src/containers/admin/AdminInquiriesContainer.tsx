@@ -1,7 +1,8 @@
 ﻿"use client";
 
-import { useAuth } from "@/components/auth/auth/AuthContext";
+import { AdminGuardMessage } from "@/components/admin/AdminGuardMessage";
 import OilHeader from "@/components/layout/OilHeader";
+import { useAdminAccess } from "@/hooks/useAdminAccess";
 import { useAdminInquiries } from "@/hooks/useInquiries";
 import Link from "next/link";
 
@@ -12,8 +13,7 @@ const formatDateTime = (value: string) =>
   }).format(new Date(value));
 
 export default function AdminInquiriesContainer() {
-  const { user, isReady } = useAuth();
-  const isAdmin = user?.role === "ADMIN";
+  const { isReady, isAdmin, showLoginLink } = useAdminAccess();
   const inquiriesQuery = useAdminInquiries(isReady && isAdmin);
   const inquiries = inquiriesQuery.data ?? [];
 
@@ -52,17 +52,7 @@ export default function AdminInquiriesContainer() {
         </div>
 
         {!isReady || inquiriesQuery.isPending || message ? (
-          <section className="rounded-lg border border-white/10 bg-[#171611] p-6">
-            <p className="text-sm font-bold text-zinc-300">{message}</p>
-            {isReady && !isAdmin ? (
-              <Link
-                href="/login"
-                className="mt-5 inline-flex h-11 items-center justify-center rounded-md bg-[#d6a84f] px-5 text-sm font-black text-black transition hover:bg-[#f0c76a]"
-              >
-                로그인하러 가기
-              </Link>
-            ) : null}
-          </section>
+          <AdminGuardMessage message={message} showLoginLink={showLoginLink} />
         ) : (
           <section className="grid gap-4">
             {inquiries.map((inquiry) => (

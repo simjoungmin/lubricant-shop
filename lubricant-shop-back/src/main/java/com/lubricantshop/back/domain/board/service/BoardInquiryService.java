@@ -11,6 +11,8 @@ import com.lubricantshop.back.domain.board.dto.InquiryResponse;
 import com.lubricantshop.back.domain.board.repository.BoardAnswerRepository;
 import com.lubricantshop.back.domain.board.repository.BoardRepository;
 import com.lubricantshop.back.domain.member.entity.Member;
+import com.lubricantshop.back.global.exception.BadRequestException;
+import com.lubricantshop.back.global.exception.ResourceNotFoundException;
 import java.util.List;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -117,10 +119,10 @@ public class BoardInquiryService {
 
     private Board findInquiry(Long boardId) {
         Board board = boardRepository.findById(boardId)
-                .orElseThrow(() -> new IllegalArgumentException("문의가 존재하지 않습니다."));
+                .orElseThrow(() -> new ResourceNotFoundException("문의가 존재하지 않습니다."));
 
         if (board.getBoardType() != BoardType.ONE_TO_ONE) {
-            throw new IllegalArgumentException("1:1 문의가 아닙니다.");
+            throw new BadRequestException("1:1 문의가 아닙니다.");
         }
 
         return board;
