@@ -34,7 +34,8 @@ export default function AdminHomeContainer() {
   return (
     <>
       <OilHeader />
-      <main className="mx-auto min-h-[calc(100vh-64px)] w-full max-w-[1180px] px-6 py-12 lg:px-8">
+      <main className="min-h-[calc(100vh-64px)] bg-[#11100d]">
+        <div className="mx-auto w-full max-w-[1180px] px-6 py-12 lg:px-8">
         <p className="text-sm font-black text-[#d6a84f]">ADMIN</p>
         <h1 className="mt-3 text-3xl font-black text-white">운영 관리</h1>
         <p className="mt-3 text-sm leading-6 text-zinc-400">
@@ -57,6 +58,7 @@ export default function AdminHomeContainer() {
             ))}
           </section>
         )}
+        </div>
       </main>
     </>
   );

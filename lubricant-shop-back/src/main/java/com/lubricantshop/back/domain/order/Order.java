@@ -211,9 +211,17 @@ public class Order {
     }
 
     public void updateShipment(String courier, String trackingNumber, String shipmentMemo) {
-        this.courier = trimToNull(courier);
-        this.trackingNumber = trimToNull(trackingNumber);
-        this.shipmentMemo = trimToNull(shipmentMemo);
+        String nextCourier = trimToNull(courier);
+        String nextTrackingNumber = trimToNull(trackingNumber);
+        String nextShipmentMemo = trimToNull(shipmentMemo);
+
+        if (orderStatus == OrderStatus.SHIPPING || orderStatus == OrderStatus.DELIVERED) {
+            requireShipmentInfo(nextCourier, nextTrackingNumber);
+        }
+
+        this.courier = nextCourier;
+        this.trackingNumber = nextTrackingNumber;
+        this.shipmentMemo = nextShipmentMemo;
     }
 
     // 관리자 주문 처리는 아래 흐름으로만 이동할 수 있습니다.
@@ -266,6 +274,10 @@ public class Order {
     }
 
     private void requireShipmentInfo() {
+        requireShipmentInfo(courier, trackingNumber);
+    }
+
+    private void requireShipmentInfo(String courier, String trackingNumber) {
         if (courier == null || courier.isBlank() || trackingNumber == null || trackingNumber.isBlank()) {
             throw new IllegalStateException("배송중 처리하려면 택배사와 송장번호가 필요합니다.");
         }

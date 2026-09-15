@@ -5,7 +5,10 @@ import type {
   AdminOrderShipmentUpdateInput,
   OrderStatus,
 } from "@/components/admin/admin.api";
-import { formatAdminOrderDateTime } from "@/components/admin/order/admin-order.labels";
+import {
+  formatAdminOrderDateTime,
+  hasRequiredAdminShipmentInfo,
+} from "@/components/admin/order/admin-order.labels";
 import {
   AdminOrderInfoCard,
   AdminOrderInfoRow,
@@ -47,6 +50,7 @@ export function AdminOrderDetailView({
   onSaveShipment,
 }: AdminOrderDetailViewProps) {
   const isChanged = selectedStatus !== order.orderStatus;
+  const hasRequiredShipmentInfo = hasRequiredAdminShipmentInfo(shipmentDraft);
 
   return (
     <div className="grid gap-5">
@@ -62,6 +66,7 @@ export function AdminOrderDetailView({
           <AdminOrderStatusActions
             order={order}
             selectedStatus={selectedStatus}
+            hasRequiredShipmentInfo={hasRequiredShipmentInfo}
             isChanged={isChanged}
             isCompletingPayment={isCompletingPayment}
             isSavingStatus={isSavingStatus}

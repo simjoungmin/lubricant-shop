@@ -1,6 +1,6 @@
 ﻿"use client";
 
-import { AdminGuardMessage } from "@/components/admin/AdminGuardMessage";
+import { AdminGuardMessage, type AdminNoticeVariant } from "@/components/admin/AdminGuardMessage";
 import OilHeader from "@/components/layout/OilHeader";
 import { useAdminAccess } from "@/hooks/useAdminAccess";
 import { useAdminInquiries } from "@/hooks/useInquiries";
@@ -26,12 +26,14 @@ export default function AdminInquiriesContainer() {
         : inquiriesQuery.isError
           ? inquiriesQuery.error.message
           : inquiries.length === 0 ? "접수된 문의가 없습니다." : "";
+  const messageVariant: AdminNoticeVariant = inquiriesQuery.isError ? "error" : "info";
 
   return (
     <>
       <OilHeader />
 
-      <main className="mx-auto min-h-[calc(100vh-64px)] w-full max-w-[1180px] px-6 py-12 lg:px-8">
+      <main className="min-h-[calc(100vh-64px)] bg-[#11100d]">
+        <div className="mx-auto w-full max-w-[1180px] px-6 py-12 lg:px-8">
         <div className="mb-8 flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
           <div>
             <Link href="/admin" className="text-sm font-bold text-zinc-400 hover:text-[#d6a84f]">
@@ -52,7 +54,11 @@ export default function AdminInquiriesContainer() {
         </div>
 
         {!isReady || inquiriesQuery.isPending || message ? (
-          <AdminGuardMessage message={message} showLoginLink={showLoginLink} />
+          <AdminGuardMessage
+            message={message}
+            showLoginLink={showLoginLink}
+            variant={messageVariant}
+          />
         ) : (
           <section className="grid gap-4">
             {inquiries.map((inquiry) => (
@@ -124,6 +130,7 @@ export default function AdminInquiriesContainer() {
             ))}
           </section>
         )}
+        </div>
       </main>
     </>
   );

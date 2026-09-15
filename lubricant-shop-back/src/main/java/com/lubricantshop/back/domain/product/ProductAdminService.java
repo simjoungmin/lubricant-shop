@@ -49,6 +49,7 @@ public class ProductAdminService {
         adminAuthorizationService.requireAdmin(adminId, ADMIN_PRODUCTS_FORBIDDEN_MESSAGE);
 
         Product product = productRepository.findById(productId)
+                .filter(foundProduct -> !Boolean.TRUE.equals(foundProduct.isDeleted()))
                 .orElseThrow(() -> new ResourceNotFoundException("존재하지 않는 상품입니다."));
 
         product.updateAdminInfo(
@@ -67,6 +68,9 @@ public class ProductAdminService {
                 request.saleStatus(),
                 request.pointRewardRatePercent()
         );
+        if (Boolean.TRUE.equals(request.shouldClearDiscountPrice())) {
+            product.clearDiscountPrice();
+        }
 
         return AdminProductResponse.from(product);
     }

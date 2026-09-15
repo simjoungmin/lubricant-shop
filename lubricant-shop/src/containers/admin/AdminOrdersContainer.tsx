@@ -1,9 +1,10 @@
 "use client";
 
 import type { AdminOrder, OrderStatus } from "@/components/admin/admin.api";
-import { AdminGuardMessage } from "@/components/admin/AdminGuardMessage";
+import { AdminGuardMessage, type AdminNoticeVariant } from "@/components/admin/AdminGuardMessage";
 import { AdminOrdersList } from "@/components/admin/order/AdminOrdersList";
 import { AdminOrderSummaryCards } from "@/components/admin/order/AdminOrderSummaryCards";
+import { hasRequiredAdminShipmentInfo } from "@/components/admin/order/admin-order.labels";
 import OilHeader from "@/components/layout/OilHeader";
 import { useAdminAccess } from "@/hooks/useAdminAccess";
 import {
@@ -15,11 +16,15 @@ import Link from "next/link";
 import { useMemo, useState } from "react";
 
 const emptyOrders: AdminOrder[] = [];
+type AdminNotice = {
+  message: string;
+  variant: AdminNoticeVariant;
+};
 
 export default function AdminOrdersContainer() {
   const { isReady, isAdmin, showLoginLink } = useAdminAccess();
   const [drafts, setDrafts] = useState<Record<number, OrderStatus>>({});
-  const [message, setMessage] = useState("");
+  const [notice, setNotice] = useState<AdminNotice | null>(null);
   const ordersQuery = useAdminOrders(isReady && isAdmin);
   const updateOrderStatusMutation = useUpdateAdminOrderStatus();
   const completePaymentMutation = useCompleteAdminOrderPayment();
@@ -41,7 +46,16 @@ export default function AdminOrdersContainer() {
       return;
     }
 
-    setMessage("");
+    const order = orders.find((item) => item.orderId === orderId);
+    if (order && nextStatus === "SHIPPING" && !hasRequiredAdminShipmentInfo(order)) {
+      setNotice({
+        message: "배송중 처리 전 상세에서 택배사와 송장번호를 먼저 저장해 주세요.",
+        variant: "error",
+      });
+      return;
+    }
+
+    setNotice(null);
 
     try {
       const updatedOrder = await updateOrderStatusMutation.mutateAsync({
@@ -52,14 +66,20 @@ export default function AdminOrdersContainer() {
         ...prevDrafts,
         [orderId]: updatedOrder.orderStatus,
       }));
-      setMessage(`${updatedOrder.orderNumber} 주문 상태가 저장되었습니다.`);
+      setNotice({
+        message: `${updatedOrder.orderNumber} 주문 상태가 저장되었습니다.`,
+        variant: "success",
+      });
     } catch (error) {
-      setMessage(error instanceof Error ? error.message : "주문 상태 저장에 실패했습니다.");
+      setNotice({
+        message: error instanceof Error ? error.message : "주문 상태 저장에 실패했습니다.",
+        variant: "error",
+      });
     }
   };
 
   const completePayment = async (orderId: number) => {
-    setMessage("");
+    setNotice(null);
 
     try {
       const updatedOrder = await completePaymentMutation.mutateAsync(orderId);
@@ -67,9 +87,15 @@ export default function AdminOrdersContainer() {
         ...prevDrafts,
         [orderId]: updatedOrder.orderStatus,
       }));
-      setMessage(`${updatedOrder.orderNumber} 결제 완료 처리가 반영되었습니다.`);
+      setNotice({
+        message: `${updatedOrder.orderNumber} 결제 완료 처리가 반영되었습니다.`,
+        variant: "success",
+      });
     } catch (error) {
-      setMessage(error instanceof Error ? error.message : "결제 완료 처리에 실패했습니다.");
+      setNotice({
+        message: error instanceof Error ? error.message : "결제 완료 처리에 실패했습니다.",
+        variant: "error",
+      });
     }
   };
 
@@ -81,12 +107,16 @@ export default function AdminOrdersContainer() {
         ? "주문 데이터를 불러오는 중입니다."
         : ordersQuery.isError
           ? ordersQuery.error.message
-          : message || (orders.length === 0 ? "접수된 주문이 없습니다." : "");
+          : notice?.message || (orders.length === 0 ? "접수된 주문이 없습니다." : "");
+  const guardVariant: AdminNoticeVariant = ordersQuery.isError
+    ? "error"
+    : notice?.variant ?? "info";
 
   return (
     <>
       <OilHeader />
-      <main className="mx-auto min-h-[calc(100vh-64px)] w-full max-w-[1280px] px-6 py-10 lg:px-8">
+      <main className="min-h-[calc(100vh-64px)] bg-[#11100d]">
+        <div className="mx-auto w-full max-w-[1280px] px-6 py-10 lg:px-8">
         <AdminOrdersHeader />
 
         {isReady && isAdmin ? (
@@ -98,7 +128,12 @@ export default function AdminOrdersContainer() {
           />
         ) : null}
 
-        <AdminGuardMessage message={guardMessage} showLoginLink={showLoginLink} className="mb-5" />
+        <AdminGuardMessage
+          message={guardMessage}
+          showLoginLink={showLoginLink}
+          className="mb-5"
+          variant={guardVariant}
+        />
 
         {isReady && isAdmin ? (
           <AdminOrdersList
@@ -116,6 +151,7 @@ export default function AdminOrdersContainer() {
             onSaveStatus={(orderId) => void saveOrderStatus(orderId)}
           />
         ) : null}
+        </div>
       </main>
     </>
   );

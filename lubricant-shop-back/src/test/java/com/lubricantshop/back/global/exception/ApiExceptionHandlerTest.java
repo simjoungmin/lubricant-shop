@@ -22,6 +22,15 @@ class ApiExceptionHandlerTest {
     }
 
     @Test
+    void illegalStateIsBadRequest() {
+        ResponseEntity<ApiErrorResponse> response = apiExceptionHandler.handleIllegalState(
+                new IllegalStateException("배송중 처리하려면 택배사와 송장번호가 필요합니다.")
+        );
+
+        assertErrorResponse(response, HttpStatus.BAD_REQUEST, "BAD_REQUEST", "배송중 처리하려면 택배사와 송장번호가 필요합니다.");
+    }
+
+    @Test
     void resourceNotFoundIsNotFound() {
         ResponseEntity<ApiErrorResponse> response = apiExceptionHandler.handleResourceNotFound(
                 new ResourceNotFoundException("존재하지 않는 상품입니다.")

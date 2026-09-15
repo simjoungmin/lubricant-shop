@@ -61,7 +61,7 @@ public class OrderAdminService {
 
         Order order = findOrder(orderId);
 
-        if (request.orderStatus() == OrderStatus.SHIPPING) {
+        if (request.orderStatus() == OrderStatus.SHIPPING && hasShipmentUpdate(request)) {
             order.updateShipment(request.courier(), request.trackingNumber(), request.shipmentMemo());
         }
 
@@ -136,6 +136,12 @@ public class OrderAdminService {
         if (product.getStock() < quantity) {
             throw new ConflictException("상품 재고가 부족합니다.");
         }
+    }
+
+    private boolean hasShipmentUpdate(AdminOrderStatusUpdateRequest request) {
+        return request.courier() != null
+                || request.trackingNumber() != null
+                || request.shipmentMemo() != null;
     }
 
     private AdminOrderResponse toResponse(Order order) {

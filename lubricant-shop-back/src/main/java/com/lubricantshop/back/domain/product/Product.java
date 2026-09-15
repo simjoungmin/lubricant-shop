@@ -213,6 +213,10 @@ public class Product {
         }
     }
 
+    public void clearDiscountPrice() {
+        priceInfo.clearDiscountPrice();
+    }
+
     public void markDeleted() {
         deleted = true;
         saleStatus = ProductStatus.HIDDEN;

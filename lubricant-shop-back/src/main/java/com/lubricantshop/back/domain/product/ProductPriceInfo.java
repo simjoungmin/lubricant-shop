@@ -76,6 +76,10 @@ public class ProductPriceInfo {
         }
     }
 
+    public void clearDiscountPrice() {
+        discountPrice = null;
+    }
+
     public void ensureDefaults() {
         if (pointRewardRatePercent == null) {
             pointRewardRatePercent = DEFAULT_POINT_REWARD_RATE_PERCENT;

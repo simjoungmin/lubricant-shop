@@ -62,6 +62,14 @@ export const formatAdminOrderDateTime = (value: string) =>
     timeStyle: "short",
   }).format(new Date(value));
 
+export const hasRequiredAdminShipmentInfo = ({
+  courier,
+  trackingNumber,
+}: {
+  courier?: string | null;
+  trackingNumber?: string | null;
+}) => Boolean(courier?.trim() && trackingNumber?.trim());
+
 export const getAdminOrderStatusClassName = (status: OrderStatus) => {
   if (status === "DELIVERED") {
     return "border-emerald-500/40 bg-emerald-500/10 text-emerald-300";

@@ -1,6 +1,6 @@
 ﻿"use client";
 
-import { AdminGuardMessage } from "@/components/admin/AdminGuardMessage";
+import { AdminGuardMessage, type AdminNoticeVariant } from "@/components/admin/AdminGuardMessage";
 import OilHeader from "@/components/layout/OilHeader";
 import { useAdminAccess } from "@/hooks/useAdminAccess";
 import { useAdminInquiryDetail, useCreateInquiryAnswer } from "@/hooks/useInquiries";
@@ -15,12 +15,23 @@ const formatDateTime = (value: string) =>
     timeStyle: "short",
   }).format(new Date(value));
 
+type AdminNotice = {
+  message: string;
+  variant: AdminNoticeVariant;
+};
+
+const noticeTextClassName: Record<AdminNoticeVariant, string> = {
+  error: "text-red-300",
+  info: "text-zinc-300",
+  success: "text-emerald-300",
+};
+
 export default function AdminInquiryDetailContainer() {
   const params = useParams<{ boardId: string }>();
   const boardId = Number(params.boardId);
   const { isReady, isAdmin, showLoginLink } = useAdminAccess();
   const [answer, setAnswer] = useState("");
-  const [message, setMessage] = useState("");
+  const [notice, setNotice] = useState<AdminNotice | null>(null);
   const detailQuery = useAdminInquiryDetail(boardId, isReady && isAdmin);
   const createAnswerMutation = useCreateInquiryAnswer(boardId);
   const detail = detailQuery.data ?? null;
@@ -29,18 +40,21 @@ export default function AdminInquiryDetailContainer() {
     event.preventDefault();
 
     if (!answer.trim()) {
-      setMessage("답변 내용을 입력해 주세요.");
+      setNotice({ message: "답변 내용을 입력해 주세요.", variant: "error" });
       return;
     }
 
-    setMessage("");
+    setNotice(null);
 
     try {
       await createAnswerMutation.mutateAsync(answer.trim());
       setAnswer("");
-      setMessage("답변이 등록되었습니다.");
+      setNotice({ message: "답변이 등록되었습니다.", variant: "success" });
     } catch (error) {
-      setMessage(error instanceof Error ? error.message : "답변 등록에 실패했습니다.");
+      setNotice({
+        message: error instanceof Error ? error.message : "답변 등록에 실패했습니다.",
+        variant: "error",
+      });
     }
   };
 
@@ -52,13 +66,17 @@ export default function AdminInquiryDetailContainer() {
         ? "문의 내용을 불러오는 중입니다."
         : detailQuery.isError
           ? detailQuery.error.message
-          : message;
+          : notice?.message ?? "";
+  const guardVariant: AdminNoticeVariant = detailQuery.isError
+    ? "error"
+    : notice?.variant ?? "info";
 
   return (
     <>
       <OilHeader />
 
-      <main className="mx-auto min-h-[calc(100vh-64px)] w-full max-w-[960px] px-6 py-12 lg:px-8">
+      <main className="min-h-[calc(100vh-64px)] bg-[#11100d]">
+        <div className="mx-auto w-full max-w-[960px] px-6 py-12 lg:px-8">
         <div className="mb-8">
           <Link href="/admin/inquiries" className="text-sm font-bold text-zinc-400 hover:text-[#d6a84f]">
             문의 목록으로 돌아가기
@@ -68,7 +86,11 @@ export default function AdminInquiryDetailContainer() {
         </div>
 
         {guardMessage && !detail ? (
-          <AdminGuardMessage message={guardMessage} showLoginLink={showLoginLink} />
+          <AdminGuardMessage
+            message={guardMessage}
+            showLoginLink={showLoginLink}
+            variant={guardVariant}
+          />
         ) : null}
 
         {detail ? (
@@ -137,13 +159,17 @@ export default function AdminInquiryDetailContainer() {
                   value={answer}
                   onChange={(event) => {
                     setAnswer(event.target.value);
-                    setMessage("");
+                    setNotice(null);
                   }}
                 />
               </label>
 
               <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
-                {message ? <p className="text-sm font-bold text-zinc-300">{message}</p> : <span />}
+                {notice ? (
+                  <p className={`text-sm font-bold ${noticeTextClassName[notice.variant]}`}>
+                    {notice.message}
+                  </p>
+                ) : <span />}
                 <button
                   type="submit"
                   disabled={createAnswerMutation.isPending}
@@ -155,6 +181,7 @@ export default function AdminInquiryDetailContainer() {
             </form>
           </div>
         ) : null}
+        </div>
       </main>
     </>
   );

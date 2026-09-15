@@ -23,6 +23,7 @@ type SignupInputProps = {
   className?: string;
   inputMode?: "email" | "numeric" | "tel" | "text";
   placeholder?: string;
+  readOnly?: boolean;
   type?: "email" | "password" | "text";
 };
 
@@ -34,6 +35,16 @@ const selectClassName =
   "h-[30px] border border-[#d9d9d9] bg-white px-3 text-[12px] text-[#111] outline-none focus:border-[#777]";
 const helperClassName = "mt-[7px] text-[11px] leading-[16px] text-[#7b8794]";
 const errorClassName = "mt-[7px] text-[11px] font-semibold leading-[16px] text-[#d93636]";
+const JUSO_ADDRESS_POPUP_URL = "https://business.juso.go.kr/addrlink/addrLinkUrl.do";
+const JUSO_MESSAGE_TYPE = "JUSO_ADDRESS_SELECTED";
+
+type JusoAddressPayload = {
+  zipNo: string;
+  roadAddrPart1: string;
+  roadAddrPart2: string;
+  roadFullAddr: string;
+  addrDetail: string;
+};
 
 const getPhoneParts = (phone: SignupFormState["phone"]) => {
   const onlyNumber = phone.replace(/\D/g, "");
@@ -87,6 +98,72 @@ const SignupPanel = () => {
     updateSignupField("privacyAgreed", isChecked);
     updateSignupField("privacyDelegationAgreed", isChecked);
     updateSignupField("marketingAgreed", isChecked);
+  };
+
+  const handleSearchAddress = () => {
+    const confirmKey = process.env.NEXT_PUBLIC_JUSO_CONFIRM_KEY;
+
+    if (!confirmKey) {
+      window.alert("도로명주소 API 승인키가 설정되어 있지 않습니다.");
+      return;
+    }
+
+    const popupName = "jusoAddressPopup";
+    const popup = window.open(
+      "",
+      popupName,
+      "width=570,height=520,scrollbars=yes,resizable=yes",
+    );
+
+    if (!popup) {
+      window.alert("팝업 차단을 해제한 뒤 다시 시도해 주세요.");
+      return;
+    }
+
+    const handleAddressMessage = (event: MessageEvent) => {
+      if (event.origin !== window.location.origin || event.data?.type !== JUSO_MESSAGE_TYPE) {
+        return;
+      }
+
+      const payload = event.data.payload as Partial<JusoAddressPayload>;
+      const roadAddress = payload.roadAddrPart1 || payload.roadFullAddr || "";
+
+      updateSignupField("postalCode", payload.zipNo ?? "");
+      updateSignupField("address", [roadAddress, payload.roadAddrPart2].filter(Boolean).join(" "));
+
+      if (payload.addrDetail) {
+        updateSignupField("detailAddress", payload.addrDetail);
+      }
+
+      window.removeEventListener("message", handleAddressMessage);
+    };
+
+    window.addEventListener("message", handleAddressMessage);
+
+    const form = document.createElement("form");
+    form.method = "POST";
+    form.action = JUSO_ADDRESS_POPUP_URL;
+    form.target = popupName;
+    form.style.display = "none";
+
+    const fields = {
+      confmKey: confirmKey,
+      returnUrl: `${window.location.origin}/api/juso/callback`,
+      resultType: "4",
+      useDetailAddr: "Y",
+    };
+
+    Object.entries(fields).forEach(([name, value]) => {
+      const input = document.createElement("input");
+      input.type = "hidden";
+      input.name = name;
+      input.value = value;
+      form.appendChild(input);
+    });
+
+    document.body.appendChild(form);
+    form.submit();
+    form.remove();
   };
 
   return (
@@ -216,28 +293,30 @@ const SignupPanel = () => {
             <div className="grid gap-[8px]">
               <div className="flex flex-wrap items-center gap-[6px]">
                 <SignupInput
-                  className="h-[30px] w-[150px] border border-[#d9d9d9] bg-[#fafafa] px-3 text-[12px] text-[#111] outline-none"
+                  className="h-[30px] w-[150px] cursor-not-allowed border border-[#d9d9d9] bg-[#f5f5f5] px-3 text-[12px] text-[#111] outline-none"
                   field="postalCode"
                   form={signupForm}
                   inputMode="numeric"
                   onChangeField={updateSignupField}
                   placeholder="우편번호"
+                  readOnly
                 />
                 <button
                   className="h-[30px] border border-[#aaa] bg-white px-[14px] text-[12px] text-[#333]"
                   type="button"
-                  disabled
+                  onClick={handleSearchAddress}
                 >
                   주소검색
                 </button>
               </div>
               <SignupInput
                 ariaInvalid={Boolean(signupErrors.address)}
-                className="h-[30px] w-full max-w-[368px] border border-[#d9d9d9] bg-[#fafafa] px-3 text-[12px] text-[#111] outline-none focus:border-[#777] aria-[invalid=true]:border-red-400"
+                className="h-[30px] w-full max-w-[368px] cursor-not-allowed border border-[#d9d9d9] bg-[#f5f5f5] px-3 text-[12px] text-[#111] outline-none aria-[invalid=true]:border-red-400"
                 field="address"
                 form={signupForm}
                 onChangeField={updateSignupField}
-                placeholder="기본주소"
+                placeholder="주소검색으로 입력해 주세요"
+                readOnly
               />
               <SignupInput
                 className="h-[30px] w-full max-w-[368px] border border-[#d9d9d9] bg-white px-3 text-[12px] text-[#111] outline-none focus:border-[#777]"
@@ -357,6 +436,7 @@ function SignupInput({
   className = fullInputClassName,
   inputMode = "text",
   placeholder,
+  readOnly = false,
   type = "text",
 }: SignupInputProps) {
   return (
@@ -365,9 +445,14 @@ function SignupInput({
       className={className}
       inputMode={inputMode}
       placeholder={placeholder}
+      readOnly={readOnly}
       type={type}
       value={String(form[field])}
-      onChange={(event) => onChangeField(field, event.target.value)}
+      onChange={(event) => {
+        if (!readOnly) {
+          onChangeField(field, event.target.value);
+        }
+      }}
     />
   );
 }

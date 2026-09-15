@@ -30,7 +30,8 @@ export default function AdminProductEditContainer({
   return (
     <>
       <OilHeader />
-      <main className="mx-auto min-h-[calc(100vh-64px)] w-full max-w-[1180px] px-6 py-10 lg:px-8">
+      <main className="min-h-[calc(100vh-64px)] bg-[#11100d]">
+        <div className="mx-auto w-full max-w-[1180px] px-6 py-10 lg:px-8">
         <div className="mb-8 flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
           <div>
             <Link href="/admin/products" className="text-sm font-bold text-zinc-400 hover:text-[#d6a84f]">
@@ -49,6 +50,7 @@ export default function AdminProductEditContainer({
         {productQuery.data ? (
           <AdminProductEditForm key={productId} product={productQuery.data} />
         ) : null}
+        </div>
       </main>
     </>
   );

@@ -20,6 +20,7 @@ public record AdminProductUpdateRequest(
         @Size(max = 40) String volume,
         @Size(max = 500) String imageUrl,
         ProductStatus saleStatus,
+        Boolean shouldClearDiscountPrice,
         @DecimalMin("0") BigDecimal pointRewardRatePercent
 ) {
 }

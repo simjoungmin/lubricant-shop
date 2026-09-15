@@ -46,19 +46,27 @@ export function AdminProductsTable({
             </tr>
           </thead>
           <tbody className="divide-y divide-white/10">
-            {products.map((product) => (
-              <AdminProductRow
-                key={product.productId}
-                product={product}
-                draft={drafts[product.productId] ?? {
-                  stock: product.stock,
-                  saleStatus: product.saleStatus,
-                }}
-                isSaving={isSaving}
-                onUpdateDraft={onUpdateDraft}
-                onSaveProduct={onSaveProduct}
-              />
-            ))}
+            {products.length > 0 ? (
+              products.map((product) => (
+                <AdminProductRow
+                  key={product.productId}
+                  product={product}
+                  draft={drafts[product.productId] ?? {
+                    stock: product.stock,
+                    saleStatus: product.saleStatus,
+                  }}
+                  isSaving={isSaving}
+                  onUpdateDraft={onUpdateDraft}
+                  onSaveProduct={onSaveProduct}
+                />
+              ))
+            ) : (
+              <tr>
+                <td className="px-4 py-10 text-center font-bold text-zinc-400" colSpan={8}>
+                  조건에 맞는 상품이 없습니다.
+                </td>
+              </tr>
+            )}
           </tbody>
         </table>
       </div>
@@ -89,7 +97,7 @@ function AdminProductRow({
         <div className="flex items-center gap-3">
           <Image
             src={product.imageUrl}
-            alt=""
+            alt={`${product.productName} 상품 이미지`}
             width={64}
             height={64}
             className="h-16 w-16 rounded-md bg-white object-cover"
@@ -111,14 +119,17 @@ function AdminProductRow({
       <td className="px-4 py-4">
         <input
           type="number"
+          inputMode="numeric"
           min={0}
           value={draft.stock}
-          onChange={(event) =>
+          onChange={(event) => {
+            const nextStock = Number.parseInt(event.target.value, 10);
+
             onUpdateDraft(product.productId, {
-              stock: Math.max(0, Number(event.target.value)),
+              stock: Number.isFinite(nextStock) ? Math.max(0, nextStock) : 0,
               saleStatus: draft.saleStatus,
-            })
-          }
+            });
+          }}
           className={`h-10 w-24 rounded-md border bg-[#11100d] px-3 font-bold text-white outline-none focus:border-[#d6a84f] ${
             isLowStock ? "border-[#d6a84f]" : "border-white/10"
           }`}

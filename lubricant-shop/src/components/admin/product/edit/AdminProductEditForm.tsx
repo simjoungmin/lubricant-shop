@@ -4,6 +4,7 @@ import {
   type AdminProduct,
   type AdminProductUpdateInput,
 } from "@/components/admin/admin.api";
+import type { AdminNoticeVariant } from "@/components/admin/AdminGuardMessage";
 import { AdminProductBasicForm } from "@/components/admin/product/edit/AdminProductBasicForm";
 import {
   type ProductEditForm,
@@ -17,6 +18,17 @@ import { type FormEvent, useState } from "react";
 
 type AdminProductEditFormProps = {
   product: AdminProduct;
+};
+
+type AdminNotice = {
+  message: string;
+  variant: AdminNoticeVariant;
+};
+
+const noticeClassName: Record<AdminNoticeVariant, string> = {
+  error: "border-red-500/30 bg-red-500/10 text-red-200",
+  info: "border-white/10 bg-[#171611] text-zinc-300",
+  success: "border-emerald-500/30 bg-emerald-500/10 text-emerald-200",
 };
 
 const toForm = (product: AdminProduct): ProductEditForm => ({
@@ -42,11 +54,11 @@ export function AdminProductEditForm({ product }: AdminProductEditFormProps) {
   const router = useRouter();
   const updateProductMutation = useUpdateAdminProduct();
   const [form, setForm] = useState<ProductEditForm>(() => toForm(product));
-  const [message, setMessage] = useState("");
+  const [notice, setNotice] = useState<AdminNotice | null>(null);
 
   const updateForm: ProductEditFormChangeHandler = (key, value) => {
     setForm((currentForm) => ({ ...currentForm, [key]: value }));
-    setMessage("");
+    setNotice(null);
   };
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
@@ -60,9 +72,12 @@ export function AdminProductEditForm({ product }: AdminProductEditFormProps) {
         input,
       });
       setForm(toForm(updatedProduct));
-      setMessage("상품 정보가 저장되었습니다.");
+      setNotice({ message: "상품 정보가 저장되었습니다.", variant: "success" });
     } catch (error) {
-      setMessage(error instanceof Error ? error.message : "상품 저장에 실패했습니다.");
+      setNotice({
+        message: error instanceof Error ? error.message : "상품 저장에 실패했습니다.",
+        variant: "error",
+      });
     }
   };
 
@@ -76,9 +91,9 @@ export function AdminProductEditForm({ product }: AdminProductEditFormProps) {
       <AdminProductOilSpecForm form={form} onChange={updateForm} />
       <AdminProductPriceStockForm form={form} onChange={updateForm} />
 
-      {message ? (
-        <p className="rounded-lg border border-white/10 bg-[#171611] p-4 text-sm font-bold text-zinc-300">
-          {message}
+      {notice ? (
+        <p className={`rounded-lg border p-4 text-sm font-bold ${noticeClassName[notice.variant]}`}>
+          {notice.message}
         </p>
       ) : null}
 
@@ -121,6 +136,8 @@ function buildProductUpdateInput(form: ProductEditForm): AdminProductUpdateInput
 
   if (form.discountPrice.trim()) {
     input.discountPrice = toNumber(form.discountPrice);
+  } else {
+    input.shouldClearDiscountPrice = true;
   }
 
   return input;

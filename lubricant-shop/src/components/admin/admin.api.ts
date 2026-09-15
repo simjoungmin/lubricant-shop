@@ -38,6 +38,7 @@ export type AdminProductUpdateInput = Partial<{
   volume: string;
   imageUrl: string;
   saleStatus: ProductStatus;
+  shouldClearDiscountPrice: boolean;
   pointRewardRatePercent: number;
 }>;
 

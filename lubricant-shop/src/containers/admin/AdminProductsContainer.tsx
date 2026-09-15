@@ -1,7 +1,7 @@
 "use client";
 
 import type { AdminProduct, ProductStatus } from "@/components/admin/admin.api";
-import { AdminGuardMessage } from "@/components/admin/AdminGuardMessage";
+import { AdminGuardMessage, type AdminNoticeVariant } from "@/components/admin/AdminGuardMessage";
 import { AdminProductFilters } from "@/components/admin/product/AdminProductFilters";
 import { AdminProductSummaryCards } from "@/components/admin/product/AdminProductSummaryCards";
 import { AdminProductsTable } from "@/components/admin/product/AdminProductsTable";
@@ -14,10 +14,14 @@ import Link from "next/link";
 import { useMemo, useState } from "react";
 
 const emptyProducts: AdminProduct[] = [];
+type AdminNotice = {
+  message: string;
+  variant: AdminNoticeVariant;
+};
 
 export default function AdminProductsContainer() {
   const { isReady, isAdmin, showLoginLink } = useAdminAccess();
-  const [message, setMessage] = useState("");
+  const [notice, setNotice] = useState<AdminNotice | null>(null);
   const productsQuery = useAdminProducts(isReady && isAdmin);
   const updateProductMutation = useUpdateAdminProduct();
   const products = productsQuery.data ?? emptyProducts;
@@ -46,7 +50,7 @@ export default function AdminProductsContainer() {
       return;
     }
 
-    setMessage("");
+    setNotice(null);
 
     try {
       const updatedProduct = await updateProductMutation.mutateAsync({
@@ -54,9 +58,15 @@ export default function AdminProductsContainer() {
         input: draft,
       });
       syncDraft(updatedProduct);
-      setMessage(`${updatedProduct.productName} 재고가 저장되었습니다.`);
+      setNotice({
+        message: `${updatedProduct.productName} 재고와 판매상태가 저장되었습니다.`,
+        variant: "success",
+      });
     } catch (error) {
-      setMessage(error instanceof Error ? error.message : "재고 저장에 실패했습니다.");
+      setNotice({
+        message: error instanceof Error ? error.message : "재고 저장에 실패했습니다.",
+        variant: "error",
+      });
     }
   };
 
@@ -68,12 +78,16 @@ export default function AdminProductsContainer() {
         ? "재고 데이터를 불러오는 중입니다."
         : productsQuery.isError
           ? productsQuery.error.message
-          : message || (products.length === 0 ? "등록된 상품이 없습니다." : "");
+          : notice?.message || (products.length === 0 ? "등록된 상품이 없습니다." : "");
+  const guardVariant: AdminNoticeVariant = productsQuery.isError
+    ? "error"
+    : notice?.variant ?? "info";
 
   return (
     <>
       <OilHeader />
-      <main className="mx-auto min-h-[calc(100vh-64px)] w-full max-w-[1280px] px-6 py-10 lg:px-8">
+      <main className="min-h-[calc(100vh-64px)] bg-[#11100d]">
+        <div className="mx-auto w-full max-w-[1280px] px-6 py-10 lg:px-8">
         <AdminProductsHeader />
 
         {isReady && isAdmin ? (
@@ -85,7 +99,12 @@ export default function AdminProductsContainer() {
           />
         ) : null}
 
-        <AdminGuardMessage message={guardMessage} showLoginLink={showLoginLink} className="mb-5" />
+        <AdminGuardMessage
+          message={guardMessage}
+          showLoginLink={showLoginLink}
+          className="mb-5"
+          variant={guardVariant}
+        />
 
         {isReady && isAdmin ? (
           <>
@@ -106,6 +125,7 @@ export default function AdminProductsContainer() {
             />
           </>
         ) : null}
+        </div>
       </main>
     </>
   );
