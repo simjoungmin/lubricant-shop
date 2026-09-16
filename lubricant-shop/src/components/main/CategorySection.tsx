@@ -1,4 +1,4 @@
-import Image from "next/image";
+import { ProductImage, PRODUCT_IMAGE_SIZES } from "@/components/common/ProductImage";
 import Link from "next/link";
 import React from "react";
 import MainOilSearchFilter from "./MainOilSearchFilter";
@@ -8,37 +8,37 @@ const categories = [
     label: "엔진오일",
     description: "브랜드 / 점도 / 차종",
     href: "/category/engine/brand-engine-oil",
-    imageUrl: "/product-images/oil-bottle.svg",
+    color: "#b7bec7",
   },
   {
     label: "자동 미션 오일",
     description: "ATF / CVT / DCT",
     href: "/category/mission/atf",
-    imageUrl: "/product-images/oil-bottle.svg",
+    color: "#bf2331",
   },
   {
     label: "기어 오일",
     description: "기어 / 트랜스퍼 / 할덱스",
     href: "/category/gear/gear-oil",
-    imageUrl: "/product-images/oil-bottle.svg",
+    color: "#a0a9b4",
   },
   {
     label: "브레이크액·파워오일",
     description: "브레이크액 / 파워오일",
     href: "/category/brake-power/brake-fluid",
-    imageUrl: "/product-images/oil-bottle.svg",
+    color: "#286c98",
   },
   {
     label: "부동액",
     description: "색상별 냉각수",
     href: "/category/coolant/green",
-    imageUrl: "/product-images/oil-bottle.svg",
+    color: "#26709b",
   },
   {
     label: "케미컬·첨가제",
     description: "첨가제 / 세정제 / 그리스",
     href: "/category/chemical/engine-system",
-    imageUrl: "/product-images/oil-bottle.svg",
+    color: "#5f7f8f",
   },
 ];
 
@@ -60,13 +60,12 @@ const CategorySection = () => {
               href={category.href}
               className="group rounded border border-[#dde2e8] bg-white p-5 text-center transition hover:-translate-y-1 hover:border-[#ff8a65] hover:shadow-[0_14px_28px_rgba(7,29,59,0.08)]"
             >
-              <div className="mx-auto flex h-28 items-center justify-center">
-                <Image
-                  src={category.imageUrl}
+              <div className="relative mx-auto h-28 overflow-hidden">
+                <ProductImage
                   alt={`${category.label} 상품`}
-                  width={118}
-                  height={118}
-                  className="h-24 w-24 object-contain"
+                  sizes={PRODUCT_IMAGE_SIZES.categoryIcon}
+                  fallbackColor={category.color}
+                  className="object-contain p-4"
                 />
               </div>
               <p className="mt-3 text-sm font-black">

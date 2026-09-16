@@ -1,7 +1,7 @@
 import type { Product } from "@/assets/category/types";
 import { formatPrice, getDiscountRate } from "@/components/cart/cart.utils";
 import Button from "@/components/common/Button";
-import Image from "next/image";
+import { ProductImage, PRODUCT_IMAGE_SIZES } from "@/components/common/ProductImage";
 import Link from "next/link";
 import React from "react";
 
@@ -28,28 +28,14 @@ const CategoryProductCard = ({ product }: CategoryProductCardProps) => {
       </div>
 
       <Link href={`/products/${product.id}`} className="block">
-        <div className="mb-4 flex h-[178px] items-center justify-center rounded-md bg-[#fbfcfd]">
-          {product.imageUrl ? (
-            <Image
-              src={product.imageUrl}
-              alt={product.name}
-              width={130}
-              height={130}
-              className="h-[130px] w-[130px] object-contain"
-            />
-          ) : (
-            <div
-              className="relative flex h-[130px] w-[72px] flex-col items-center justify-center rounded-[18px_18px_12px_12px] border border-[#dce2e8] shadow-lg"
-              style={{ backgroundColor: product.color }}
-            >
-              <div className="absolute -top-5 h-6 w-9 rounded-t-md bg-[#2d3744]" />
-              <div className="w-[52px] rounded bg-white px-1 py-2 text-center text-[10px] font-black leading-tight text-[#071d3b]">
-                OIL
-                <br />
-                MASTER
-              </div>
-            </div>
-          )}
+        <div className="relative mb-4 h-[178px] overflow-hidden rounded-md bg-[#fbfcfd]">
+          <ProductImage
+            src={product.imageUrl}
+            alt={product.name}
+            sizes={PRODUCT_IMAGE_SIZES.card}
+            fallbackColor={product.color}
+            className="object-contain p-6 transition duration-300 group-hover:scale-105"
+          />
         </div>
 
         <h3 className="min-h-10 text-sm font-black leading-5 text-[#071d3b]">

@@ -2,7 +2,7 @@
 
 import type { CartItem } from "@/components/cart/CartContext";
 import { formatPrice } from "@/components/cart/cart.utils";
-import Image from "next/image";
+import { ProductImage, PRODUCT_IMAGE_SIZES } from "@/components/common/ProductImage";
 
 type CartItemCardProps = {
   item: CartItem;
@@ -17,14 +17,15 @@ const CartItemCard = ({
   onDecrease,
   onRemove,
 }: CartItemCardProps) => {
+  const isIncreaseDisabled = item.quantity >= item.product.stock;
+
   return (
     <div className="grid grid-cols-[72px_1fr] gap-4 rounded-lg border border-[#dde2e8] bg-white p-3 text-[#071d3b] shadow-sm transition hover:border-[#ff8a65]">
       <div className="relative h-[72px] overflow-hidden rounded-md bg-[#fbfcfd]">
-        <Image
-          src={item.product.imageUrl || "/product-images/oil-bottle.svg"}
+        <ProductImage
+          src={item.product.imageUrl}
           alt={item.product.name}
-          fill
-          sizes="72px"
+          sizes={PRODUCT_IMAGE_SIZES.cart}
           className="object-contain p-2"
         />
       </div>
@@ -66,7 +67,9 @@ const CartItemCard = ({
             <button
               type="button"
               aria-label={`${item.product.name} 수량 늘리기`}
-              className="flex h-9 w-9 items-center justify-center text-sm font-black text-[#65717f] transition hover:bg-[#fff3ef] hover:text-[#ff4b1f]"
+              disabled={isIncreaseDisabled}
+              title={isIncreaseDisabled ? "현재 재고만큼 담았습니다." : undefined}
+              className="flex h-9 w-9 items-center justify-center text-sm font-black text-[#65717f] transition hover:bg-[#fff3ef] hover:text-[#ff4b1f] disabled:cursor-not-allowed disabled:bg-[#eef2f6] disabled:text-[#b9c1ca]"
               onClick={() => onIncrease(item.cartId)}
             >
               +

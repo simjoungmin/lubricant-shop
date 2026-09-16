@@ -1,6 +1,6 @@
 import type { CartItem } from "@/components/cart/CartContext";
 import { formatPrice } from "@/components/cart/cart.utils";
-import Image from "next/image";
+import { ProductImage, PRODUCT_IMAGE_SIZES } from "@/components/common/ProductImage";
 
 type OrderItemsSectionProps = {
   items: CartItem[];
@@ -18,11 +18,10 @@ export function OrderItemsSection({ items }: OrderItemsSectionProps) {
               className="grid grid-cols-[64px_1fr] gap-4 rounded-md border border-[#edf0f3] bg-[#fbfcfd] p-3"
             >
               <div className="relative h-16 overflow-hidden rounded-md bg-white">
-                <Image
-                  src={item.product.imageUrl || "/product-images/oil-bottle.svg"}
+                <ProductImage
+                  src={item.product.imageUrl}
                   alt={item.product.name}
-                  fill
-                  sizes="64px"
+                  sizes={PRODUCT_IMAGE_SIZES.thumbnail}
                   className="object-contain p-2"
                 />
               </div>

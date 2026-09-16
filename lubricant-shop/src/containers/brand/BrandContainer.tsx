@@ -1,4 +1,5 @@
 import OilHeader from "@/components/layout/OilHeader";
+import Image from "next/image";
 import React from "react";
 
 const warehouseImageUrl =
@@ -40,6 +41,13 @@ const serviceItems = [
 
 const partnerBrands = ["Mobil", "Shell", "Castrol", "ZIC", "MANN FILTER", "BOSCH"];
 
+type BrandImagePanelProps = {
+  src: string;
+  alt: string;
+  className?: string;
+  priority?: boolean;
+};
+
 const BrandContainer = () => {
   return (
     <>
@@ -63,15 +71,17 @@ const BrandContainer = () => {
               </p>
             </div>
 
-            <div
-              className="relative min-h-[340px] overflow-hidden bg-[#eef1f4] bg-cover bg-center"
-              style={{ backgroundImage: `url(${warehouseImageUrl})` }}
+            <BrandImagePanel
+              src={warehouseImageUrl}
+              alt="오일마스터 물류 창고 이미지"
+              className="min-h-[340px] bg-[#eef1f4]"
+              priority
             >
               <div className="absolute inset-0 bg-gradient-to-r from-black/10 via-transparent to-black/20" />
               <div className="absolute left-8 top-8 text-xl font-black tracking-tight text-white">
                 <span className="text-[#ff4b1f]">OIL</span> MASTER
               </div>
-            </div>
+            </BrandImagePanel>
           </div>
         </section>
 
@@ -135,10 +145,10 @@ const BrandContainer = () => {
               </ul>
             </div>
 
-            <div
-              className="min-h-[340px] bg-[#e9edf2] bg-cover bg-center"
-              style={{ backgroundImage: `url(${workshopImageUrl})` }}
-              aria-label="정비사가 차량 엔진룸을 점검하는 사진"
+            <BrandImagePanel
+              src={workshopImageUrl}
+              alt="정비사가 차량 엔진룸을 점검하는 사진"
+              className="min-h-[340px] bg-[#e9edf2]"
             />
           </div>
         </section>
@@ -161,5 +171,27 @@ const BrandContainer = () => {
     </>
   );
 };
+
+function BrandImagePanel({
+  src,
+  alt,
+  children,
+  className = "",
+  priority = false,
+}: React.PropsWithChildren<BrandImagePanelProps>) {
+  return (
+    <div className={`relative overflow-hidden ${className}`}>
+      <Image
+        src={src}
+        alt={alt}
+        fill
+        sizes="(max-width: 1024px) 100vw, 560px"
+        priority={priority}
+        className="object-cover"
+      />
+      {children}
+    </div>
+  );
+}
 
 export default BrandContainer;

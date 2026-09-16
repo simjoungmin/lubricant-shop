@@ -3,7 +3,7 @@
 import type { Product, ProductBadge } from "@/assets/category/types";
 import { formatPrice, getDiscountRate } from "@/components/cart/cart.utils";
 import Button from "@/components/common/Button";
-import Image from "next/image";
+import { ProductImage, PRODUCT_IMAGE_SIZES } from "@/components/common/ProductImage";
 import Link from "next/link";
 import { useRef } from "react";
 
@@ -83,23 +83,14 @@ const ProductSection = ({ title, badge, products }: ProductSectionProps) => {
                       </div>
 
                       <Link href={`/products/${product.id}`} className="block">
-                        <div className="mb-4 flex h-[170px] items-center justify-center bg-[#fbfcfd]">
-                          {product.imageUrl ? (
-                            <Image
-                              src={product.imageUrl}
-                              alt={product.name}
-                              width={140}
-                              height={140}
-                              className="h-[136px] w-[136px] object-contain"
-                            />
-                          ) : (
-                            <div
-                              className="flex h-[132px] w-[86px] items-center justify-center rounded-xl border border-[#dce2e8] text-center text-sm font-black text-white"
-                              style={{ backgroundColor: product.color }}
-                            >
-                              OIL
-                            </div>
-                          )}
+                        <div className="relative mb-4 h-[170px] overflow-hidden bg-[#fbfcfd]">
+                          <ProductImage
+                            src={product.imageUrl}
+                            alt={product.name}
+                            sizes={PRODUCT_IMAGE_SIZES.carouselCard}
+                            fallbackColor={product.color}
+                            className="object-contain p-5 transition duration-300 group-hover:scale-105"
+                          />
                         </div>
 
                         <h3 className="line-clamp-2 min-h-10 text-sm font-black text-[#071d3b]">

@@ -1,9 +1,9 @@
 import { formatPrice, getDiscountRate } from "@/components/cart/cart.utils";
 import Button from "@/components/common/Button";
 import { PageLayout } from "@/components/common/Layout";
+import { ProductImage, PRODUCT_IMAGE_SIZES } from "@/components/common/ProductImage";
 import { productApi } from "@/components/category/product.api";
 import OilHeader from "@/components/layout/OilHeader";
-import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
@@ -51,23 +51,16 @@ const ProductDetailPage = async ({ params }: ProductDetailPageProps) => {
 
         <section className="mx-auto grid max-w-[1440px] gap-10 px-6 py-10 lg:grid-cols-[520px_1fr] lg:px-8">
           <div className="flex min-h-[420px] items-center justify-center rounded-lg border border-[#dde2e8] bg-white">
-            {product.imageUrl ? (
-              <Image
+            <div className="relative h-[320px] w-full max-w-[420px] overflow-hidden">
+              <ProductImage
                 src={product.imageUrl}
                 alt={product.name}
-                width={320}
-                height={320}
-                className="h-[320px] w-[320px] object-contain"
+                sizes={PRODUCT_IMAGE_SIZES.detail}
+                fallbackColor={product.color}
+                className="object-contain p-4"
                 priority
               />
-            ) : (
-              <div
-                className="flex h-[260px] w-[160px] items-center justify-center rounded-xl border border-[#dce2e8] text-center text-xl font-black text-white"
-                style={{ backgroundColor: product.color }}
-              >
-                OIL MASTER
-              </div>
-            )}
+            </div>
           </div>
 
           <div className="flex flex-col justify-center">

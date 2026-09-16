@@ -12,7 +12,7 @@ import {
   productEditLabelClassName,
   productEditTextareaClassName,
 } from "@/components/admin/product/edit/admin-product-edit.types";
-import Image from "next/image";
+import { ProductImage, PRODUCT_IMAGE_SIZES } from "@/components/common/ProductImage";
 
 type AdminProductBasicFormProps = {
   productId: number;
@@ -109,20 +109,17 @@ export function AdminProductBasicForm({
         <ProductInput
           label="대표 이미지"
           value={form.imageUrl}
-          placeholder="/product-images/oil-bottle.svg"
+          placeholder="/product-images/sample.jpeg 또는 https://cdn.example.com/sample.webp"
           onChange={(value) => onChange("imageUrl", value)}
         />
-        {form.imageUrl ? (
-          <div className="flex h-28 items-center justify-center rounded-md border border-white/10 bg-[#11100d]">
-            <Image
-              src={form.imageUrl}
-              alt=""
-              width={96}
-              height={96}
-              className="h-24 w-24 object-contain"
-            />
-          </div>
-        ) : null}
+        <div className="relative h-28 overflow-hidden rounded-md border border-white/10 bg-[#11100d]">
+          <ProductImage
+            src={form.imageUrl}
+            alt="대표 이미지 미리보기"
+            sizes={PRODUCT_IMAGE_SIZES.adminPreview}
+            className="object-contain p-3"
+          />
+        </div>
       </div>
     </section>
   );

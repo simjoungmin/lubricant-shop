@@ -6,7 +6,7 @@ import {
   formatAdminProductDate,
 } from "@/components/admin/product/admin-product.labels";
 import { formatPrice } from "@/components/cart/cart.utils";
-import Image from "next/image";
+import { ProductImage, PRODUCT_IMAGE_SIZES } from "@/components/common/ProductImage";
 import Link from "next/link";
 
 export type AdminProductDraft = {
@@ -95,13 +95,14 @@ function AdminProductRow({
       <td className="px-4 py-4 font-black text-zinc-400">#{product.productId}</td>
       <td className="px-4 py-4">
         <div className="flex items-center gap-3">
-          <Image
-            src={product.imageUrl}
-            alt={`${product.productName} 상품 이미지`}
-            width={64}
-            height={64}
-            className="h-16 w-16 rounded-md bg-white object-cover"
-          />
+          <div className="relative h-16 w-16 shrink-0 overflow-hidden rounded-md bg-white">
+            <ProductImage
+              src={product.imageUrl}
+              alt={`${product.productName} 상품 이미지`}
+              sizes={PRODUCT_IMAGE_SIZES.thumbnail}
+              className="object-contain p-2"
+            />
+          </div>
           <div>
             <p className="font-black text-white">{product.productName}</p>
             <p className="mt-1 text-xs text-zinc-500">
