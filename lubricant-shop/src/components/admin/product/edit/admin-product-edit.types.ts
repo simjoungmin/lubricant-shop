@@ -5,6 +5,7 @@ export type ProductEditForm = {
   brand: string;
   category: string;
   subCategory: string;
+  subCategories: string[];
   productDescription: string;
   imageUrl: string;
   saleStatus: ProductStatus;

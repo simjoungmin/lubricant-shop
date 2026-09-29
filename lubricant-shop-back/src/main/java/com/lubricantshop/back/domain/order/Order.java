@@ -55,6 +55,9 @@ public class Order {
     @Column(name = "payment_amount", nullable = false, precision = 12, scale = 0)
     private BigDecimal paymentAmount;
 
+    @Column(name = "pg_order_id", unique = true, length = 64)
+    private String pgOrderId;
+
     // 이번 주문에서 사용한 포인트입니다.
     @Column(name = "point_used", nullable = false)
     private Integer pointUsed = 0;
@@ -162,6 +165,10 @@ public class Order {
         return paymentAmount;
     }
 
+    public String getPgOrderId() {
+        return pgOrderId;
+    }
+
     public Integer getPointUsed() {
         return pointUsed;
     }
@@ -208,6 +215,14 @@ public class Order {
 
     public LocalDateTime getUpdatedAt() {
         return updatedAt;
+    }
+
+    public void assignPgOrderId(String pgOrderId) {
+        if (pgOrderId == null || pgOrderId.isBlank()) {
+            throw new IllegalArgumentException("PG 주문번호가 필요합니다.");
+        }
+
+        this.pgOrderId = pgOrderId;
     }
 
     public void updateShipment(String courier, String trackingNumber, String shipmentMemo) {

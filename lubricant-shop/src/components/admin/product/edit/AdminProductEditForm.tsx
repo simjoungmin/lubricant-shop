@@ -36,6 +36,11 @@ const toForm = (product: AdminProduct): ProductEditForm => ({
   brand: product.brand,
   category: product.category,
   subCategory: product.subCategory ?? "",
+  subCategories: product.subCategories.length > 0
+    ? product.subCategories
+    : product.subCategory
+      ? [product.subCategory]
+      : [],
   productDescription: product.productDescription ?? "",
   imageUrl: product.imageUrl ?? "",
   saleStatus: product.saleStatus,
@@ -48,7 +53,43 @@ const toForm = (product: AdminProduct): ProductEditForm => ({
   pointRewardRatePercent: String(product.pointRewardRatePercent),
 });
 
-const toNumber = (value: string) => Number(value.replace(/[^0-9.]/g, ""));
+type NumberParseResult =
+  | { value: number }
+  | { errorMessage: string };
+
+type ProductUpdateInputResult =
+  | { input: AdminProductUpdateInput }
+  | { errorMessage: string };
+
+const normalizeNumberText = (value: string) => value.trim().replaceAll(",", "");
+
+const parseRequiredNumber = (
+  value: string,
+  label: string,
+  options?: { shouldBeInteger?: boolean },
+): NumberParseResult => {
+  const normalizedValue = normalizeNumberText(value);
+
+  if (!normalizedValue) {
+    return { errorMessage: `${label} 항목을 입력해 주세요.` };
+  }
+
+  const numberPattern = options?.shouldBeInteger ? /^\d+$/ : /^\d+(\.\d+)?$/;
+
+  if (!numberPattern.test(normalizedValue)) {
+    return { errorMessage: `${label} 항목은 0 이상의 숫자로 입력해 주세요.` };
+  }
+
+  return { value: Number(normalizedValue) };
+};
+
+const parseOptionalNumber = (value: string, label: string): NumberParseResult | null => {
+  if (!value.trim()) {
+    return null;
+  }
+
+  return parseRequiredNumber(value, label);
+};
 
 export function AdminProductEditForm({ product }: AdminProductEditFormProps) {
   const router = useRouter();
@@ -64,12 +105,17 @@ export function AdminProductEditForm({ product }: AdminProductEditFormProps) {
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
-    const input = buildProductUpdateInput(form);
+    const result = buildProductUpdateInput(form);
+
+    if ("errorMessage" in result) {
+      setNotice({ message: result.errorMessage, variant: "error" });
+      return;
+    }
 
     try {
       const updatedProduct = await updateProductMutation.mutateAsync({
         productId: product.productId,
-        input,
+        input: result.input,
       });
       setForm(toForm(updatedProduct));
       setNotice({ message: "상품 정보가 저장되었습니다.", variant: "success" });
@@ -117,28 +163,57 @@ export function AdminProductEditForm({ product }: AdminProductEditFormProps) {
   );
 }
 
-function buildProductUpdateInput(form: ProductEditForm): AdminProductUpdateInput {
+function buildProductUpdateInput(form: ProductEditForm): ProductUpdateInputResult {
+  if (!form.productName.trim()) {
+    return { errorMessage: "상품명을 입력해 주세요." };
+  }
+
+  if (!form.brand.trim()) {
+    return { errorMessage: "브랜드를 입력해 주세요." };
+  }
+
+  const price = parseRequiredNumber(form.price, "정상 판매가");
+  if ("errorMessage" in price) {
+    return price;
+  }
+
+  const stock = parseRequiredNumber(form.stock, "현재 재고", { shouldBeInteger: true });
+  if ("errorMessage" in stock) {
+    return stock;
+  }
+
+  const pointRewardRatePercent = parseRequiredNumber(form.pointRewardRatePercent, "적립률");
+  if ("errorMessage" in pointRewardRatePercent) {
+    return pointRewardRatePercent;
+  }
+
+  const discountPrice = parseOptionalNumber(form.discountPrice, "할인 판매가");
+  if (discountPrice && "errorMessage" in discountPrice) {
+    return discountPrice;
+  }
+
   const input: AdminProductUpdateInput = {
     productName: form.productName.trim(),
     brand: form.brand.trim(),
     category: form.category,
-    subCategory: form.subCategory,
+    subCategory: form.subCategories[0] ?? "",
+    subCategories: form.subCategories,
     productDescription: form.productDescription.trim(),
     imageUrl: form.imageUrl.trim(),
     saleStatus: form.saleStatus,
     viscosity: form.viscosity.trim(),
     specification: form.specification.trim(),
     volume: form.volume.trim(),
-    price: toNumber(form.price),
-    stock: Math.max(0, Math.floor(toNumber(form.stock))),
-    pointRewardRatePercent: toNumber(form.pointRewardRatePercent),
+    price: price.value,
+    stock: stock.value,
+    pointRewardRatePercent: pointRewardRatePercent.value,
   };
 
-  if (form.discountPrice.trim()) {
-    input.discountPrice = toNumber(form.discountPrice);
+  if (discountPrice) {
+    input.discountPrice = discountPrice.value;
   } else {
     input.shouldClearDiscountPrice = true;
   }
 
-  return input;
+  return { input };
 }

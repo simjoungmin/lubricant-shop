@@ -44,12 +44,12 @@ const categories = [
 
 const CategorySection = () => {
   return (
-    <section className="bg-[#f7f7f5] pb-10">
+    <section className="bg-white pb-8">
       <div className="mx-auto max-w-[1240px] px-6 lg:px-8">
         <MainOilSearchFilter />
 
         <div className="mt-8">
-          <p className="text-xs font-black uppercase text-[#ff4b1f]">Category</p>
+          <p className="text-xs uppercase text-[#ff4b1f]">Category</p>
           <h2 className="mt-2 text-2xl font-black">카테고리 쇼핑</h2>
         </div>
 

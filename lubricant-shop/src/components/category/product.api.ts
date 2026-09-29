@@ -16,6 +16,7 @@ export type ServerProduct = {
   productName: string;
   category: string;
   subCategory: string | null;
+  subCategories: string[];
   brand: string;
   price: number;
   originalPrice: number;
@@ -84,7 +85,7 @@ const resolveSubCategorySlug = (product: ServerProduct) => {
 export const toProduct = (product: ServerProduct, badge: ProductBadge = "BEST"): Product => ({
   id: product.productId,
   categorySlug: product.category,
-  subCategorySlug: product.subCategory ?? resolveSubCategorySlug(product),
+  subCategorySlug: product.subCategories[0] ?? product.subCategory ?? resolveSubCategorySlug(product),
   name: product.productName,
   spec: [product.specification, product.volume].filter(Boolean).join(" / "),
   price: Number(product.price),

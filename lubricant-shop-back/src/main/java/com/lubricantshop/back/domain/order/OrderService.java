@@ -1,6 +1,5 @@
 package com.lubricantshop.back.domain.order;
 
-import com.lubricantshop.back.domain.cart.CartRepository;
 import com.lubricantshop.back.domain.member.entity.Member;
 import com.lubricantshop.back.domain.member.repository.MemberRepository;
 import com.lubricantshop.back.domain.order.dto.MyOrderDetailResponse;
@@ -21,24 +20,24 @@ public class OrderService {
     private final MemberRepository memberRepository;
     private final OrderRepository orderRepository;
     private final OrderItemRepository orderItemRepository;
-    private final CartRepository cartRepository;
     private final OrderLineResolver orderLineResolver;
     private final OrderPointCalculator orderPointCalculator;
+    private final OrderPaymentCompletionService orderPaymentCompletionService;
 
     public OrderService(
             MemberRepository memberRepository,
             OrderRepository orderRepository,
             OrderItemRepository orderItemRepository,
-            CartRepository cartRepository,
             OrderLineResolver orderLineResolver,
-            OrderPointCalculator orderPointCalculator
+            OrderPointCalculator orderPointCalculator,
+            OrderPaymentCompletionService orderPaymentCompletionService
     ) {
         this.memberRepository = memberRepository;
         this.orderRepository = orderRepository;
         this.orderItemRepository = orderItemRepository;
-        this.cartRepository = cartRepository;
         this.orderLineResolver = orderLineResolver;
         this.orderPointCalculator = orderPointCalculator;
+        this.orderPaymentCompletionService = orderPaymentCompletionService;
     }
 
     @Transactional
@@ -66,19 +65,25 @@ public class OrderService {
                 request.receiverPhone().trim(),
                 trimToNull(request.deliveryRequest())
         ));
+        String pgOrderId = toOrderNumber(order.getOrderId());
+        order.assignPgOrderId(pgOrderId);
 
         List<OrderItem> orderItems = orderLines.stream()
                 .map(line -> new OrderItem(order, line.product(), line.quantity(), line.pointEarned()))
                 .toList();
         orderItemRepository.saveAll(orderItems);
-        cartRepository.deleteByMember_MemberId(memberId);
+
+        if (paymentAmount.compareTo(BigDecimal.ZERO) == 0) {
+            orderPaymentCompletionService.completePayment(order);
+        }
 
         return new OrderCreateResponse(
                 order.getOrderId(),
-                toOrderNumber(order.getOrderId()),
+                pgOrderId,
+                pgOrderId,
                 order.getTotalOrderAmount(),
                 order.getPaymentAmount(),
-                request.usePoints(),
+                order.getOrderStatus() == OrderStatus.PAID && order.getPointUsed() > 0,
                 order.getPointUsed(),
                 order.getPointEarned(),
                 member.getPointBalance(),

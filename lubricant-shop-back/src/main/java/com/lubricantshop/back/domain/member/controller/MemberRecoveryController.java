@@ -32,7 +32,7 @@ public class MemberRecoveryController {
     public PasswordVerificationResponse sendPasswordVerificationCode(
             @Valid @RequestBody PasswordVerificationRequest request
     ) {
-        return memberRecoveryService.sendPasswordVerificationCode(request.email(), request.method());
+        return memberRecoveryService.sendPasswordVerificationCode(request.email(), request.phone());
     }
 
     @PostMapping("/password/reset")

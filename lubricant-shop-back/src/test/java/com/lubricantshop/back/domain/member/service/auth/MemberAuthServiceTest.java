@@ -1,12 +1,14 @@
 package com.lubricantshop.back.domain.member.service.auth;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import com.lubricantshop.back.domain.cart.CartRepository;
+import com.lubricantshop.back.domain.member.dto.auth.MemberAddressUpdateRequest;
 import com.lubricantshop.back.domain.member.dto.auth.MemberLoginRequest;
 import com.lubricantshop.back.domain.member.dto.auth.MemberPasswordUpdateRequest;
 import com.lubricantshop.back.domain.member.entity.Member;
@@ -69,6 +71,16 @@ class MemberAuthServiceTest {
                 1L,
                 new MemberPasswordUpdateRequest("WrongPassword!1", NEW_PASSWORD, NEW_PASSWORD)
         ));
+    }
+
+    @Test
+    void updateAddressChangesDefaultShippingAddress() {
+        Member member = createMember();
+        when(memberRepository.findById(1L)).thenReturn(Optional.of(member));
+
+        memberAuthService.updateAddress(1L, new MemberAddressUpdateRequest("12345 서울시 강남구 테스트로 1"));
+
+        assertEquals("12345 서울시 강남구 테스트로 1", member.getAddress());
     }
 
     @Test

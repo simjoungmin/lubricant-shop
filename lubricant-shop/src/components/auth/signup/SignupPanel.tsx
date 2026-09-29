@@ -12,7 +12,6 @@ import {
   SignupFeedbackMessage,
   SignupFixedInfoRows,
   SignupFormHeader,
-  SignupPhoneRow,
   SignupSubmitActions,
 } from "./SignupPanelSections";
 import { getNextSignupPhoneValue, getSignupPhoneParts, type SignupPhonePart } from "./signup.utils";
@@ -25,9 +24,15 @@ const SignupPanel = () => {
     signupForm,
     signupErrors,
     emailCheckState,
+    phoneVerificationState,
+    phoneVerificationMessage,
     signupMessage,
+    isPhoneVerificationSending,
+    isPhoneVerificationConfirming,
     isSignupSubmitting,
     updateSignupField,
+    handleSendPhoneVerificationCode,
+    handleConfirmPhoneVerification,
     handleSignupSubmit,
   } = useSignupForm({
     onSignupSuccess: () => setIsSuccessModalOpen(true),
@@ -58,6 +63,10 @@ const SignupPanel = () => {
 
   const updatePhone = (field: SignupPhonePart, value: string) => {
     updateSignupField("phone", getNextSignupPhoneValue(phoneParts, field, value));
+  };
+
+  const updatePhoneVerificationCode = (value: string) => {
+    updateSignupField("phoneVerificationCode", value.replace(/\D/g, "").slice(0, 6));
   };
 
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
@@ -92,7 +101,20 @@ const SignupPanel = () => {
         <SignupFormHeader />
 
         <section className="border-t border-[#d7d7d7]">
-          <SignupFixedInfoRows />
+          <SignupFixedInfoRows
+            phoneError={signupErrors.phone}
+            verificationCode={signupForm.phoneVerificationCode}
+            verificationError={signupErrors.phoneVerificationCode}
+            verificationMessage={phoneVerificationMessage}
+            verificationState={phoneVerificationState}
+            isSending={isPhoneVerificationSending}
+            isConfirming={isPhoneVerificationConfirming}
+            phoneParts={phoneParts}
+            onChangePhonePart={updatePhone}
+            onChangeVerificationCode={updatePhoneVerificationCode}
+            onConfirmVerification={() => void handleConfirmPhoneVerification()}
+            onSendVerificationCode={() => void handleSendPhoneVerificationCode()}
+          />
           <SignupAccountRows
             emailCheckState={emailCheckState}
             errors={signupErrors}
@@ -104,11 +126,6 @@ const SignupPanel = () => {
             form={signupForm}
             onChangeField={updateSignupField}
             onSearchAddress={handleSearchAddress}
-          />
-          <SignupPhoneRow
-            error={signupErrors.phone}
-            phoneParts={phoneParts}
-            onChangePhonePart={updatePhone}
           />
         </section>
 

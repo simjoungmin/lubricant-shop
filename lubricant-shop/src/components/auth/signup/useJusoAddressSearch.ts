@@ -76,6 +76,20 @@ const submitAddressSearchForm = (confirmKey: string, popupName: string) => {
   form.remove();
 };
 
+const getCenteredPopupFeatures = (width: number, height: number) => {
+  const left = Math.max(0, window.screenX + (window.outerWidth - width) / 2);
+  const top = Math.max(0, window.screenY + (window.outerHeight - height) / 2);
+
+  return [
+    `width=${width}`,
+    `height=${height}`,
+    `left=${Math.round(left)}`,
+    `top=${Math.round(top)}`,
+    "scrollbars=yes",
+    "resizable=yes",
+  ].join(",");
+};
+
 export const useJusoAddressSearch = ({ onAddressSelected }: UseJusoAddressSearchOptions) =>
   useCallback(() => {
     const confirmKey = process.env.NEXT_PUBLIC_JUSO_CONFIRM_KEY;
@@ -86,10 +100,11 @@ export const useJusoAddressSearch = ({ onAddressSelected }: UseJusoAddressSearch
     }
 
     const popupName = "jusoAddressPopup";
+    const popupFeatures = getCenteredPopupFeatures(570, 520);
     const popup = window.open(
       "",
       popupName,
-      "width=570,height=520,scrollbars=yes,resizable=yes",
+      popupFeatures,
     );
 
     if (!popup) {

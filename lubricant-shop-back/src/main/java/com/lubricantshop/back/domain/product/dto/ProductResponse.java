@@ -3,12 +3,14 @@ package com.lubricantshop.back.domain.product.dto;
 import com.lubricantshop.back.domain.product.Product;
 import com.lubricantshop.back.domain.product.ProductStatus;
 import java.math.BigDecimal;
+import java.util.List;
 
 public record ProductResponse(
         Long productId,
         String productName,
         String category,
         String subCategory,
+        List<String> subCategories,
         String brand,
         BigDecimal price,
         BigDecimal originalPrice,
@@ -28,6 +30,7 @@ public record ProductResponse(
                 product.getProductName(),
                 product.getCategory(),
                 product.getSubCategory(),
+                product.getSubCategories(),
                 product.getBrand(),
                 product.getPrice(),
                 product.getOriginalPrice(),

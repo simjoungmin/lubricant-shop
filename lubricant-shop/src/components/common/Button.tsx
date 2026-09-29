@@ -19,10 +19,15 @@ const typeClassNames: Record<ButtonKind, string> = {
 
 const Button = ({ type, product, className = "", children }: ButtonProps) => {
   const { addToCart } = useCart();
+  const isCartUnavailable =
+    type === "cart"
+    && product !== undefined
+    && ((product.saleStatus !== undefined && product.saleStatus !== "ON_SALE")
+      || (product.stock !== undefined && product.stock <= 0));
 
   const handleClick = () => {
     if (type === "cart" && product) {
-      addToCart(product);
+      void addToCart(product);
     }
   };
 
@@ -32,7 +37,9 @@ const Button = ({ type, product, className = "", children }: ButtonProps) => {
       aria-label={
         type === "cart" && product ? `${product.name} 장바구니 담기` : undefined
       }
-      className={`${typeClassNames[type]} ${className}`.trim()}
+      disabled={isCartUnavailable}
+      title={isCartUnavailable ? "현재 구매할 수 없는 상품입니다." : undefined}
+      className={`${typeClassNames[type]} ${className} disabled:cursor-not-allowed disabled:opacity-60`.trim()}
       onClick={handleClick}
     >
       {children ?? (type === "cart" ? "담기" : null)}

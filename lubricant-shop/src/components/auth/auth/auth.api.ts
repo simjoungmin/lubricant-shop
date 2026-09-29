@@ -2,6 +2,7 @@ import { getApiErrorMessage } from "./auth.errors";
 import type {
   AuthProviderName,
   LoginInput,
+  MemberAddressUpdateInput,
   MemberNameUpdateInput,
   MemberPasswordUpdateInput,
   MemberResponse,
@@ -48,6 +49,14 @@ export const authApi = {
       method: "PATCH",
       body: JSON.stringify({
         name: input.name.trim(),
+      }),
+    }),
+
+  updateAddress: (input: MemberAddressUpdateInput) =>
+    requestJson<MemberResponse>("/api/members/me/address", {
+      method: "PATCH",
+      body: JSON.stringify({
+        address: input.address.trim(),
       }),
     }),
 

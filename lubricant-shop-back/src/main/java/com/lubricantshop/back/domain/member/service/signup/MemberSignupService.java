@@ -4,6 +4,7 @@ import com.lubricantshop.back.domain.member.dto.signup.MemberSignupRequest;
 import com.lubricantshop.back.domain.member.dto.signup.MemberSignupResponse;
 import com.lubricantshop.back.domain.member.entity.Member;
 import com.lubricantshop.back.domain.member.repository.MemberRepository;
+import com.lubricantshop.back.domain.member.service.verification.SignupPhoneVerificationService;
 import com.lubricantshop.back.global.exception.ConflictException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -14,10 +15,16 @@ public class MemberSignupService {
 
     private final MemberRepository memberRepository;
     private final PasswordEncoder passwordEncoder;
+    private final SignupPhoneVerificationService signupPhoneVerificationService;
 
-    public MemberSignupService(MemberRepository memberRepository, PasswordEncoder passwordEncoder) {
+    public MemberSignupService(
+            MemberRepository memberRepository,
+            PasswordEncoder passwordEncoder,
+            SignupPhoneVerificationService signupPhoneVerificationService
+    ) {
         this.memberRepository = memberRepository;
         this.passwordEncoder = passwordEncoder;
+        this.signupPhoneVerificationService = signupPhoneVerificationService;
     }
 
     @Transactional(readOnly = true)
@@ -25,10 +32,16 @@ public class MemberSignupService {
         return memberRepository.existsByEmailIgnoreCase(email.trim());
     }
 
+    @Transactional(readOnly = true)
+    public boolean isPhoneDuplicated(String phone) {
+        return memberRepository.existsByPhoneNumber(normalizePhone(phone));
+    }
+
     @Transactional
     public MemberSignupResponse signup(MemberSignupRequest request) {
         String email = request.email().trim().toLowerCase();
         String loginId = request.loginId().trim().toLowerCase();
+        String phone = normalizePhone(request.phone());
 
         if (memberRepository.existsByEmailIgnoreCase(email)) {
             throw new ConflictException("이미 사용 중인 이메일입니다.");
@@ -38,12 +51,18 @@ public class MemberSignupService {
             throw new ConflictException("이미 사용 중인 아이디입니다.");
         }
 
+        if (memberRepository.existsByPhoneNumber(phone)) {
+            throw new ConflictException("이미 가입된 휴대폰 번호입니다.");
+        }
+
+        signupPhoneVerificationService.verifyAndConsume(phone, request.phoneVerificationToken());
+
         Member member = new Member(
                 email,
                 loginId,
                 passwordEncoder.encode(request.password()),
                 request.name().trim(),
-                normalizePhone(request.phone()),
+                phone,
                 request.address() == null ? "" : request.address().trim(),
                 request.termsAgreed(),
                 request.privacyAgreed(),
@@ -64,6 +83,6 @@ public class MemberSignupService {
     }
 
     private String normalizePhone(String phone) {
-        return phone.trim().replace("-", "");
+        return phone.trim().replaceAll("[^0-9]", "");
     }
 }

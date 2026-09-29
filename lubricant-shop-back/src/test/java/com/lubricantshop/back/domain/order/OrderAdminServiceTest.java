@@ -31,6 +31,9 @@ class OrderAdminServiceTest {
     @Mock
     private AdminAuthorizationService adminAuthorizationService;
 
+    @Mock
+    private OrderPaymentCompletionService orderPaymentCompletionService;
+
     private OrderAdminService orderAdminService;
 
     @BeforeEach
@@ -38,7 +41,8 @@ class OrderAdminServiceTest {
         orderAdminService = new OrderAdminService(
                 orderRepository,
                 orderItemRepository,
-                adminAuthorizationService
+                adminAuthorizationService,
+                orderPaymentCompletionService
         );
     }
 

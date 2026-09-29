@@ -30,7 +30,7 @@ const CategoryContainer = ({
   return (
     <>
       <OilHeader />
-      <main className="bg-[#f7f7f5]">
+      <main className="bg-white">
         <section className="border-b border-[#e2e6eb] bg-white">
           <div className="mx-auto flex max-w-[1440px] items-center gap-2 px-6 py-4 text-xs font-semibold text-[#7a8490] lg:px-8">
             <span>홈</span>

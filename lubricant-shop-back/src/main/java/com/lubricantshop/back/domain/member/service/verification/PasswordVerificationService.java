@@ -1,6 +1,5 @@
 package com.lubricantshop.back.domain.member.service.verification;
 
-import com.lubricantshop.back.domain.member.dto.recovery.PasswordVerificationMethod;
 import java.security.SecureRandom;
 import java.time.LocalDateTime;
 import java.util.Map;
@@ -16,12 +15,16 @@ public class PasswordVerificationService {
     private final SecureRandom secureRandom = new SecureRandom();
     private final Map<String, VerificationCode> verificationCodes = new ConcurrentHashMap<>();
 
-    public String createCode(String email, PasswordVerificationMethod method, String receiver) {
+    public String createCode(String email) {
         String code = String.format("%06d", secureRandom.nextInt(CODE_BOUND));
         String normalizedEmail = normalizeEmail(email);
         verificationCodes.put(normalizedEmail, new VerificationCode(code, LocalDateTime.now().plusMinutes(CODE_TTL_MINUTES)));
 
         return code;
+    }
+
+    public void discard(String email) {
+        verificationCodes.remove(normalizeEmail(email));
     }
 
     public boolean verifyAndConsume(String email, String code) {

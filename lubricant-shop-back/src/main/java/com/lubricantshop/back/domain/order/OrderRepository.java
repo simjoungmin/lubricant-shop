@@ -16,7 +16,16 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
 
     Optional<Order> findByOrderIdAndMember_MemberId(Long orderId, Long memberId);
 
+    Optional<Order> findByPgOrderIdAndMember_MemberId(String pgOrderId, Long memberId);
+
     @Lock(LockModeType.PESSIMISTIC_WRITE)
     @Query("select o from Order o where o.orderId = :orderId")
     Optional<Order> findByOrderIdForUpdate(@Param("orderId") Long orderId);
+
+    @Lock(LockModeType.PESSIMISTIC_WRITE)
+    @Query("select o from Order o where o.pgOrderId = :pgOrderId and o.member.memberId = :memberId")
+    Optional<Order> findByPgOrderIdAndMemberIdForUpdate(
+            @Param("pgOrderId") String pgOrderId,
+            @Param("memberId") Long memberId
+    );
 }

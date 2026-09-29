@@ -5,11 +5,13 @@ import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.Size;
 import java.math.BigDecimal;
+import java.util.List;
 
 public record AdminProductUpdateRequest(
         @Size(max = 160) String productName,
         @Size(max = 80) String category,
         @Size(max = 120) String subCategory,
+        List<@Size(max = 120) String> subCategories,
         @Size(max = 80) String brand,
         @DecimalMin("0") BigDecimal price,
         @DecimalMin("0") BigDecimal discountPrice,

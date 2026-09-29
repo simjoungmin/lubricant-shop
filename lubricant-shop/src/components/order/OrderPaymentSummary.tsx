@@ -86,7 +86,7 @@ export function OrderPaymentSummary({
         disabled={itemCount === 0 || isCreatePending}
         className="mt-5 h-12 w-full rounded-md bg-[#ff4b1f] text-sm font-black text-white transition hover:bg-[#e63e16] disabled:cursor-not-allowed disabled:bg-[#d8dde3] disabled:text-[#8a94a1]"
       >
-        {isCreatePending ? "주문 저장 중..." : "주문 데이터 저장"}
+        {isCreatePending ? "주문 저장 중..." : form.paymentMethod === "CARD" ? "카드 결제하기" : "주문 접수하기"}
       </button>
     </aside>
   );

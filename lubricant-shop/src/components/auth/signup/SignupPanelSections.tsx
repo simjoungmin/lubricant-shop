@@ -2,6 +2,7 @@ import Link from "next/link";
 import type { ReactNode } from "react";
 import type {
   EmailCheckState,
+  PhoneVerificationState,
   SignupErrors,
   SignupFormState,
   SignupFormUpdateHandler,
@@ -46,10 +47,23 @@ type SignupAddressRowProps = {
   onSearchAddress: () => void;
 };
 
-type SignupPhoneRowProps = {
+type PhoneVerificationFieldsProps = {
   error?: string;
+  verificationCode: string;
+  verificationError?: string;
+  verificationMessage: string;
+  verificationState: PhoneVerificationState;
+  isSending: boolean;
+  isConfirming: boolean;
   phoneParts: SignupPhoneParts;
   onChangePhonePart: (field: SignupPhonePart, value: string) => void;
+  onChangeVerificationCode: (value: string) => void;
+  onConfirmVerification: () => void;
+  onSendVerificationCode: () => void;
+};
+
+type SignupFixedInfoRowsProps = Omit<PhoneVerificationFieldsProps, "error"> & {
+  phoneError?: string;
 };
 
 type SignupAgreementRowsProps = {
@@ -86,7 +100,20 @@ export function SignupFormHeader() {
   );
 }
 
-export function SignupFixedInfoRows() {
+export function SignupFixedInfoRows({
+  phoneError,
+  verificationCode,
+  verificationError,
+  verificationMessage,
+  verificationState,
+  isSending,
+  isConfirming,
+  phoneParts,
+  onChangePhonePart,
+  onChangeVerificationCode,
+  onConfirmVerification,
+  onSendVerificationCode,
+}: SignupFixedInfoRowsProps) {
   return (
     <>
       <SignupRow label="회원구분">
@@ -111,16 +138,23 @@ export function SignupFixedInfoRows() {
           <input checked readOnly className="h-[13px] w-[13px] accent-[#222]" type="radio" />
           휴대폰인증
         </label>
-        <div className="mt-[7px]">
-          <button
-            className="h-[30px] border border-[#bfbfbf] bg-white px-[14px] text-[12px] text-[#333]"
-            type="button"
-            disabled
-          >
-            휴대폰인증
-          </button>
-        </div>
         <p className={helperClassName}>본인 명의의 휴대폰으로 본인인증을 진행합니다.</p>
+        <div className="mt-[8px]">
+          <PhoneVerificationFields
+            error={phoneError}
+            verificationCode={verificationCode}
+            verificationError={verificationError}
+            verificationMessage={verificationMessage}
+            verificationState={verificationState}
+            isSending={isSending}
+            isConfirming={isConfirming}
+            phoneParts={phoneParts}
+            onChangePhonePart={onChangePhonePart}
+            onChangeVerificationCode={onChangeVerificationCode}
+            onConfirmVerification={onConfirmVerification}
+            onSendVerificationCode={onSendVerificationCode}
+          />
+        </div>
       </SignupRow>
     </>
   );
@@ -261,24 +295,72 @@ export function SignupAddressRow({
   );
 }
 
-export function SignupPhoneRow({
+function PhoneVerificationFields({
   error,
+  verificationCode,
+  verificationError,
+  verificationMessage,
+  verificationState,
+  isSending,
+  isConfirming,
   phoneParts,
   onChangePhonePart,
-}: SignupPhoneRowProps) {
+  onChangeVerificationCode,
+  onConfirmVerification,
+  onSendVerificationCode,
+}: PhoneVerificationFieldsProps) {
+  const isVerified = verificationState === "verified";
+
   return (
-    <SignupRow label="휴대전화" isRequired>
-      <PhoneNumberFields
-        ariaInvalid={Boolean(error)}
-        first={phoneParts.first}
-        onChangeFirst={(value) => onChangePhonePart("first", value)}
-        onChangePrefix={(value) => onChangePhonePart("prefix", value)}
-        onChangeSecond={(value) => onChangePhonePart("second", value)}
-        prefix={phoneParts.prefix}
-        second={phoneParts.second}
-      />
+    <>
+      <div className="grid gap-[8px]">
+        <div className="flex flex-wrap items-center gap-[8px]">
+          <PhoneNumberFields
+            ariaInvalid={Boolean(error)}
+            first={phoneParts.first}
+            onChangeFirst={(value) => onChangePhonePart("first", value)}
+            onChangePrefix={(value) => onChangePhonePart("prefix", value)}
+            onChangeSecond={(value) => onChangePhonePart("second", value)}
+            prefix={phoneParts.prefix}
+            second={phoneParts.second}
+          />
+          <button
+            className="h-[30px] border border-[#aaa] bg-white px-[12px] text-[12px] font-bold text-[#333] disabled:cursor-not-allowed disabled:opacity-60"
+            disabled={isSending || isVerified}
+            type="button"
+            onClick={onSendVerificationCode}
+          >
+            {isSending ? "발송 중" : isVerified ? "인증 완료" : "인증번호 발송"}
+          </button>
+        </div>
+        <div className="flex flex-wrap items-center gap-[8px]">
+          <input
+            aria-label="휴대전화 인증번호"
+            aria-invalid={Boolean(verificationError)}
+            className={`${inputClassName} w-[132px] aria-[invalid=true]:border-red-400`}
+            inputMode="numeric"
+            placeholder="인증번호 6자리"
+            value={verificationCode}
+            onChange={(event) => onChangeVerificationCode(event.target.value)}
+          />
+          <button
+            className="h-[30px] border border-[#333] bg-[#333] px-[12px] text-[12px] font-bold text-white disabled:cursor-not-allowed disabled:opacity-60"
+            disabled={isConfirming || isVerified || verificationCode.length !== 6}
+            type="button"
+            onClick={onConfirmVerification}
+          >
+            {isConfirming ? "확인 중" : "인증 확인"}
+          </button>
+        </div>
+      </div>
       {error ? <p className={errorClassName}>{error}</p> : null}
-    </SignupRow>
+      {verificationError ? <p className={errorClassName}>{verificationError}</p> : null}
+      {verificationMessage ? (
+        <p className={`${helperClassName} ${isVerified ? "text-emerald-600" : ""}`}>
+          {verificationMessage}
+        </p>
+      ) : null}
+    </>
   );
 }
 

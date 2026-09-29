@@ -48,12 +48,6 @@ public class ProductService {
                         condition.hasSubCategory(),
                         condition.isBrandSubCategory(),
                         condition.subCategory(),
-                        condition.subCategoryKeyword(),
-                        condition.subCategoryKeyword1(),
-                        condition.subCategoryKeyword2(),
-                        condition.subCategoryKeyword3(),
-                        condition.subCategoryKeyword4(),
-                        condition.subCategoryKeyword5(),
                         condition.hasBrand(),
                         condition.brand(),
                         condition.hasKeyword(),
@@ -97,12 +91,6 @@ public class ProductService {
                         condition.hasSubCategory(),
                         condition.isBrandSubCategory(),
                         condition.subCategory(),
-                        condition.subCategoryKeyword(),
-                        condition.subCategoryKeyword1(),
-                        condition.subCategoryKeyword2(),
-                        condition.subCategoryKeyword3(),
-                        condition.subCategoryKeyword4(),
-                        condition.subCategoryKeyword5(),
                         condition.hasKeyword(),
                         condition.keyword(),
                         condition.hasFuelType(),
@@ -147,12 +135,6 @@ public class ProductService {
             boolean hasSubCategory,
             boolean isBrandSubCategory,
             String subCategory,
-            String subCategoryKeyword,
-            String subCategoryKeyword1,
-            String subCategoryKeyword2,
-            String subCategoryKeyword3,
-            String subCategoryKeyword4,
-            String subCategoryKeyword5,
             boolean hasBrand,
             String brand,
             boolean hasKeyword,
@@ -181,7 +163,6 @@ public class ProductService {
             String normalizedFuelType = normalize(fuelType);
             String normalizedViscosity = normalize(viscosity);
             String normalizedStandard = normalize(standard);
-            List<String> subCategoryKeywords = resolveSubCategoryKeywords(normalizedSubCategory);
 
             return new ProductSearchCondition(
                     !isBlank(normalizedCategory),
@@ -189,12 +170,6 @@ public class ProductService {
                     !isBlank(normalizedSubCategory),
                     "brandengineoil".equals(normalizedSubCategory),
                     normalizedSubCategory,
-                    like(normalizedSubCategory),
-                    likeKeyword(subCategoryKeywords, 0),
-                    likeKeyword(subCategoryKeywords, 1),
-                    likeKeyword(subCategoryKeywords, 2),
-                    likeKeyword(subCategoryKeywords, 3),
-                    likeKeyword(subCategoryKeywords, 4),
                     !isBlank(normalizedBrand),
                     normalizedBrand,
                     !isBlank(normalizedKeyword),
@@ -217,30 +192,6 @@ public class ProductService {
             };
         }
 
-        private static List<String> resolveSubCategoryKeywords(String subCategory) {
-            return switch (subCategory) {
-                case "brandengineoil" -> List.of("브랜드", "zic", "kixx", "mobil", "shell");
-                case "viscosityengineoil" -> List.of("0w20", "0w30", "5w30", "5w40", "10w40");
-                case "gasolinelpgengineoil" -> List.of("가솔린", "lpg");
-                case "passengerdieselinegineoil", "passengerdieselengineoil" -> List.of("승용", "디젤", "diesel");
-                case "racingbikeengineoil" -> List.of("레이싱", "바이크", "racing", "bike");
-                case "drum200lengineoil" -> List.of("200l", "200리터", "드럼", "자가하차");
-                case "dctdctf" -> List.of("dct", "dctf");
-                case "gearoil" -> List.of("기어오일", "gl5");
-                case "transfercase" -> List.of("트랜스퍼케이스", "transfercase");
-                case "brakefluid" -> List.of("브레이크액", "dot");
-                case "poweroil" -> List.of("파워오일");
-                case "orangepink" -> List.of("주황색", "분홍색");
-                case "enginesystem" -> List.of("엔진", "첨가제", "불스원샷");
-                case "airconradiator" -> List.of("에어컨", "라디에이터");
-                case "missionadditive" -> List.of("미션첨가제", "미션", "첨가제");
-                case "rustproofcleaner" -> List.of("방청유", "세정제");
-                case "washerfluid" -> List.of("워셔액");
-                case "hydraulicoil" -> List.of("유압유");
-                default -> List.of(subCategory);
-            };
-        }
-
         private static String normalize(String value) {
             if (value == null) {
                 return DEFAULT_QUERY_VALUE;
@@ -255,14 +206,6 @@ public class ProductService {
 
         private static String like(String value) {
             return LIKE_WILDCARD + value + LIKE_WILDCARD;
-        }
-
-        private static String likeKeyword(List<String> keywords, int index) {
-            if (keywords.size() <= index) {
-                return like(DEFAULT_QUERY_VALUE);
-            }
-
-            return like(normalize(keywords.get(index)));
         }
 
         private static boolean isBlank(String value) {

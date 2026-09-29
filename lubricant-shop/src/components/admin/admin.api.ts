@@ -9,6 +9,7 @@ export type AdminProduct = {
   productName: string;
   category: string;
   subCategory: string | null;
+  subCategories: string[];
   brand: string;
   price: number;
   discountPrice: number | null;
@@ -28,6 +29,7 @@ export type AdminProductUpdateInput = Partial<{
   productName: string;
   category: string;
   subCategory: string;
+  subCategories: string[];
   brand: string;
   price: number;
   discountPrice: number | null;

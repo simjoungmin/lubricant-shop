@@ -26,6 +26,14 @@ export function AdminProductBasicForm({
   onChange,
 }: AdminProductBasicFormProps) {
   const selectedCategory = categories.find((category) => category.slug === form.category);
+  const handleToggleSubCategory = (subCategorySlug: string) => {
+    const nextSubCategories = form.subCategories.includes(subCategorySlug)
+      ? form.subCategories.filter((currentSlug) => currentSlug !== subCategorySlug)
+      : [...form.subCategories, subCategorySlug];
+
+    onChange("subCategories", nextSubCategories);
+    onChange("subCategory", nextSubCategories[0] ?? "");
+  };
 
   return (
     <section className="grid gap-5 rounded-lg border border-white/10 bg-[#171611] p-5">
@@ -55,6 +63,7 @@ export function AdminProductBasicForm({
             onChange={(event) => {
               onChange("category", event.target.value);
               onChange("subCategory", "");
+              onChange("subCategories", []);
             }}
             className={productEditInputClassName}
           >
@@ -65,21 +74,29 @@ export function AdminProductBasicForm({
             ))}
           </select>
         </label>
-        <label className={productEditLabelClassName}>
-          하위 카테고리
-          <select
-            value={form.subCategory}
-            onChange={(event) => onChange("subCategory", event.target.value)}
-            className={productEditInputClassName}
-          >
-            <option value="">선택 안 함</option>
-            {selectedCategory?.subCategories.map((subCategory) => (
-              <option key={subCategory.slug} value={subCategory.slug}>
-                {subCategory.label}
-              </option>
-            ))}
-          </select>
-        </label>
+        <fieldset className="grid gap-2 text-xs font-black text-zinc-500 md:col-span-2">
+          <legend>하위 카테고리</legend>
+          <div className="grid gap-2 rounded-md border border-white/10 bg-[#11100d] p-3 sm:grid-cols-2 lg:grid-cols-3">
+            {selectedCategory?.subCategories.map((subCategory) => {
+              const isChecked = form.subCategories.includes(subCategory.slug);
+
+              return (
+                <label
+                  key={subCategory.slug}
+                  className="flex min-h-10 items-center gap-2 rounded-md px-2 text-sm font-bold text-white transition hover:bg-white/5"
+                >
+                  <input
+                    type="checkbox"
+                    checked={isChecked}
+                    onChange={() => handleToggleSubCategory(subCategory.slug)}
+                    className="h-4 w-4 accent-[#d6a84f]"
+                  />
+                  {subCategory.label}
+                </label>
+              );
+            })}
+          </div>
+        </fieldset>
         <label className={productEditLabelClassName}>
           판매 상태
           <select

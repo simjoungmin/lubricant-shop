@@ -15,6 +15,7 @@ export type SignupSavedFieldState = {
 
 export type SignupUiOnlyFieldState = {
   passwordConfirm: string;
+  phoneVerificationCode: string;
   privacyDelegationAgreed: boolean;
   vehicleEnabled: boolean;
 };
@@ -24,6 +25,7 @@ export type SignupFormState = SignupSavedFieldState & SignupUiOnlyFieldState;
 export type SignupErrors = Partial<Record<keyof SignupFormState | "emailCheck" | "submit", string>>;
 
 export type EmailCheckState = "idle" | "checking" | "available" | "duplicated";
+export type PhoneVerificationState = "idle" | "sent" | "checking" | "verified";
 
 export type SignupFormUpdateHandler = <Field extends keyof SignupFormState>(
   field: Field,
@@ -41,4 +43,5 @@ export type SignupPayload = {
   privacyAgreed: boolean;
   marketingAgreed: boolean;
   vehicleInfo: string;
+  phoneVerificationToken: string;
 };

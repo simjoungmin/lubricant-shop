@@ -26,40 +26,10 @@ export function PaymentMethodFields({
 }: PaymentMethodFieldsProps) {
   if (form.paymentMethod === "CARD") {
     return (
-      <PaymentBox title="카드 정보">
+      <PaymentBox title="토스페이먼츠 카드 결제">
         <p className="text-xs font-bold leading-5 text-[#65717f]">
-          현재는 카드 결제 UI만 제공하며 카드 정보는 저장되지 않습니다.
+          주문을 저장하면 토스페이먼츠 결제창으로 이동합니다. 카드 정보는 OIL MASTER에 저장되지 않습니다.
         </p>
-        <div className="mt-4 grid gap-3">
-          <PaymentInput
-            label="카드번호"
-            inputMode="numeric"
-            placeholder="0000 0000 0000 0000"
-            value={form.cardNumber}
-            onChange={(value) => onUpdateForm("cardNumber", value)}
-          />
-          <div className="grid grid-cols-2 gap-3">
-            <PaymentInput
-              label="유효기간"
-              placeholder="MM/YY"
-              value={form.cardExpiry}
-              onChange={(value) => onUpdateForm("cardExpiry", value)}
-            />
-            <PaymentInput
-              label="CVC"
-              inputMode="numeric"
-              placeholder="3자리"
-              value={form.cardCvc}
-              onChange={(value) => onUpdateForm("cardCvc", value)}
-            />
-          </div>
-          <PaymentInput
-            label="카드 소유자명"
-            placeholder="홍길동"
-            value={form.cardOwnerName}
-            onChange={(value) => onUpdateForm("cardOwnerName", value)}
-          />
-        </div>
       </PaymentBox>
     );
   }

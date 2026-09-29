@@ -27,9 +27,40 @@ export const signupApi = {
       throw new Error(await getApiErrorMessage(response));
     }
   },
+
+  sendPhoneVerificationCode: async (phone: string) => {
+    const response = await fetch(`${API_BASE_URL}/api/members/signup/phone-verification-code`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ phone }),
+    });
+
+    if (!response.ok) {
+      throw new Error(await getApiErrorMessage(response));
+    }
+
+    return (await response.json()) as { message: string };
+  },
+
+  confirmPhoneVerification: async (phone: string, code: string) => {
+    const response = await fetch(`${API_BASE_URL}/api/members/signup/phone-verification`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ phone, code }),
+    });
+
+    if (!response.ok) {
+      throw new Error(await getApiErrorMessage(response));
+    }
+
+    return (await response.json()) as { message: string; phoneVerificationToken: string };
+  },
 };
 
-export const toSignupPayload = (signupForm: SignupFormState): SignupPayload => ({
+export const toSignupPayload = (
+  signupForm: SignupFormState,
+  phoneVerificationToken: string,
+): SignupPayload => ({
   email: signupForm.email.trim().toLowerCase(),
   loginId: signupForm.loginId.trim().toLowerCase(),
   password: signupForm.password,
@@ -43,4 +74,5 @@ export const toSignupPayload = (signupForm: SignupFormState): SignupPayload => (
   privacyAgreed: signupForm.privacyAgreed,
   marketingAgreed: signupForm.marketingAgreed,
   vehicleInfo: signupForm.vehicleEnabled ? signupForm.vehicleInfo.trim() : "",
+  phoneVerificationToken,
 });

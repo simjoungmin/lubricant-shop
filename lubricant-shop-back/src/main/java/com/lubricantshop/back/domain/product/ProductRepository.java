@@ -12,52 +12,16 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
     List<Product> findByDeletedFalseOrderByProductIdAsc();
 
     @Query("""
-            select p
+            select distinct p
             from Product p
+            left join p.subCategories mappedSubCategory
             where p.deleted = false
               and p.saleStatus = :saleStatus
               and (:hasCategory = false or replace(replace(replace(lower(coalesce(p.basicInfo.category, '')), ' ', ''), '-', ''), '/', '') in :categories)
               and (:hasSubCategory = false
                    or (:isBrandSubCategory = true and p.basicInfo.brand is not null and trim(p.basicInfo.brand) <> '')
                    or replace(replace(replace(lower(coalesce(p.basicInfo.subCategory, '')), ' ', ''), '-', ''), '/', '') = :subCategory
-                   or replace(replace(replace(lower(coalesce(p.basicInfo.viscosity, '')), ' ', ''), '-', ''), '/', '') = :subCategory
-                   or replace(replace(replace(lower(coalesce(p.basicInfo.specification, '')), ' ', ''), '-', ''), '/', '') like :subCategoryKeyword
-                   or replace(replace(replace(lower(coalesce(p.basicInfo.productName, '')), ' ', ''), '-', ''), '/', '') like :subCategoryKeyword
-                   or replace(replace(replace(lower(concat(
-                        coalesce(p.basicInfo.productName, ''), ' ',
-                        coalesce(p.basicInfo.brand, ''), ' ',
-                        coalesce(p.basicInfo.productDescription, ''), ' ',
-                        coalesce(p.basicInfo.specification, ''), ' ',
-                        coalesce(p.basicInfo.viscosity, '')
-                   )), ' ', ''), '-', ''), '/', '') like :subCategoryKeyword1
-                   or replace(replace(replace(lower(concat(
-                        coalesce(p.basicInfo.productName, ''), ' ',
-                        coalesce(p.basicInfo.brand, ''), ' ',
-                        coalesce(p.basicInfo.productDescription, ''), ' ',
-                        coalesce(p.basicInfo.specification, ''), ' ',
-                        coalesce(p.basicInfo.viscosity, '')
-                   )), ' ', ''), '-', ''), '/', '') like :subCategoryKeyword2
-                   or replace(replace(replace(lower(concat(
-                        coalesce(p.basicInfo.productName, ''), ' ',
-                        coalesce(p.basicInfo.brand, ''), ' ',
-                        coalesce(p.basicInfo.productDescription, ''), ' ',
-                        coalesce(p.basicInfo.specification, ''), ' ',
-                        coalesce(p.basicInfo.viscosity, '')
-                   )), ' ', ''), '-', ''), '/', '') like :subCategoryKeyword3
-                   or replace(replace(replace(lower(concat(
-                        coalesce(p.basicInfo.productName, ''), ' ',
-                        coalesce(p.basicInfo.brand, ''), ' ',
-                        coalesce(p.basicInfo.productDescription, ''), ' ',
-                        coalesce(p.basicInfo.specification, ''), ' ',
-                        coalesce(p.basicInfo.viscosity, '')
-                   )), ' ', ''), '-', ''), '/', '') like :subCategoryKeyword4
-                   or replace(replace(replace(lower(concat(
-                        coalesce(p.basicInfo.productName, ''), ' ',
-                        coalesce(p.basicInfo.brand, ''), ' ',
-                        coalesce(p.basicInfo.productDescription, ''), ' ',
-                        coalesce(p.basicInfo.specification, ''), ' ',
-                        coalesce(p.basicInfo.viscosity, '')
-                   )), ' ', ''), '-', ''), '/', '') like :subCategoryKeyword5)
+                   or replace(replace(replace(lower(coalesce(mappedSubCategory, '')), ' ', ''), '-', ''), '/', '') = :subCategory)
               and (:hasBrand = false or replace(replace(replace(lower(coalesce(p.basicInfo.brand, '')), ' ', ''), '-', ''), '/', '') = :brand)
               and (:hasKeyword = false
                    or replace(replace(replace(lower(concat(
@@ -96,12 +60,6 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
             @Param("hasSubCategory") boolean hasSubCategory,
             @Param("isBrandSubCategory") boolean isBrandSubCategory,
             @Param("subCategory") String subCategory,
-            @Param("subCategoryKeyword") String subCategoryKeyword,
-            @Param("subCategoryKeyword1") String subCategoryKeyword1,
-            @Param("subCategoryKeyword2") String subCategoryKeyword2,
-            @Param("subCategoryKeyword3") String subCategoryKeyword3,
-            @Param("subCategoryKeyword4") String subCategoryKeyword4,
-            @Param("subCategoryKeyword5") String subCategoryKeyword5,
             @Param("hasBrand") boolean hasBrand,
             @Param("brand") String brand,
             @Param("hasKeyword") boolean hasKeyword,
@@ -117,6 +75,7 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
     @Query("""
             select distinct trim(p.basicInfo.brand)
             from Product p
+            left join p.subCategories mappedSubCategory
             where p.deleted = false
               and p.saleStatus = :saleStatus
               and p.basicInfo.brand is not null
@@ -125,44 +84,7 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
               and (:hasSubCategory = false
                    or (:isBrandSubCategory = true and p.basicInfo.brand is not null and trim(p.basicInfo.brand) <> '')
                    or replace(replace(replace(lower(coalesce(p.basicInfo.subCategory, '')), ' ', ''), '-', ''), '/', '') = :subCategory
-                   or replace(replace(replace(lower(coalesce(p.basicInfo.viscosity, '')), ' ', ''), '-', ''), '/', '') = :subCategory
-                   or replace(replace(replace(lower(coalesce(p.basicInfo.specification, '')), ' ', ''), '-', ''), '/', '') like :subCategoryKeyword
-                   or replace(replace(replace(lower(coalesce(p.basicInfo.productName, '')), ' ', ''), '-', ''), '/', '') like :subCategoryKeyword
-                   or replace(replace(replace(lower(concat(
-                        coalesce(p.basicInfo.productName, ''), ' ',
-                        coalesce(p.basicInfo.brand, ''), ' ',
-                        coalesce(p.basicInfo.productDescription, ''), ' ',
-                        coalesce(p.basicInfo.specification, ''), ' ',
-                        coalesce(p.basicInfo.viscosity, '')
-                   )), ' ', ''), '-', ''), '/', '') like :subCategoryKeyword1
-                   or replace(replace(replace(lower(concat(
-                        coalesce(p.basicInfo.productName, ''), ' ',
-                        coalesce(p.basicInfo.brand, ''), ' ',
-                        coalesce(p.basicInfo.productDescription, ''), ' ',
-                        coalesce(p.basicInfo.specification, ''), ' ',
-                        coalesce(p.basicInfo.viscosity, '')
-                   )), ' ', ''), '-', ''), '/', '') like :subCategoryKeyword2
-                   or replace(replace(replace(lower(concat(
-                        coalesce(p.basicInfo.productName, ''), ' ',
-                        coalesce(p.basicInfo.brand, ''), ' ',
-                        coalesce(p.basicInfo.productDescription, ''), ' ',
-                        coalesce(p.basicInfo.specification, ''), ' ',
-                        coalesce(p.basicInfo.viscosity, '')
-                   )), ' ', ''), '-', ''), '/', '') like :subCategoryKeyword3
-                   or replace(replace(replace(lower(concat(
-                        coalesce(p.basicInfo.productName, ''), ' ',
-                        coalesce(p.basicInfo.brand, ''), ' ',
-                        coalesce(p.basicInfo.productDescription, ''), ' ',
-                        coalesce(p.basicInfo.specification, ''), ' ',
-                        coalesce(p.basicInfo.viscosity, '')
-                   )), ' ', ''), '-', ''), '/', '') like :subCategoryKeyword4
-                   or replace(replace(replace(lower(concat(
-                        coalesce(p.basicInfo.productName, ''), ' ',
-                        coalesce(p.basicInfo.brand, ''), ' ',
-                        coalesce(p.basicInfo.productDescription, ''), ' ',
-                        coalesce(p.basicInfo.specification, ''), ' ',
-                        coalesce(p.basicInfo.viscosity, '')
-                   )), ' ', ''), '-', ''), '/', '') like :subCategoryKeyword5)
+                   or replace(replace(replace(lower(coalesce(mappedSubCategory, '')), ' ', ''), '-', ''), '/', '') = :subCategory)
               and (:hasKeyword = false
                    or replace(replace(replace(lower(concat(
                         coalesce(p.basicInfo.productName, ''), ' ',
@@ -201,12 +123,6 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
             @Param("hasSubCategory") boolean hasSubCategory,
             @Param("isBrandSubCategory") boolean isBrandSubCategory,
             @Param("subCategory") String subCategory,
-            @Param("subCategoryKeyword") String subCategoryKeyword,
-            @Param("subCategoryKeyword1") String subCategoryKeyword1,
-            @Param("subCategoryKeyword2") String subCategoryKeyword2,
-            @Param("subCategoryKeyword3") String subCategoryKeyword3,
-            @Param("subCategoryKeyword4") String subCategoryKeyword4,
-            @Param("subCategoryKeyword5") String subCategoryKeyword5,
             @Param("hasKeyword") boolean hasKeyword,
             @Param("keyword") String keyword,
             @Param("hasFuelType") boolean hasFuelType,

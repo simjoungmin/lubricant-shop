@@ -16,18 +16,16 @@ const postJson = async <ResponseBody>(path: string, body: unknown) => {
   return (await response.json()) as ResponseBody;
 };
 
-export type PasswordVerificationMethod = "EMAIL" | "PHONE";
-
 export const recoveryApi = {
   findEmail: (phone: string) =>
     postJson<{ loginId: string }>("/api/members/find-email", {
       phone,
     }),
 
-  sendPasswordVerificationCode: (email: string, method: PasswordVerificationMethod) =>
-    postJson<{ message: string; devCode: string }>("/api/members/password/verification-code", {
+  sendPasswordVerificationCode: (email: string, phone: string) =>
+    postJson<{ message: string }>("/api/members/password/verification-code", {
       email,
-      method,
+      phone,
     }),
 
   resetPassword: (

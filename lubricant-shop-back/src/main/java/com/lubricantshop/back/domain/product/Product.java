@@ -1,6 +1,8 @@
 package com.lubricantshop.back.domain.product;
 
 import jakarta.persistence.Column;
+import jakarta.persistence.CollectionTable;
+import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -8,11 +10,16 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.PreUpdate;
 import jakarta.persistence.Table;
+import jakarta.persistence.UniqueConstraint;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
 
 @Entity
 @Table(name = "product")
@@ -31,6 +38,17 @@ public class Product {
 
     @Embedded
     private ProductInventory inventory = new ProductInventory();
+
+    @ElementCollection
+    @CollectionTable(
+            name = "product_sub_category",
+            joinColumns = @JoinColumn(name = "product_id"),
+            uniqueConstraints = {
+                    @UniqueConstraint(name = "uk_product_sub_category", columnNames = {"product_id", "sub_category"})
+            }
+    )
+    @Column(name = "sub_category", nullable = false, length = 120)
+    private List<String> subCategories = new ArrayList<>();
 
     @Enumerated(EnumType.STRING)
     @Column(name = "sale_status", nullable = false, length = 30)
@@ -77,6 +95,7 @@ public class Product {
         );
         priceInfo = new ProductPriceInfo(price, discountPrice, pointRewardRatePercent);
         inventory = new ProductInventory(stock);
+        replaceSubCategories(toSubCategoryList(subCategory));
         changeSaleStatus(saleStatus == null ? ProductStatus.ON_SALE : saleStatus);
     }
 
@@ -93,7 +112,19 @@ public class Product {
     }
 
     public String getSubCategory() {
+        if (!subCategories.isEmpty()) {
+            return subCategories.get(0);
+        }
+
         return basicInfo.getSubCategory();
+    }
+
+    public List<String> getSubCategories() {
+        if (!subCategories.isEmpty()) {
+            return List.copyOf(subCategories);
+        }
+
+        return toSubCategoryList(basicInfo.getSubCategory());
     }
 
     public String getBrand() {
@@ -190,7 +221,8 @@ public class Product {
             String volume,
             String imageUrl,
             ProductStatus saleStatus,
-            BigDecimal pointRewardRatePercent
+            BigDecimal pointRewardRatePercent,
+            List<String> subCategories
     ) {
         basicInfo.updateIfPresent(
                 productName,
@@ -203,6 +235,7 @@ public class Product {
                 volume,
                 imageUrl
         );
+        updateSubCategoriesIfPresent(subCategory, subCategories);
         priceInfo.updateIfPresent(price, discountPrice, pointRewardRatePercent);
 
         if (stock != null) {
@@ -220,6 +253,13 @@ public class Product {
     public void markDeleted() {
         deleted = true;
         saleStatus = ProductStatus.HIDDEN;
+    }
+
+    public void replaceSubCategories(List<String> subCategories) {
+        this.subCategories.clear();
+        this.subCategories.addAll(normalizeSubCategories(subCategories));
+
+        basicInfo.changeSubCategory(this.subCategories.isEmpty() ? null : this.subCategories.get(0));
     }
 
     public void decreaseStock(int quantity) {
@@ -246,5 +286,39 @@ public class Product {
     @PreUpdate
     void preUpdate() {
         updatedAt = LocalDateTime.now();
+    }
+
+    private void updateSubCategoriesIfPresent(String subCategory, List<String> subCategories) {
+        if (subCategories != null) {
+            replaceSubCategories(subCategories);
+            return;
+        }
+
+        if (subCategory != null) {
+            replaceSubCategories(toSubCategoryList(subCategory));
+        }
+    }
+
+    private static List<String> toSubCategoryList(String subCategory) {
+        String trimmedSubCategory = ProductValidation.trimToNull(subCategory);
+
+        if (trimmedSubCategory == null) {
+            return List.of();
+        }
+
+        return List.of(trimmedSubCategory);
+    }
+
+    private static List<String> normalizeSubCategories(List<String> subCategories) {
+        if (subCategories == null) {
+            return List.of();
+        }
+
+        return subCategories.stream()
+                .filter(Objects::nonNull)
+                .map(String::trim)
+                .filter(subCategory -> !subCategory.isBlank())
+                .distinct()
+                .toList();
     }
 }

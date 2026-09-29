@@ -66,7 +66,8 @@ public class ProductAdminService {
                 request.volume(),
                 request.imageUrl(),
                 request.saleStatus(),
-                request.pointRewardRatePercent()
+                request.pointRewardRatePercent(),
+                request.subCategories()
         );
         if (Boolean.TRUE.equals(request.shouldClearDiscountPrice())) {
             product.clearDiscountPrice();

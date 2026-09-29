@@ -59,6 +59,13 @@ export const useAuthState = (): AuthContextValue => {
 
         return nextUser;
       },
+      updateAddress: async (input) => {
+        const member = await authApi.updateAddress(input);
+        const nextUser = toAuthUser(member);
+        setUser(nextUser);
+
+        return nextUser;
+      },
       updatePassword: async (input) => {
         await authApi.updatePassword(input);
       },

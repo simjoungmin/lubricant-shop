@@ -4,12 +4,14 @@ import com.lubricantshop.back.domain.product.Product;
 import com.lubricantshop.back.domain.product.ProductStatus;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.List;
 
 public record AdminProductResponse(
         Long productId,
         String productName,
         String category,
         String subCategory,
+        List<String> subCategories,
         String brand,
         BigDecimal price,
         BigDecimal discountPrice,
@@ -30,6 +32,7 @@ public record AdminProductResponse(
                 product.getProductName(),
                 product.getCategory(),
                 product.getSubCategory(),
+                product.getSubCategories(),
                 product.getBrand(),
                 product.getOriginalPrice(),
                 product.getDiscountPrice(),

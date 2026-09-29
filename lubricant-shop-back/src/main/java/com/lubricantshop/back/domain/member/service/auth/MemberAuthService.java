@@ -1,6 +1,7 @@
 package com.lubricantshop.back.domain.member.service.auth;
 
 import com.lubricantshop.back.domain.cart.CartRepository;
+import com.lubricantshop.back.domain.member.dto.auth.MemberAddressUpdateRequest;
 import com.lubricantshop.back.domain.member.dto.auth.MemberLoginRequest;
 import com.lubricantshop.back.domain.member.dto.auth.MemberLoginResponse;
 import com.lubricantshop.back.domain.member.dto.auth.MemberNameUpdateRequest;
@@ -68,6 +69,15 @@ public class MemberAuthService {
         Member member = findMember(memberId);
 
         member.changeName(request.name().trim());
+
+        return toLoginResponse(member);
+    }
+
+    @Transactional
+    public MemberLoginResponse updateAddress(Long memberId, MemberAddressUpdateRequest request) {
+        Member member = findMember(memberId);
+
+        member.changeAddress(request.address().trim());
 
         return toLoginResponse(member);
     }

@@ -8,8 +8,8 @@ type PageLayoutProps = {
 
 export function PageLayout({ children, shouldShowFooter = true }: PageLayoutProps) {
   return (
-    <div className="min-h-screen bg-white text-[#071d3b]">
-      {children}
+    <div className="flex min-h-screen flex-col bg-white text-[#071d3b]">
+      <div className="flex-1">{children}</div>
       {shouldShowFooter ? <OilFooter /> : null}
     </div>
   );

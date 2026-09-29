@@ -35,9 +35,9 @@ const ProductSection = ({ title, badge, products }: ProductSectionProps) => {
   };
 
   return (
-    <section className="bg-white py-8">
+    <section className="bg-white py-2">
       <div className="mx-auto max-w-[1240px] px-6 lg:px-8">
-        <div className="mb-5 flex items-center justify-between gap-3">
+        <div className="mb-1 flex items-center justify-between gap-3">
           <h2 className="text-2xl font-black">{title}</h2>
 
           <Link href="/category" className="text-sm font-bold text-[#65717f] hover:text-[#ff4b1f]">

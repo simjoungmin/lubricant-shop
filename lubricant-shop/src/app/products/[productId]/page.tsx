@@ -1,9 +1,10 @@
-import { formatPrice, getDiscountRate } from "@/components/cart/cart.utils";
-import Button from "@/components/common/Button";
+import { productApi } from "@/components/category/product.api";
 import { PageLayout } from "@/components/common/Layout";
 import { ProductImage, PRODUCT_IMAGE_SIZES } from "@/components/common/ProductImage";
-import { productApi } from "@/components/category/product.api";
 import OilHeader from "@/components/layout/OilHeader";
+import OiltimeNoticeImage from "@/components/product-detail/OiltimeNoticeImage";
+import ProductDetailPurchasePanel from "@/components/product-detail/ProductDetailPurchasePanel";
+import ProductPurchaseGuide from "@/components/product-detail/ProductPurchaseGuide";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
@@ -27,104 +28,90 @@ const ProductDetailPage = async ({ params }: ProductDetailPageProps) => {
     notFound();
   }
 
-  const rewardRate = product.pointRewardRatePercent ?? 0;
-  const expectedRewardPoint = Math.floor(product.price * (rewardRate / 100));
-  const discountRate = getDiscountRate(product.originalPrice, product.price);
-
   return (
     <PageLayout>
       <OilHeader />
-      <main className="bg-[#f7f7f5]">
+      <main className="bg-white">
         <section className="border-b border-[#e2e6eb] bg-white">
-          <div className="mx-auto flex max-w-[1440px] items-center gap-2 px-6 py-4 text-xs font-semibold text-[#7a8490] lg:px-8">
-            <Link href="/" className="hover:text-[#ff4b1f]">
+          <div className="mx-auto flex max-w-[1000px] items-center gap-2 px-6 py-4 text-xs font-semibold text-[#7a8490] lg:px-0">
+            <Link href="/" className="hover:text-[#2276dc]">
               홈
             </Link>
             <span>/</span>
-            <Link href="/category" className="hover:text-[#ff4b1f]">
+            <Link href="/category" className="hover:text-[#2276dc]">
               상품
             </Link>
             <span>/</span>
-            <span className="text-[#ff4b1f]">{product.name}</span>
+            <span className="truncate text-[#111827]">{product.name}</span>
           </div>
         </section>
 
-        <section className="mx-auto grid max-w-[1440px] gap-10 px-6 py-10 lg:grid-cols-[520px_1fr] lg:px-8">
-          <div className="flex min-h-[420px] items-center justify-center rounded-lg border border-[#dde2e8] bg-white">
-            <div className="relative h-[320px] w-full max-w-[420px] overflow-hidden">
-              <ProductImage
-                src={product.imageUrl}
-                alt={product.name}
-                sizes={PRODUCT_IMAGE_SIZES.detail}
-                fallbackColor={product.color}
-                className="object-contain p-4"
-                priority
-              />
+        <section className="mx-auto grid max-w-[1000px] gap-10 px-6 py-8 lg:grid-cols-[560px_400px] lg:px-0 lg:py-10">
+          <div>
+            <div className="flex h-[500px] items-center justify-center border border-[#dfe5ec] bg-white">
+              <div className="relative h-[390px] w-full max-w-[430px] overflow-hidden">
+                <ProductImage
+                  src={product.imageUrl}
+                  alt={product.name}
+                  sizes={PRODUCT_IMAGE_SIZES.detail}
+                  fallbackColor={product.color}
+                  className="object-contain p-4"
+                  priority
+                />
+              </div>
+            </div>
+
+            <div className="mt-5 flex justify-center">
+              <div className="relative h-[60px] w-[60px] border border-[#111827] bg-white">
+                <ProductImage
+                  src={product.imageUrl}
+                  alt={`${product.name} 썸네일`}
+                  sizes="60px"
+                  fallbackColor={product.color}
+                  className="object-contain p-1"
+                />
+              </div>
             </div>
           </div>
 
-          <div className="flex flex-col justify-center">
-            <div className="mb-4 flex flex-wrap items-center gap-2">
-              <span className="rounded bg-[#ff4b1f] px-2 py-1 text-xs font-black text-white">
-                {product.badge}
-              </span>
-              {product.brand ? (
-                <span className="text-sm font-bold text-[#65717f]">
-                  {product.brand}
-                </span>
-              ) : null}
-            </div>
+          <ProductDetailPurchasePanel product={product} />
+        </section>
 
-            <h1 className="text-3xl font-black leading-tight text-[#071d3b] md:text-4xl">
-              {product.name}
-            </h1>
-            <p className="mt-3 text-sm leading-6 text-[#65717f]">
-              {product.description || "상품 설명을 준비 중입니다."}
-            </p>
+        <section className="mx-auto max-w-[1000px] px-6 pt-8 lg:px-0">
+          <nav className="grid grid-cols-3 border-b border-[#d8dee6] text-center text-sm text-[#777]">
+            <a
+              href="#product-info"
+              className="border-b-2 border-[#222] py-4 font-black text-[#111827]"
+            >
+              상품정보
+            </a>
+            <a href="#purchase-guide" className="py-4 font-medium">
+              상품구매안내
+            </a>
+            <a href="#product-reviews" className="py-4 font-medium">
+              상품후기(0)
+            </a>
+          </nav>
+        </section>
 
-            <div className="mt-8 grid gap-3 border-y border-[#e2e6eb] py-6 text-sm">
-              <div className="flex justify-between gap-4">
-                <span className="text-[#65717f]">규격/용량</span>
-                <strong className="text-right text-[#071d3b]">
-                  {product.spec || "-"}
-                </strong>
-              </div>
-              <div className="flex justify-between gap-4">
-                <span className="text-[#65717f]">예상 적립</span>
-                <strong className="text-[#ff4b1f]">
-                  {expectedRewardPoint.toLocaleString("ko-KR")} P
-                </strong>
-              </div>
-            </div>
+        <section id="product-info">
+          <OiltimeNoticeImage />
+        </section>
 
-            <div className="mt-8 flex flex-col gap-5 sm:flex-row sm:items-end sm:justify-between">
-              <div>
-                <p className="text-xs font-bold text-[#65717f]">판매가</p>
-                {discountRate > 0 ? (
-                  <p className="mt-1 text-sm font-bold text-[#8a94a1] line-through">
-                    {formatPrice(product.originalPrice ?? product.price)}
-                  </p>
-                ) : null}
-                <div className="mt-1 flex items-baseline gap-3">
-                  {discountRate > 0 ? (
-                    <span className="text-3xl font-black text-[#ff4b1f]">
-                      {discountRate}%
-                    </span>
-                  ) : null}
-                  <p className="text-3xl font-black text-[#071d3b]">
-                    {formatPrice(product.price)}
-                  </p>
-                </div>
-              </div>
-              <Button
-                type="cart"
-                product={product}
-                className="h-12 rounded-md bg-[#ff4b1f] px-8 text-sm font-black text-white transition hover:bg-[#e63e16]"
-              >
-                장바구니 담기
-              </Button>
-            </div>
-          </div>
+        {/*
+          상품안내는 제품별 상세 콘텐츠가 준비되면 이 위치에 추가합니다.
+          <section className="mx-auto max-w-[1000px] px-6 py-12 lg:px-0" />
+        */}
+
+        <section
+          id="product-reviews"
+          className="mx-auto max-w-[1000px] px-6 py-12 lg:px-0"
+        >
+          <h2 className="sr-only">상품후기</h2>
+        </section>
+
+        <section id="purchase-guide">
+          <ProductPurchaseGuide />
         </section>
       </main>
     </PageLayout>

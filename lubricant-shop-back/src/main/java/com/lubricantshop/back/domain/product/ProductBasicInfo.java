@@ -65,6 +65,10 @@ public class ProductBasicInfo {
         return subCategory;
     }
 
+    public void changeSubCategory(String subCategory) {
+        this.subCategory = ProductValidation.trimToNull(subCategory);
+    }
+
     public String getBrand() {
         return brand;
     }

@@ -21,6 +21,8 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
 
     Optional<Member> findByPhoneNumber(String phoneNumber);
 
+    boolean existsByPhoneNumber(String phoneNumber);
+
     List<Member> findByWithdrawnTrueAndWithdrawalFinalizedAtIsNullAndWithdrawnAtLessThanEqual(
             LocalDateTime withdrawnAt
     );

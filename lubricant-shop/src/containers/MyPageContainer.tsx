@@ -1,6 +1,10 @@
 "use client";
 
 import { useAuth } from "@/components/auth/auth/AuthContext";
+import {
+  useJusoAddressSearch,
+  type JusoSelectedAddress,
+} from "@/components/auth/signup/useJusoAddressSearch";
 import { ConfirmModal } from "@/components/common/ConfirmModal";
 import OilHeader from "@/components/layout/OilHeader";
 import { MyPageAccountInfoSection } from "@/components/my-page/MyPageAccountInfoSection";
@@ -10,23 +14,26 @@ import { MyPageSecuritySection } from "@/components/my-page/MyPageSecuritySectio
 import { MyPageWithdrawalPanel } from "@/components/my-page/MyPageWithdrawalPanel";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useCallback, useState } from "react";
 
 type CompletionModal = {
   title: string;
   message: string;
+  redirectHome?: boolean;
 };
 
 const MyPageContainer = () => {
   const router = useRouter();
-  const { user, isReady, logout, withdraw } = useAuth();
+  const { user, isReady, logout, withdraw, updateAddress } = useAuth();
   const [completionModal, setCompletionModal] = useState<CompletionModal | null>(null);
+  const [isAddressUpdating, setIsAddressUpdating] = useState(false);
 
   const handleLogout = async () => {
     await logout();
     setCompletionModal({
       title: "로그아웃 완료",
       message: "로그아웃되었습니다.",
+      redirectHome: true,
     });
   };
 
@@ -35,8 +42,46 @@ const MyPageContainer = () => {
     setCompletionModal({
       title: "회원탈퇴 신청 완료",
       message: "회원탈퇴 신청이 완료되었습니다.",
+      redirectHome: true,
     });
   };
+
+  const handleAddressSelected = useCallback(
+    async ({ postalCode, address, detailAddress }: JusoSelectedAddress) => {
+      const nextAddress = [postalCode, address, detailAddress]
+        .map((value) => value?.trim() ?? "")
+        .filter(Boolean)
+        .join(" ");
+
+      if (!nextAddress) {
+        return;
+      }
+
+      setIsAddressUpdating(true);
+
+      try {
+        await updateAddress({ address: nextAddress });
+        setCompletionModal({
+          title: "배송지 변경 완료",
+          message: "기본 배송지가 변경되었습니다.",
+        });
+      } catch (error) {
+        setCompletionModal({
+          title: "배송지 변경 실패",
+          message: error instanceof Error ? error.message : "배송지 변경에 실패했습니다.",
+        });
+      } finally {
+        setIsAddressUpdating(false);
+      }
+    },
+    [updateAddress],
+  );
+
+  const handleChangeAddress = useJusoAddressSearch({
+    onAddressSelected: (address) => {
+      void handleAddressSelected(address);
+    },
+  });
 
   return (
     <>
@@ -46,8 +91,12 @@ const MyPageContainer = () => {
         message={completionModal?.message ?? ""}
         tone="success"
         onConfirm={() => {
+          const shouldRedirectHome = completionModal?.redirectHome;
           setCompletionModal(null);
-          router.replace("/");
+
+          if (shouldRedirectHome) {
+            router.replace("/");
+          }
         }}
       />
 
@@ -67,8 +116,12 @@ const MyPageContainer = () => {
           ) : user ? (
             <div className="grid gap-8">
               <MyPageProfileCard user={user} onLogout={handleLogout} />
-              <MyPageAccountInfoSection user={user} />
-              <MyPageSecuritySection />
+              <MyPageAccountInfoSection
+                user={user}
+                isAddressUpdating={isAddressUpdating}
+                onChangeAddress={handleChangeAddress}
+              />
+              <MyPageSecuritySection pointBalance={user.pointBalance} />
               <MyPageWithdrawalPanel onWithdraw={handleWithdraw} />
             </div>
           ) : (

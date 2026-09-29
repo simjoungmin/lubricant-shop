@@ -17,6 +17,7 @@ export const initialSignupSavedFields: SignupSavedFieldState = {
 
 export const initialSignupUiOnlyFields: SignupUiOnlyFieldState = {
   passwordConfirm: "",
+  phoneVerificationCode: "",
   privacyDelegationAgreed: false,
   vehicleEnabled: false,
 };

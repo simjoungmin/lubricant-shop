@@ -5,6 +5,7 @@ import java.math.BigDecimal;
 public record OrderCreateResponse(
         Long orderId,
         String orderNumber,
+        String pgOrderId,
         BigDecimal totalOrderAmount,
         BigDecimal paymentAmount,
         boolean pointUseConfirmed,

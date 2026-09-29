@@ -33,6 +33,9 @@ public record MemberSignupRequest(
         @Pattern(regexp = "^01[016789]-?\\d{3,4}-?\\d{4}$", message = "휴대폰 번호 형식을 확인해 주세요.")
         String phone,
 
+        @NotBlank(message = "휴대폰 인증을 완료해 주세요.")
+        String phoneVerificationToken,
+
         @AssertTrue(message = "이용약관에 동의해 주세요.")
         boolean termsAgreed,
 

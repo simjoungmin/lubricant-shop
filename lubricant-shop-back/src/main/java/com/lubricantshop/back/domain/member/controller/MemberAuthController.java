@@ -1,5 +1,6 @@
 package com.lubricantshop.back.domain.member.controller;
 
+import com.lubricantshop.back.domain.member.dto.auth.MemberAddressUpdateRequest;
 import com.lubricantshop.back.domain.member.dto.auth.MemberLoginRequest;
 import com.lubricantshop.back.domain.member.dto.auth.MemberLoginResponse;
 import com.lubricantshop.back.domain.member.dto.auth.MemberNameUpdateRequest;
@@ -67,6 +68,14 @@ public class MemberAuthController {
             @Valid @RequestBody MemberNameUpdateRequest request
     ) {
         return memberAuthService.updateName(member.memberId(), request);
+    }
+
+    @PatchMapping("/me/address")
+    public MemberLoginResponse updateAddress(
+            @AuthenticationPrincipal AuthenticatedMember member,
+            @Valid @RequestBody MemberAddressUpdateRequest request
+    ) {
+        return memberAuthService.updateAddress(member.memberId(), request);
     }
 
     @PatchMapping("/me/password")

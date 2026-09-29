@@ -17,9 +17,12 @@ import {
   orderApi,
   type OrderCreateResponse,
 } from "@/components/order/order.api";
+import { requestTossCardPayment } from "@/components/payment/tossPayments";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 import { type FormEvent, useMemo, useState } from "react";
+
+const TOSS_PAYMENTS_CLIENT_KEY = process.env.NEXT_PUBLIC_TOSS_PAYMENTS_CLIENT_KEY ?? "";
 
 export default function OrderContainer() {
   const router = useRouter();
@@ -51,14 +54,6 @@ export default function OrderContainer() {
 
   const createOrderMutation = useMutation({
     mutationFn: orderApi.createOrder,
-    onSuccess: (order) => {
-      setCreatedOrder(order);
-      setMessage("주문이 접수되었습니다. 입금 확인 후 결제 완료로 변경됩니다.");
-      void queryClient.invalidateQueries({ queryKey: ["cart"] });
-    },
-    onError: (error) => {
-      setMessage(error instanceof Error ? error.message : "주문 생성에 실패했습니다.");
-    },
   });
 
   const updateForm: OrderFieldChangeHandler = (field, value) => {
@@ -71,7 +66,7 @@ export default function OrderContainer() {
     updateForm("pointAmount", Number.isFinite(pointAmount) ? Math.min(pointAmount, maxUsablePoint) : 0);
   };
 
-  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
     if (!user) {
@@ -89,16 +84,55 @@ export default function OrderContainer() {
       return;
     }
 
-    createOrderMutation.mutate({
-      items: orderItems,
-      receiverName: form.receiverName.trim(),
-      receiverPhone: form.receiverPhone.trim(),
-      shippingAddress: form.shippingAddress.trim(),
-      deliveryRequest: form.deliveryRequest.trim(),
-      paymentMethod: form.paymentMethod,
-      usePoints: form.usePoints,
-      pointAmount: usablePointAmount,
-    });
+    try {
+      const order = await createOrderMutation.mutateAsync({
+        items: orderItems,
+        receiverName: form.receiverName.trim(),
+        receiverPhone: form.receiverPhone.trim(),
+        shippingAddress: form.shippingAddress.trim(),
+        deliveryRequest: form.deliveryRequest.trim(),
+        paymentMethod: form.paymentMethod,
+        usePoints: form.usePoints,
+        pointAmount: usablePointAmount,
+      });
+
+      setCreatedOrder(order);
+
+      if (order.paymentMethod === "CARD" && order.paymentAmount > 0) {
+        await requestCardPayment(order);
+        return;
+      }
+
+      if (order.orderStatus === "PAID") {
+        setMessage("포인트 결제가 완료되었습니다.");
+        void queryClient.invalidateQueries({ queryKey: ["cart"] });
+        return;
+      }
+
+      setMessage("주문이 접수되었습니다. 결제 완료 후 상품 준비가 시작됩니다.");
+    } catch (error) {
+      setMessage(error instanceof Error ? error.message : "주문 생성에 실패했습니다.");
+    }
+  };
+
+  const requestCardPayment = async (order: OrderCreateResponse) => {
+    const firstProductName = items[0]?.product.name ?? "OIL MASTER 상품";
+    const orderName = items.length > 1 ? `${firstProductName} 외 ${items.length - 1}건` : firstProductName;
+    const origin = window.location.origin;
+
+    try {
+      setMessage("토스페이먼츠 결제창으로 이동합니다.");
+      await requestTossCardPayment(TOSS_PAYMENTS_CLIENT_KEY, {
+        amount: order.paymentAmount,
+        orderId: order.pgOrderId,
+        orderName,
+        customerName: user?.name,
+        successUrl: `${origin}/order/payment/success`,
+        failUrl: `${origin}/order/payment/fail`,
+      });
+    } catch (error) {
+      setMessage(error instanceof Error ? error.message : "결제창 호출에 실패했습니다.");
+    }
   };
 
   const renderOrderContent = () => {

@@ -277,6 +277,10 @@ public class Member {
         this.memberName = memberName;
     }
 
+    public void changeAddress(String address) {
+        this.address = address;
+    }
+
     public void requestWithdrawal(LocalDateTime now) {
         if (Boolean.TRUE.equals(withdrawn)) {
             return;

@@ -1,6 +1,11 @@
+import type { AuthUser } from "@/components/auth/auth/auth.types";
 import Link from "next/link";
 
-export function MyPageSecuritySection() {
+type MyPageSecuritySectionProps = {
+  pointBalance: AuthUser["pointBalance"];
+};
+
+export function MyPageSecuritySection({ pointBalance }: MyPageSecuritySectionProps) {
   return (
     <section>
       <h2 className="text-xl font-black text-[#071d3b]">로그인 및 보안</h2>
@@ -14,15 +19,17 @@ export function MyPageSecuritySection() {
             주기적으로 비밀번호를 변경해 계정을 안전하게 관리합니다.
           </span>
           <span className="text-xl font-bold text-[#071d3b]" aria-hidden="true">
-            ›
+            &gt;
           </span>
         </Link>
         <div className="grid min-h-14 grid-cols-[140px_1fr_auto] items-center gap-4 px-4 py-3 text-sm md:grid-cols-[180px_1fr_auto]">
-          <span className="font-black text-[#071d3b]">최근 로그인</span>
+          <span className="font-black text-[#071d3b]">사용가능 포인트</span>
           <span className="font-bold leading-6 text-[#65717f]">
-            최근 로그인 이력 기능은 준비 중입니다.
+            결제 단계에서 바로 사용할 수 있는 포인트입니다.
           </span>
-          <span className="text-xs font-black text-[#65717f]">준비 중</span>
+          <span className="text-base font-black text-[#071d3b]">
+            {pointBalance.toLocaleString("ko-KR")} P
+          </span>
         </div>
       </div>
     </section>

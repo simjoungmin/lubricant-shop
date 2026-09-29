@@ -6,9 +6,6 @@ import com.lubricantshop.back.domain.order.dto.AdminOrderItemResponse;
 import com.lubricantshop.back.domain.order.dto.AdminOrderResponse;
 import com.lubricantshop.back.domain.order.dto.AdminOrderShipmentUpdateRequest;
 import com.lubricantshop.back.domain.order.dto.AdminOrderStatusUpdateRequest;
-import com.lubricantshop.back.domain.product.Product;
-import com.lubricantshop.back.domain.product.ProductStatus;
-import com.lubricantshop.back.global.exception.ConflictException;
 import com.lubricantshop.back.global.exception.ResourceNotFoundException;
 import java.util.List;
 import org.springframework.stereotype.Service;
@@ -22,15 +19,18 @@ public class OrderAdminService {
     private final OrderRepository orderRepository;
     private final OrderItemRepository orderItemRepository;
     private final AdminAuthorizationService adminAuthorizationService;
+    private final OrderPaymentCompletionService orderPaymentCompletionService;
 
     public OrderAdminService(
             OrderRepository orderRepository,
             OrderItemRepository orderItemRepository,
-            AdminAuthorizationService adminAuthorizationService
+            AdminAuthorizationService adminAuthorizationService,
+            OrderPaymentCompletionService orderPaymentCompletionService
     ) {
         this.orderRepository = orderRepository;
         this.orderItemRepository = orderItemRepository;
         this.adminAuthorizationService = adminAuthorizationService;
+        this.orderPaymentCompletionService = orderPaymentCompletionService;
     }
 
     @Transactional(readOnly = true)
@@ -98,23 +98,7 @@ public class OrderAdminService {
             return toResponse(order);
         }
 
-        if (order.getOrderStatus() != OrderStatus.ORDERED) {
-            throw new ConflictException("주문 접수 상태에서만 결제 완료 처리할 수 있습니다.");
-        }
-
-        List<OrderItem> orderItems = orderItemRepository.findByOrderOrderIdOrderByOrderItemIdAsc(order.getOrderId());
-
-        for (OrderItem orderItem : orderItems) {
-            Product product = orderItem.getProduct();
-            validatePurchasableProduct(product, orderItem.getQuantity());
-            product.decreaseStock(orderItem.getQuantity());
-        }
-
-        if (order.getPointUsed() > 0) {
-            order.getMember().usePoints(order.getPointUsed());
-        }
-        order.getMember().earnPoints(order.getPointEarned());
-        order.completePayment();
+        orderPaymentCompletionService.completePayment(order);
 
         return toResponse(order);
     }
@@ -126,16 +110,6 @@ public class OrderAdminService {
 
     private Member requireAdmin(Long memberId) {
         return adminAuthorizationService.requireAdmin(memberId, ADMIN_ORDERS_FORBIDDEN_MESSAGE);
-    }
-
-    private void validatePurchasableProduct(Product product, int quantity) {
-        if (product.getSaleStatus() != ProductStatus.ON_SALE) {
-            throw new ConflictException("현재 구매할 수 없는 상품이 포함되어 있습니다.");
-        }
-
-        if (product.getStock() < quantity) {
-            throw new ConflictException("상품 재고가 부족합니다.");
-        }
     }
 
     private boolean hasShipmentUpdate(AdminOrderStatusUpdateRequest request) {

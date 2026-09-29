@@ -17,6 +17,7 @@ export type OrderCreateInput = {
 export type OrderCreateResponse = {
   orderId: number;
   orderNumber: string;
+  pgOrderId: string;
   totalOrderAmount: number;
   paymentAmount: number;
   pointUseConfirmed: boolean;
@@ -31,6 +32,7 @@ export type MyOrderItem = {
   orderItemId: number;
   productId: number;
   productName: string;
+  imageUrl: string;
   quantity: number;
   price: number;
   totalPrice: number;

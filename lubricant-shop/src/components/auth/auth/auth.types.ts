@@ -21,6 +21,10 @@ export type MemberNameUpdateInput = {
   name: string;
 };
 
+export type MemberAddressUpdateInput = {
+  address: string;
+};
+
 export type MemberPasswordUpdateInput = {
   currentPassword: string;
   newPassword: string;
@@ -45,6 +49,7 @@ export type AuthContextValue = {
   login: (input: LoginInput) => Promise<AuthUser>;
   socialLogin: (provider: Exclude<AuthProviderName, "email">) => Promise<AuthUser>;
   updateName: (input: MemberNameUpdateInput) => Promise<AuthUser>;
+  updateAddress: (input: MemberAddressUpdateInput) => Promise<AuthUser>;
   updatePassword: (input: MemberPasswordUpdateInput) => Promise<void>;
   withdraw: () => Promise<void>;
   logout: () => Promise<void>;

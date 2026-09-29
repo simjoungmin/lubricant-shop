@@ -1,9 +1,15 @@
 import { emailPattern, passwordPattern, phonePattern } from "./signup.constants";
-import type { EmailCheckState, SignupErrors, SignupFormState } from "./signup.types";
+import type {
+  EmailCheckState,
+  PhoneVerificationState,
+  SignupErrors,
+  SignupFormState,
+} from "./signup.types";
 
 export const validateSignupForm = (
   signupForm: SignupFormState,
   emailCheckState: EmailCheckState,
+  phoneVerificationState: PhoneVerificationState,
 ) => {
   const nextErrors: SignupErrors = {};
   const email = signupForm.email.trim();
@@ -47,6 +53,10 @@ export const validateSignupForm = (
     nextErrors.phone = "휴대폰 번호를 입력해 주세요.";
   } else if (!phonePattern.test(signupForm.phone.trim())) {
     nextErrors.phone = "휴대폰 번호 형식을 확인해 주세요.";
+  }
+
+  if (phoneVerificationState !== "verified") {
+    nextErrors.phoneVerificationCode = "휴대폰 인증을 완료해 주세요.";
   }
 
   if (!signupForm.termsAgreed) {

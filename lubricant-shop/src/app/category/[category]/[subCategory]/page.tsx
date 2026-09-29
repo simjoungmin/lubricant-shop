@@ -1,6 +1,63 @@
 import CategoryProductGrid from "@/components/category/CategoryProductGrid";
 import { productApi } from "@/components/category/product.api";
 
+const brandEngineOilBrands = [
+  "GS 킥스",
+  "SK 지크",
+  "쉘",
+  "에쓰오일",
+  "캐스트롤",
+  "현대오일뱅크",
+  "77루브리컨츠",
+  "GRO",
+  "그랜빌",
+  "라프렌졸",
+  "루벡스",
+  "부두라이드",
+  "부스터",
+  "비톨",
+  "실버이글",
+  "앱솔",
+  "익스트림",
+  "지에너지",
+  "케놀",
+  "코프란",
+];
+
+const viscosityEngineOilViscosities = [
+  "0W20",
+  "0W30",
+  "0W40",
+  "5W20",
+  "5W30",
+  "5W40",
+  "5W50",
+  "5W60",
+  "10W30",
+  "10W60",
+];
+
+const gasolineLpgEngineOilBrands = [
+  "GS 킥스",
+  "SK 지크",
+  "쉘",
+  "캐스트롤",
+  "현대오일뱅크",
+  "77루브리컨츠",
+  "GRO",
+  "그랜빌",
+  "라프렌졸",
+  "루벡스",
+  "부두라이드",
+  "부스터",
+  "비톨",
+  "실버이글",
+  "앱솔",
+  "익스트림",
+  "케놀",
+  "코프란",
+];
+
 type CategoryDetailPageProps = {
   params: Promise<{
     category: string;
@@ -43,7 +100,13 @@ export default async function CategoryDetailPage({
   });
   const shouldShowBrandFilter =
     category === "engine" && subCategory === "brand-engine-oil";
-  const brandOptions = shouldShowBrandFilter
+  const shouldShowGasolineLpgBrandFilter =
+    category === "engine" && subCategory === "gasoline-lpg-engine-oil";
+  const shouldShowPassengerDieselBrandFilter =
+    category === "engine" && subCategory === "passenger-diesel-engine-oil";
+  const shouldShowViscosityFilter =
+    category === "engine" && subCategory === "viscosity-engine-oil";
+  const fetchedBrandOptions = shouldShowBrandFilter
     ? await productApi.findBrands({
         category,
         subCategory,
@@ -53,6 +116,11 @@ export default async function CategoryDetailPage({
         standard,
       })
     : [];
+  const brandOptions = shouldShowBrandFilter
+    ? [...new Set([...brandEngineOilBrands, ...fetchedBrandOptions])]
+    : shouldShowGasolineLpgBrandFilter || shouldShowPassengerDieselBrandFilter
+      ? gasolineLpgEngineOilBrands
+      : fetchedBrandOptions;
   const parsedPageSize = Number(pageSize);
   const visibleCount = Number.isFinite(parsedPageSize)
     ? Math.min(Math.max(Math.floor(parsedPageSize), 1), 100)
@@ -64,6 +132,10 @@ export default async function CategoryDetailPage({
       products={displayProducts}
       brandOptions={brandOptions}
       selectedBrand={brand}
+      viscosityOptions={
+        shouldShowViscosityFilter ? viscosityEngineOilViscosities : []
+      }
+      selectedViscosity={viscosity}
     />
   );
 }
